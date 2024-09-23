@@ -2,3 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+.custom-border-gradient {
+    
+    border-radius: 9999px;
+    border-width: 1px;
+    border-style: solid;
+    border-image-source: linear-gradient(180deg, rgba(182, 255, 27, 0.46) 0%, rgba(64, 95, 0, 0.46) 100%);
+    border-image-slice: 1;
+  }

@@ -21,7 +21,7 @@ export default function Landing() {
               variant="outline"
               className="text-black bg-white rounded-2xl"
             >
-              <p className="text-lg p-4">Log in</p>
+              <a href="/home" className="text-lg p-4">Log in</a>
             </Button>
           </header>
 
