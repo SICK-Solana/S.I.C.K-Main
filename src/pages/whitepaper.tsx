@@ -1,4 +1,3 @@
-import React from 'react';
 import { Scroll, ShoppingBag, Share2, TrendingUp, DollarSign, Zap } from 'lucide-react';
 
 const WhitepaperSICK = () => {
