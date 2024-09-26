@@ -168,7 +168,7 @@ const CrateCreator: React.FC = () => {
 
       const result = await response.json();
       console.log('Crate created:', result);
-      // Reset form or navigate to a success page
+window.location.href = '/crate/' + result.id;
     } catch (error) {
       if (error instanceof Error) {
         setError('Failed to create crate: ' + error.message);
