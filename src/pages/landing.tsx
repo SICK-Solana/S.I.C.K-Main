@@ -1,11 +1,12 @@
 import { Button } from "../components/ui/button";
 import { BentoGrid } from "../components/ui/bentogrid";
+import { WalletMultiButton } from '@tiplink/wallet-adapter-react-ui'
 
 export default function Landing() {
   return (
     <>
       <div
-        className=" min-h-screen justify-center items-center bg-gradient-to-br from-gray-900 to-gray-800 text-white relative overflow-hidden"
+        className="min-h-screen justify-center items-center bg-gradient-to-br from-gray-900 to-gray-800 text-white relative overflow-hidden"
         style={{ fontFamily: "Poppins, sans-serif" }}
       >
         <div className="absolute inset-0 bg-[url('/images/SICK_LOGO2.png?height=1080&width=1920')] opacity-10"></div>
@@ -16,15 +17,9 @@ export default function Landing() {
               alt="Description of the image"
               className="h-10"
             />
-
-            <Button
-              variant="outline"
-              className="text-black bg-white rounded-2xl"
-            >
-              <a href="/home" className="text-lg p-4">Log in</a>
-            </Button>
+            <WalletMultiButton />
           </header>
-
+          
           <main className="text-center mb-16 justify-center items-center">
             <h2 className="text-lg mb-4  p-2 mx-auto">
               Revolutionizing <span className="text-lime-400">Web3</span>{" "}
@@ -44,7 +39,7 @@ export default function Landing() {
               Get Started
             </Button>
           </main>
-
+          
           <div className="text-center mb-16 text-xl">
             Follow us on: <span className="text-lime-500">X</span>
           </div>
