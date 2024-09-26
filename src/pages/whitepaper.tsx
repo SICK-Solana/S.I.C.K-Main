@@ -32,7 +32,10 @@ const WhitepaperSICK = () => {
           </li>
           <li className="flex items-center">
             <Scroll className="mr-2" size={20} />
-            Web3 Reels Feed: Discover new Krates while scrolling through crypto content
+            GoalSync krate: An AI assistant that analyzes your monthly income, personal aspirations, family goals, and dreams to recommend tailored Krates that align with your financial journey.</li>
+          <li className="flex text-gray-400 opacity-70 items-center">
+            <Scroll className="mr-2" size={20} />
+           [by feedback we r decidin to move on from this idea] Web3 Reels Feed: Discover new Krates while scrolling through crypto content
           </li>
           <li className="flex items-center">
             <DollarSign className="mr-2" size={20} />
