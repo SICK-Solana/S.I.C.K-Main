@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/ui/bentogrid.tsx","./src/components/ui/button.tsx","./src/components/ui/sidebar.tsx","./src/lib/utils.ts","./src/pages/home.tsx","./src/pages/landing.tsx","./src/pages/whitepaper.tsx"],"version":"5.6.2"}
