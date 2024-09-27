@@ -27,7 +27,7 @@ export default function CryptoDashboard() {
         </header>
 
         <main>
-          <div className="bg-gradient-to-b from-[#111817] to-[#070C14] rounded-lg  font-mono mb-10 ">
+          <div className="bg-gradient-to-b from-[#111817] to-[#070C14]   font-mono mb-10 ">
             <div className="grid grid-cols-1 sm:grid-cols-3">
               <div className="border p-4 sm:p-6 border-[#223115]">
                 <p className="text-[#238636] text-sm mb-2">▲ 10.0%</p>
@@ -174,7 +174,7 @@ const CrateCard = ({
               />
             </span>
             {token.percentage > 0 && (
-              <span className="text-gray-400 text-xs sm:text-sm">
+              <span className="text-gray-400  text-xs sm:text-sm">
                 {token.percentage}%
               </span>
             )}
