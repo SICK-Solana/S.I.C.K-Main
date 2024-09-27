@@ -36,7 +36,7 @@ const Sidebar = () => {
                       href={menu.path}
                       data-tooltip-id={`tooltip-${index}`}
                       data-tooltip-content={menu.title}
-                      className="flex items-center p-3 rounded-3xl border-yellow-400 transition-all duration-200 border ease-in-out hover:bg-yellow-500 hover:bg-opacity-20 group"
+                      className="flex items-center p-3 rounded-3xl transition-all duration-200  ease-in-out  group"
                     >
                       {Icon && <Icon className="text-yellow-400 group-hover:text-yellow-300" size={24} />}
                     </a>
