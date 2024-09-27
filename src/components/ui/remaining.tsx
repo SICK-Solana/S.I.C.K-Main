@@ -1,0 +1,180 @@
+import { Button } from "./button";
+import { Bookmark, HousePlus, ShoppingCart, Wallet } from "lucide-react";
+import { useState } from "react";
+
+export default function CryptoDashboard() {
+   
+  return (
+    <>
+  
+    
+      <div className="bg-[#0d1117] w-[96vw] ml-20 text-white min-h-screen p-6 font-mono">
+        <header className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl bg-gradient-to-b from-[#FFFFFF] to-[#494949] bg-clip-text text-transparent">
+            hello_Rishabh (&gt;_•)
+          </h1>
+          <div className="flex">
+            <Button className="text-gray-400 hover:text-white">
+              <ShoppingCart />
+            </Button>
+            <Button className="text-gray-400 hover:text-white">
+              <Wallet />
+            </Button>
+            <div className="w-8 h-8 ml-6 bg-gray-300 rounded-full">
+              <img
+                src="https://imgs.search.brave.com/6PN65lJBy4NhRQ01F3qEaPE0lg-6nrHcwPfeIWQAAJE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/YnJpdGFubmljYS5j/b20vNDUvMjIzMDQ1/LTA1MC1BNjQ1M0Q1/RC9UZWxzYS1DRU8t/RWxvbi1NdXNrLTIw/MTQuanBnP3c9Mzg1"
+                alt="lol"
+                className="h-8 w-8 rounded-full"
+              />
+            </div>
+          </div>
+        </header>
+
+        <main>
+          <div className="bg-gradient-to-b from-[#111817] to-[#070C14] rounded-lg mb-8 font-mono">
+            <div className="grid grid-cols-3">
+              <div className="border p-6 border-[#223115]">
+                <p className="text-[#238636] text-sm mb-2">▲ 10.0%</p>
+                <h2 className="text-6xl font-semibold bg-gradient-to-b from-[#B7FC24] to-[#486900] bg-clip-text text-transparent">
+                  $1980
+                </h2>
+                <p className="text-gray-400 mt-2">current_value</p>
+              </div>
+              <div className="border p-6 border-[#223115] text-md text-center">
+                <p className="mb-2 text-gray-400">invested_value: $1800</p>
+                <p className="mb-2 text-gray-400">
+                  total_returns:{" "}
+                  <span className="text-[#B6FF1B]">+$180 (10%)</span>
+                </p>
+                <p className="mb-2 text-gray-400">
+                  1D_returns: <span className="text-[#B6FF1B]">+$1 (0.6%)</span>
+                </p>
+                <p className="text-gray-400">
+                  XIRR: <span className="text-[#B6FF1B]">78.4%</span>
+                </p>
+              </div>
+              <div className="text-right p-6 border border-[#223115]">
+                <a href="#" className="text-[#238636] hover:underline text-sm">
+                  view_dashboard ↗
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <h3 className="text-[#B6FF1B] text-sm mb-4">// crates</h3>
+          <h2 className="text-2xl mb-4 text-gray-400">popular</h2>
+
+          <div className="grid grid-cols-3 gap-4">
+            <CrateCard
+              title="Solana Mid Cap"
+              subtitle="Mid Cap: 8"
+              percentage={12.2}
+              tokens={[
+                {
+                  icon: "https://cryptologos.cc/logos/solana-sol-logo.png",
+                  percentage: 14.2,
+                },
+                {
+                  icon: "https://cryptologos.cc/logos/dogecoin-doge-logo.png",
+                  percentage: 7.38,
+                },
+                {
+                  icon: "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
+                  percentage: 7.38,
+                },
+              ]}
+            />
+            <CrateCard
+              title="Meme Crate"
+              subtitle="Meme Tokens: 4"
+              percentage={-12.2}
+              tokens={[
+                {
+                  icon: "https://cryptologos.cc/logos/solana-sol-logo.png",
+                  percentage: 14.2,
+                },
+                {
+                  icon: "https://cryptologos.cc/logos/dogecoin-doge-logo.png",
+                  percentage: 7.38,
+                },
+                {
+                  icon: "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
+                  percentage: 7.38,
+                },
+              ]}
+            />
+          </div>
+        </main>
+      </div>
+    </>
+  );
+}
+
+interface CrateCardProps {
+  title: string;
+  subtitle: string;
+  percentage: number;
+  tokens: { icon: string; percentage: number }[];
+}
+
+function CrateCard({ title, subtitle, percentage, tokens }: CrateCardProps) {
+    const [isFilled, setIsFilled] = useState(false);
+
+    const handleClick = () => {
+      setIsFilled(!isFilled); // Toggle the fill state on click
+    };
+  return (
+<div className={`relative p-6 rounded-3xl border border-gray-500 text-white shadow-lg ${
+        percentage > 0 ? 'bg-gradient-to-b from-[#121019] to-[#070A12]' : 'bg-gradient-to-b from-[#191010] to-[#070A12]'
+      }`}>      {/* Header Section */}
+      <div className="flex justify-between items-center cursor-pointer">
+        {/* Icon and Title */}
+        <div className="flex items-center space-x-2">
+          <div className="p-3 bg-gradient-to-b from-[#a09e9e] to-[#737373] rounded-2xl">
+            <span role="img" aria-label="icon">
+            <HousePlus />
+            </span>
+          </div>
+          <h1 className="text-2xl font-mono">{title}</h1>
+        </div>
+
+        <Bookmark className={isFilled ? 'text-blue-500' : 'text-gray-400'} onClick={handleClick}/>
+      </div>
+
+      <div className="mt-2">
+        <span className="text-gray-400 bg-[#2e2e2e] rounded-2xl border border-gray-500 px-3 py-2 inline-block text-sm">
+          {subtitle}
+        </span>
+      </div>
+
+      <div className="my-4">
+        <div className="w-full h-32 bg-transparent flex items-center">
+          <div className="w-full h-[2px] bg-green-400 relative">
+            <div className="h-[2px] bg-green-400 w-2/3"></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <div className="text-sm text-gray-400">token_split:</div>
+        {tokens.map((token, index) => (
+          <div className="flex items-center space-x-1" key={index}>
+            {/* Display the icon */}
+            <span className="w-6 h-6 flex items-center justify-center">
+              <img src={token.icon} alt="token-icon" className="w-4 h-4" />
+            </span>
+            {/* Display the percentage if it's more than 0 */}
+            {token.percentage > 0 && (
+              <span className="text-gray-400 text-sm">{token.percentage}%</span>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Growth Section */}
+      <div className="absolute bottom-14 right-6 text-green-400">
+        <span className="text-lg font-semibold">{percentage}</span>
+      </div>
+    </div>
+  );
+}
