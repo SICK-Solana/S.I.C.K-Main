@@ -17,7 +17,7 @@ export default function Landing() {
               alt="Description of the image"
               className="h-10"
             />
-            <WalletMultiButton />
+            <WalletMultiButton  />
           </header>
           
           <main className="text-center mb-16 justify-center items-center">
