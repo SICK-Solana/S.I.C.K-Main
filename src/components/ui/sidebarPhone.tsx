@@ -4,9 +4,9 @@ import * as Icons from "lucide-react";
 export const SideBarPhone = () => {
   const Menus = [
     { title: "Dashboard", src: "Layout", path: "/dashboard" },
-    { title: "Crates", src: "LayoutGrid", path: "/crates" },
+    { title: "Crates", src: "LayoutGrid", path: "/explorecrate" },
     { title: "Scroll", src: "Sparkle", path: "/scroll" },
-    { title: "Create Crate", src: "PackageOpen", path: "/create-crate" },
+    { title: "Create Crate", src: "PackageOpen", path: "/cratecreator" },
   ];
 
   return (

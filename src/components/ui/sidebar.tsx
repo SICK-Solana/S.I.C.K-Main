@@ -5,9 +5,9 @@ import { Tooltip } from "react-tooltip";
 const Sidebar = () => {
   const Menus = [
     { title: "/dashboard", src: "Layout", path: "/dashboard" },
-    { title: "/crates", src: "LayoutGrid", path: "/crates" },
+    { title: "/crates", src: "LayoutGrid", path: "/explorecrate" },
     { title: "/scroll", src: "Sparkle", path: "/scroll" },
-    { title: "/create Crate", src: "PackageOpen", path: "/create-crate" },
+    { title: "/create Crate", src: "PackageOpen", path: "/cratecreator" },
   ];
 
   return (
