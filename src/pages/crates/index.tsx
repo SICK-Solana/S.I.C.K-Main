@@ -247,10 +247,9 @@ setSwapQuotes(filteredResults as unknown as SwapQuote[]);
         <h3 className="text-xl font-bold mb-2">Tokens</h3>
         {crateData.tokens.map((token) => (
           <div key={token.id} className="mb-2">
-            {/* <p>{token.name} ({token.symbol}): {token.quantity}%</p> */}
-            {crateData.tokens.map((token) => (
+         
             <TokenBar key={token.id} token={token} />
-          ))}
+    
           </div>
         ))}
       </div>
