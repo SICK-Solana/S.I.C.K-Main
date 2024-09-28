@@ -18,7 +18,7 @@ const wallets = [
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <WalletProvider wallets={wallets} >
+    <WalletProvider wallets={wallets} autoConnect >
       <TipLinkWalletAutoConnectV2 isReady query={new URLSearchParams(window.location.search)}>
         <WalletModalProvider>
           <App />
