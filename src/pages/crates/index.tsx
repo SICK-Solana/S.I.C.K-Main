@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { createJupiterApiClient, QuoteResponse } from '@jup-ag/api';
 import tokenData from '../createcrate/tokens.json';
-
+import BackendApi from '../../constants/api.ts'
 const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 import { Buffer } from 'buffer';
 
@@ -82,7 +82,7 @@ const CrateDetailPage: React.FC = () => {
   useEffect(() => {
     const fetchCrateData = async () => {
       try {
-        const response = await fetch(`https://sickb.vercel.app/api/crates/${id}`);
+        const response = await fetch(`${BackendApi}/crates/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch crate data');
         }

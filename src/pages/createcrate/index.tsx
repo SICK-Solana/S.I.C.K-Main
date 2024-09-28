@@ -1,7 +1,8 @@
 import React, { useState, useEffect, ChangeEvent, useMemo } from 'react';
 import tokenData from './tokens.json';
 import debounce from 'lodash/debounce';
-
+import BackendApi from '../../constants/api.ts';
+import fetchUserData from '../../constants/fetchUserData.ts';
 interface Token {
   address: string;
   name: string;
@@ -63,28 +64,21 @@ const CrateCreator: React.FC = () => {
 
   const checkLoginStatus = async () => {
     const creatorId = localStorage.getItem('creatorId');
-    const walletAddress = localStorage.getItem('tipLink_pk_connected');
-
+  
     if (creatorId) {
       setIsLoggedIn(true);
-    } else if (walletAddress) {
-      try {
-        const response = await fetch('https://sickb.vercel.app/api/login-wallet', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ walletAddress }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          localStorage.setItem('creatorId', data.creatorId);
-          setIsLoggedIn(true);
-        }
-      } catch (error) {
-        console.error('Error logging in with wallet:', error);
+    } else {
+      // Call the reusable function
+      const user = await fetchUserData();
+      
+      // Set creatorId in localStorage if the user is found
+      if (user) {
+        localStorage.setItem('creatorId', user.id);
+        setIsLoggedIn(true); // You can handle setting login here
       }
     }
   };
+  
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +89,7 @@ const CrateCreator: React.FC = () => {
     }
 
     try {
-      const response = await fetch('https://sickb.vercel.app/api/users', {
+      const response = await fetch(`${BackendApi}/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, username, profileImage, walletAddress }),
@@ -158,7 +152,7 @@ const CrateCreator: React.FC = () => {
     };
 
     try {
-      const response = await fetch('https://sickb.vercel.app/api/crates', {
+      const response = await fetch(`${BackendApi}/crates`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(crateData)
