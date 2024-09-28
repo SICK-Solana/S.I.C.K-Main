@@ -10,3 +10,17 @@
     border-image-source: linear-gradient(180deg, rgba(182, 255, 27, 0.46) 0%, rgba(64, 95, 0, 0.46) 100%);
     border-image-slice: 1;
   }
+
+  .loader {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }

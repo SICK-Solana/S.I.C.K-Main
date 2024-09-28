@@ -3,11 +3,19 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { createJupiterApiClient, QuoteResponse } from '@jup-ag/api';
 import tokenData from '../createcrate/tokens.json';
-
+import BackendApi from '../../constants/api.ts'
+import Sidebar from '../../components/ui/sidebar.tsx';
+import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
 const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 import { Buffer } from 'buffer';
 
 // Ensure the global Buffer is available
+declare global {
+  interface Window {
+    Buffer: typeof Buffer;
+  }
+}
+
 if (typeof window !== 'undefined') {
   window.Buffer = Buffer;
 }
@@ -82,7 +90,7 @@ const CrateDetailPage: React.FC = () => {
   useEffect(() => {
     const fetchCrateData = async () => {
       try {
-        const response = await fetch(`https://sickb.vercel.app/api/crates/${id}`);
+        const response = await fetch(`${BackendApi}/crates/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch crate data');
         }
@@ -244,7 +252,7 @@ setSwapQuotes(filteredResults as unknown as SwapQuote[]);
         ))}
       </div>
 
-      <div className="bg-white shadow-md rounded-lg p-4">
+      <div className="bg-white shadow-md rounded-lg p-4 mb-20">
         <h3 className="text-xl font-bold mb-2">Buy Crate</h3>
         <input
           type="number"
@@ -277,6 +285,8 @@ setSwapQuotes(filteredResults as unknown as SwapQuote[]);
           </div>
         )}
       </div>
+      <Sidebar/>
+      <SideBarPhone/>
     </div>
   );
 };
