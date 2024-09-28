@@ -35,7 +35,7 @@ export default function Landing() {
               You can Create SIPs called "Crates" and get acknowledged with a
               Social angle
             </p>
-            <a href="/cratecreator">
+            <a href="/home">
             <Button className="text-gray-900 px-10 py-8 rounded-full text-lg bg-gradient-to-b from-lime-400 to-lime-800  shadow-[0_8px_24px_rgba(255,255,0,0.6)] hover:shadow-[0_12px_24px_rgba(255,255,0,0.8)] transition-shadow duration-300">
               Get Started
             </Button>
