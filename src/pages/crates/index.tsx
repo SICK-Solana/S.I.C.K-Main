@@ -247,7 +247,10 @@ setSwapQuotes(filteredResults as unknown as SwapQuote[]);
         <h3 className="text-xl font-bold mb-2">Tokens</h3>
         {crateData.tokens.map((token) => (
           <div key={token.id} className="mb-2">
-            <p>{token.name} ({token.symbol}): {token.quantity}</p>
+            {/* <p>{token.name} ({token.symbol}): {token.quantity}%</p> */}
+            {crateData.tokens.map((token) => (
+            <TokenBar key={token.id} token={token} />
+          ))}
           </div>
         ))}
       </div>
@@ -265,7 +268,7 @@ setSwapQuotes(filteredResults as unknown as SwapQuote[]);
           onClick={handleGetQuotes}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
-          Get Quotes
+          Put Your Life Savings in this Crate 🚀
         </button>
 
         {swapQuotes.length > 0 && (
@@ -292,3 +295,22 @@ setSwapQuotes(filteredResults as unknown as SwapQuote[]);
 };
 
 export default CrateDetailPage;
+const TokenBar: React.FC<{ token: Token }> = ({ token }) => {
+  const barWidth = `${token.quantity}%`;
+  const hue = Math.floor(Math.random() * 360); // Generate a random hue for color variety
+
+  return (
+    <div className="mb-2">
+      <div className="flex justify-between mb-1">
+        <span className="text-sm font-medium">{token.name} ({token.symbol})</span>
+        <span className="text-sm font-medium">{token.quantity}%</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2.5">
+        <div 
+          className="h-2.5 rounded-full" 
+          style={{ width: barWidth, backgroundColor: `hsl(${hue}, 70%, 50%)` }}
+        ></div>
+      </div>
+    </div>
+  );
+};
