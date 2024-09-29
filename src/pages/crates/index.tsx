@@ -307,28 +307,28 @@ const getSwapQuotes = async (amount: number) => {
     },
   };
 
-  const renderTokenIcons = () => {
-    return crateData.tokens.map((token, index) => {
-      const angle = (index / crateData.tokens.length) * 2 * Math.PI - Math.PI / 2;
-      const radius = 80; // Adjust this value to position icons
-      const x = Math.cos(angle) * radius + 100; // 100 is half of chart size
-      const y = Math.sin(angle) * radius + 100;
+  // const renderTokenIcons = () => {
+  //   return crateData.tokens.map((token, index) => {
+  //     const angle = (index / crateData.tokens.length) * 2 * Math.PI - Math.PI / 2;
+  //     const radius = 80; // Adjust this value to position icons
+  //     const x = Math.cos(angle) * radius + 100; // 100 is half of chart size
+  //     const y = Math.sin(angle) * radius + 100;
 
-      return (
-        <img
-          key={token.id}
-          src={tokenData.find(t => t.symbol === token.symbol)?.logoURI || `/path/to/${token.symbol}-icon.png`}
-          alt={token.name}
-          className="absolute w-8 h-8 rounded-full"
-          style={{
-            left: `${x}px`,
-            top: `${y}px`,
-            transform: 'translate(-50%, -50%)',
-          }}
-        />
-      );
-    });
-  };
+  //     return (
+  //       <img
+  //         key={token.id}
+  //         src={tokenData.find(t => t.symbol === token.symbol)?.logoURI || `/path/to/${token.symbol}-icon.png`}
+  //         alt={token.name}
+  //         className="absolute w-8 h-8 rounded-full"
+  //         style={{
+  //           left: `${x}px`,
+  //           top: `${y}px`,
+  //           transform: 'translate(-50%, -50%)',
+  //         }}
+  //       />
+  //     );
+  //   });
+  // };
 
   // const pieOptions = {
   //   cutout: '50%', // Makes it a donut chart
