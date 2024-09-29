@@ -1,8 +1,39 @@
+import  { useEffect } from 'react';
 import { Button } from "../components/ui/button";
 import { BentoGrid } from "../components/ui/bentogrid";
 import { WalletMultiButton } from "@tiplink/wallet-adapter-react-ui";
+import { useWallet } from '@solana/wallet-adapter-react';
+import fetchUserData from '../constants/fetchUserData.ts';
 
 export default function Landing() {
+
+  const { publicKey, connected } = useWallet();
+
+
+  useEffect(() => {
+    if (connected && publicKey) {
+      // Store the public key in local storage
+      localStorage.setItem('walletPublicKey', publicKey.toBase58());
+      console.log('Public key stored in local storage:', publicKey.toBase58());
+      checkLoginStatus();
+     
+    }
+  }, [connected, publicKey]);
+  const checkLoginStatus = async () => {
+    const creatorId = localStorage.getItem('creatorId');
+  
+    if (creatorId) {
+      return;
+    } else {
+      // Call the reusable function
+      const user = await fetchUserData();
+      
+      // Set creatorId in localStorage if the user is found
+      if (user) {
+        localStorage.setItem('creatorId', user.id);
+      }
+    }
+  };
   return (
     <>
       <div

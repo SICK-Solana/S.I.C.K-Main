@@ -84,7 +84,7 @@ const CrateDetailPage: React.FC = () => {
   const [swapQuotes, setSwapQuotes] = useState<SwapQuote[]>([]);
 
   // Retrieve wallet public key from localStorage (TipLink)
-  const publicKeyFromLocalStorage = localStorage.getItem('tipLink_pk_connected');
+  const publicKeyFromLocalStorage = localStorage.getItem('tipLink_pk_connected') || localStorage.getItem('walletPublicKey');
   const userPublicKey = publicKeyFromLocalStorage ? new PublicKey(publicKeyFromLocalStorage) : null;
 
   useEffect(() => {

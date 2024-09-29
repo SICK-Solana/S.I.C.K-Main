@@ -1,8 +1,10 @@
 import BackendApi from './api.ts';
 const fetchUserData = async () => {
-    const walletAddress = localStorage.getItem('tipLink_pk_connected');
-  
+    let walletAddress = localStorage.getItem('tipLink_pk_connected') || localStorage.getItem('walletPublicKey');
+     walletAddress =  localStorage.getItem('walletPublicKey');
+
     if (walletAddress) {
+      console.log('Wallet address found:', walletAddress);  
       try {
         const response = await fetch(`${BackendApi}/login-wallet`, {
           method: 'POST',

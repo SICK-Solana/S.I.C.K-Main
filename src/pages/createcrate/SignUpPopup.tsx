@@ -42,7 +42,7 @@ const SignUpPopup: React.FC = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
-    const walletAddress = localStorage.getItem('tipLink_pk_connected');
+    const walletAddress = localStorage.getItem('tipLink_pk_connected') || localStorage.getItem('walletPublicKey');
     if (!walletAddress) {
       setError('Wallet address not found. Please connect your wallet.');
       setIsProcessing(false);
