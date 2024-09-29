@@ -58,6 +58,10 @@ export default function Landing() {
                 borderRadius: "180px",
               }}
             />
+<<<<<<< HEAD
+            <WalletMultiButton  />
+=======
+>>>>>>> a8c7cce9ec9863579234198dee827085b46c66f0
           </header>
 
           <main className="text-center justify-center items-center">
