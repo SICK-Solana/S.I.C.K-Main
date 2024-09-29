@@ -291,8 +291,55 @@ const getSwapQuotes = async (amount: number) => {
       legend: {
         display: false,
       },
+      tooltip: {
+        callbacks: {
+          label: (context: any) => {
+            const token = crateData.tokens[context.dataIndex];
+            return `${token.name}: ${token.quantity}%`;
+          },
+        },
+      },
+    },
+    elements: {
+      arc: {
+        borderWidth: 0,
+      },
     },
   };
+
+  const renderTokenIcons = () => {
+    return crateData.tokens.map((token, index) => {
+      const angle = (index / crateData.tokens.length) * 2 * Math.PI - Math.PI / 2;
+      const radius = 80; // Adjust this value to position icons
+      const x = Math.cos(angle) * radius + 100; // 100 is half of chart size
+      const y = Math.sin(angle) * radius + 100;
+
+      return (
+        <img
+          key={token.id}
+          src={tokenData.find(t => t.symbol === token.symbol)?.logoURI || `/path/to/${token.symbol}-icon.png`}
+          alt={token.name}
+          className="absolute w-8 h-8 rounded-full"
+          style={{
+            left: `${x}px`,
+            top: `${y}px`,
+            transform: 'translate(-50%, -50%)',
+          }}
+        />
+      );
+    });
+  };
+
+  // const pieOptions = {
+  //   cutout: '50%', // Makes it a donut chart
+  //   responsive: true,
+  //   maintainAspectRatio: false,
+  //   plugins: {
+  //     legend: {
+  //       display: false,
+  //     },
+  //   },
+  // };
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white">
@@ -426,8 +473,11 @@ const getSwapQuotes = async (amount: number) => {
               {crateData.tokens.map((token, index) => (
                 <div key={token.id}>
                   <div className="flex items-center">
-                    <img src={`/path/to/${token.symbol}-icon.png`} alt={token.symbol} className="w-6 h-6 mr-2" />
-                    <span className="text-lime-100 font-light">{token.name}</span>
+                   
+                    <img src={tokenData.find(t => t.symbol === token.symbol)?.logoURI || `/path/to/${token.symbol}-icon.png`} alt={token.symbol} className="w-10 h-10 border-2 border-lime-900 rounded-full mr-2" />
+                  
+                    <span className="text-lime-100 text-xl font-semibold">{token.name}</span>
+                   
                     <span className="ml-auto">{token.quantity}%</span>
                   </div>
                   {index < crateData.tokens.length - 1 && (
@@ -437,7 +487,7 @@ const getSwapQuotes = async (amount: number) => {
               ))}
             </div>
             <div className="w-full md:w-40 h-40 md:h-40 mx-auto md:ml-16">
-              <Doughnut data={pieData} options={pieOptions} />
+              <Doughnut  data={pieData}  options={pieOptions} />
             </div>
           </div>
         </div>
@@ -450,22 +500,3 @@ const getSwapQuotes = async (amount: number) => {
 
 export default CrateDetailPage;
  
-// const TokenBar : React.FC<{ token: Token }> = ({ token }) => {
-//   const barWidth = `${token.quantity}%`;
-//   const hue = Math.floor(Math.random() * 360); // Generate a random hue for color variety
-
-//   return (
-//     <div className="mb-2">
-//       <div className="flex justify-between mb-1">
-//         <span className="text-sm font-medium">{token.name} ({token.symbol})</span>
-//         <span className="text-sm font-medium">{token.quantity}%</span>
-//       </div>
-//       <div className="w-full bg-gray-200 rounded-full h-2.5">
-//         <div 
-//           className="h-2.5 rounded-full" 
-//           style={{ width: barWidth, backgroundColor: `hsl(${hue}, 70%, 50%)` }}
-//         ></div>
-//       </div>
-//     </div>
-//   );
-// };
