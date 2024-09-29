@@ -3,6 +3,8 @@ import Landing from './pages/landing';
 import WhitepaperSICK from './pages/whitepaper';
 import Home from './pages/home';
 import Dashboard from './pages/dashboard';
+import CrateCreator from './pages/createcrate';
+import CrateDetailPage from './pages/crates';
 
 const App: React.FC = () => {
   return (
@@ -12,6 +14,9 @@ const App: React.FC = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/whitepaper" element={<WhitepaperSICK />} />
+        <Route path="/cratecreator" element={<CrateCreator />} />
+        <Route path="/crates/:id" element={<CrateDetailPage />} />
+        
       </Routes>
     </Router>
   );

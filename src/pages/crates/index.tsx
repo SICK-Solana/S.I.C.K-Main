@@ -43,21 +43,13 @@ interface CrateData {
   tokens: Token[];
 }
 
-interface SwapQuote {
+type SwapQuote = {
   symbol: string;
-  quote: {
-    inputMint: string;
-    inAmount: string;
-    outputMint: string;
-    outAmount: string;
-    otherAmountThreshold: string;
-    swapMode: string;
-    slippageBps: number;
-    priceImpactPct: number;
-  };
-  transaction?: VersionedTransaction;
-  simulationLogs?: string[];
-}
+  quote: QuoteResponse;
+  transaction: VersionedTransaction;
+  simulationLogs: string[] | null;
+};
+
 
 const calculateTokenAmount = (totalAmount: number, tokenQuantity: number, totalQuantity: number, inputDecimals = 6, outputDecimals = 6) => {
   const percentage = tokenQuantity / totalQuantity;
@@ -102,8 +94,11 @@ const CrateDetailPage: React.FC = () => {
     fetchCrateData();
   }, [id]);
 
+  
   const simulateAndExecuteSwap = async (inputMint: string, outputMint: string, amount: number, userPublicKey: PublicKey) => {
+  
     const jupiterApi = await createJupiterApiClient();
+  
     const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=a95e3765-35c7-459e-808a-9135a21acdf6');
   
     const quoteResponse = await jupiterApi.quoteGet({
@@ -140,64 +135,70 @@ const CrateDetailPage: React.FC = () => {
     };
   };
 
-  const getSwapQuotes = async (amount: number) => {
-    if (!crateData || !amount ) {
-      console.error('Missing required data for swap quotes');
-      return;
-    }
-  
-    try {
-      const jupiterApi = await createJupiterApiClient();
-      const totalQuantity = crateData.tokens.reduce((sum, token) => sum + token.quantity, 0);
-  
-      const quotePromises = crateData.tokens.map(async (token) => {
-        const tokenAmount = calculateTokenAmount(amount, token.quantity, totalQuantity);
-        const mint = getTokenMintAddress(token.symbol);
-  
-        try {
-          const quote = await jupiterApi.quoteGet({
-            inputMint: USDC_MINT,
-            outputMint: mint,
-            amount: tokenAmount,
-          });
-          if (!userPublicKey) {
-            throw new Error('Public key is missing');
-          }
-          
-  
-          const { transaction, simulationLogs } = await simulateAndExecuteSwap(
-            USDC_MINT,
-            mint,
-            tokenAmount,
-            userPublicKey
-          );
-  
-          return { 
-            symbol: token.symbol, 
-            quote,
-            transaction,
-            simulationLogs
-          };
-        } catch (error) {
-          console.error(`Error getting quote for token ${token.symbol}:`, error);
-          return null;
+
+const getSwapQuotes = async (amount: number) => {
+  if (!crateData || !amount) {
+    console.error('Missing required data for swap quotes');
+    return;
+  }
+
+  setLoading(true); // Add loading state
+  setError(null); // Reset error state
+
+  try {
+    const jupiterApi = await createJupiterApiClient();
+    const totalQuantity = crateData.tokens.reduce((sum, token) => sum + token.quantity, 0);
+
+    const quotePromises = crateData.tokens.map(async (token) => {
+      const tokenAmount = calculateTokenAmount(amount, token.quantity, totalQuantity);
+      const mint = getTokenMintAddress(token.symbol);
+
+      try {
+        const quote = await jupiterApi.quoteGet({
+          inputMint: USDC_MINT,
+          outputMint: mint,
+          amount: tokenAmount,
+        });
+        
+        if (!userPublicKey) {
+          throw new Error('Public key is missing');
         }
-      });
-  
-      const results = await Promise.all(quotePromises);
-// Assuming results is the array you're working with
-// const results: ({ symbol: string; quote: QuoteResponse; transaction: VersionedTransaction; simulationLogs: string[] | null; } | null)[] = ...;
 
-// Filter out null values and type assert to SwapQuote[]
-const filteredResults = results.filter((result): result is { symbol: string; quote: QuoteResponse; transaction: VersionedTransaction; simulationLogs: string[] | null; } => result !== null);
+        const { transaction, simulationLogs } = await simulateAndExecuteSwap(
+          USDC_MINT,
+          mint,
+          tokenAmount,
+          userPublicKey
+        );
 
-// Set the state with the filtered results
-setSwapQuotes(filteredResults as unknown as SwapQuote[]);
+        return { 
+          symbol: token.symbol, 
+          quote,
+          transaction,
+          simulationLogs
+        };
+      } catch (error) {
+        console.error(`Error getting quote for token ${token.symbol}:`, error);
+        return null;
+      }
+    });
 
-    } catch (error) {
-      console.error("Error fetching swap quotes:", error);
+    const results = await Promise.all(quotePromises);
+    
+    const filteredResults = results.filter((result): result is SwapQuote => result !== null);
+
+    if (filteredResults.length === 0) {
+      throw new Error('No valid quotes received');
     }
-  };
+
+    setSwapQuotes(filteredResults);
+  } catch (error) {
+    console.error("Error fetching swap quotes:", error);
+    setError(error instanceof Error ? error.message : 'An unknown error occurred');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputAmount(e.target.value);
@@ -215,7 +216,9 @@ setSwapQuotes(filteredResults as unknown as SwapQuote[]);
 
     try {
       const connection = new Connection('https://api.mainnet-beta.solana.com');
+     
       const signedTransaction = await connection.sendRawTransaction(quote.transaction!.serialize());
+     
       console.log('Transaction sent:', signedTransaction);
     } catch (error) {
       console.error('Failed to send transaction:', error);
@@ -227,53 +230,72 @@ setSwapQuotes(filteredResults as unknown as SwapQuote[]);
   if (!crateData) return <div>No crate data found</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="bg-white shadow-md rounded-lg mb-6 p-4">
-        <h2 className="text-2xl font-bold mb-2">{crateData.name}</h2>
-        <img src={crateData.image} alt={crateData.name} className="w-full h-64 object-cover mb-4 rounded" />
-        <p>Created: {new Date(crateData.createdAt).toLocaleDateString()}</p>
-        <p>Upvotes: {crateData.upvotes} | Downvotes: {crateData.downvotes}</p>
-      </div>
-
-      <div className="bg-white shadow-md rounded-lg mb-6 p-4">
-        <h3 className="text-xl font-bold mb-2">Tokens</h3>
-        {crateData.tokens.map((token) => (
-          <div key={token.id} className="mb-2">
-            <p>{token.name} ({token.symbol}): {token.quantity}</p>
+    <div className="container mx-auto p-8 bg-gray-900 min-h-screen text-gray-100">
+      <div className="bg-gray-800 shadow-2xl rounded-3xl mb-12 overflow-hidden">
+        <div className="relative h-96">
+          <img src={crateData.image} alt={crateData.name} className="w-full h-full object-cover" />
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 to-transparent p-6">
+            <h2 className="text-4xl font-bold mb-2 text-white">{crateData.name}</h2>
+            <div className="flex justify-between items-center text-sm text-gray-300">
+              <p>Created: {new Date(crateData.createdAt).toLocaleDateString()}</p>
+              <div className="flex items-center space-x-4">
+                <span className="flex items-center"><svg className="w-5 h-5 text-lime-400 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18l-1.45-1.32C3.53 12.24 0 9.24 0 5.5 0 2.42 2.42 0 5.5 0 7.24 0 8.91.81 10 2.09 11.09.81 12.76 0 14.5 0 17.58 0 20 2.42 20 5.5c0 3.74-3.53 6.74-8.55 11.18L10 18z"/></svg>{crateData.upvotes}</span>
+                <span className="flex items-center"><svg className="w-5 h-5 text-red-400 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2l-1.45 1.32C3.53 7.76 0 10.76 0 14.5 0 17.58 2.42 20 5.5 20c1.74 0 3.41-.81 4.5-2.09C11.09 19.19 12.76 20 14.5 20 17.58 20 20 17.58 20 14.5c0-3.74-3.53-6.74-8.55-11.18L10 2z"/></svg>{crateData.downvotes}</span>
+              </div>
+            </div>
           </div>
-        ))}
+        </div>
       </div>
 
-      <div className="bg-white shadow-md rounded-lg p-4">
-        <h3 className="text-xl font-bold mb-2">Buy Crate</h3>
-        <input
-          type="number"
-          value={inputAmount}
-          onChange={handleInputChange}
-          placeholder="Enter USDC amount"
-          className="w-full p-2 border rounded mb-4"
-        />
-        <button 
-          onClick={handleGetQuotes}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Get Quotes
-        </button>
+      <div className="bg-gray-800 shadow-2xl rounded-3xl mb-12 p-8">
+        <h3 className="text-3xl font-bold mb-6 text-lime-400">Tokens</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {crateData.tokens.map((token) => (
+            <div key={token.id} className="bg-gray-700 p-6 rounded-2xl transition-all duration-300 hover:shadow-lg hover:bg-gray-600">
+              <p className="font-semibold text-white text-lg mb-2">{token.name} ({token.symbol})</p>
+              <p className="text-lime-300">Quantity: {token.quantity}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-gray-800 shadow-2xl rounded-3xl p-8">
+        <h3 className="text-3xl font-bold mb-6 text-lime-400">Buy Crate</h3>
+        <div className="flex flex-col md:flex-row md:items-end space-y-4 md:space-y-0 md:space-x-4">
+          <div className="flex-grow">
+            <input
+              type="number"
+              value={inputAmount}
+              onChange={handleInputChange}
+              placeholder="Enter USDC amount"
+              className="w-full p-4 bg-gray-700 border-2 border-lime-500 rounded-xl focus:ring-2 focus:ring-lime-400 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
+            />
+          </div>
+          <button 
+            onClick={handleGetQuotes}
+            className="w-full md:w-auto bg-lime-600 text-gray-900 px-8 py-4 rounded-xl hover:bg-lime-500 transition duration-300 ease-in-out font-bold text-lg"
+          >
+            Get Quotes
+          </button>
+        </div>
 
         {swapQuotes.length > 0 && (
-          <div className="mt-4">
-            <h4 className="text-lg font-semibold mb-2">Swap Quotes:</h4>
-            {swapQuotes.map((quote, index) => (
-              <div key={index} className="bg-gray-100 p-3 mb-2 rounded">
-                <p>{quote.symbol}: {quote.quote.outAmount} output tokens</p>
-                <button
-                  onClick={() => handleSwap(quote)}
-                  className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mt-2"
-                >
-                  Swap
-                </button>
-              </div>
-            ))}
+          <div className="mt-12">
+            <h4 className="text-2xl font-semibold mb-6 text-lime-400">Swap Quotes:</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {swapQuotes.map((quote, index) => (
+                <div key={index} className="bg-gray-700 p-6 rounded-2xl transition-all duration-300 hover:shadow-lg hover:bg-gray-600">
+                  <p className="font-semibold text-white text-lg mb-2">{quote.symbol}</p>
+                  <p className="text-lime-300 mb-4">{quote.quote.outAmount} output tokens</p>
+                  <button
+                    onClick={() => handleSwap(quote)}
+                    className="w-full bg-green-600 text-white px-6 py-3 rounded-xl hover:bg-green-500 transition duration-300 ease-in-out font-bold"
+                  >
+                    Swap
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

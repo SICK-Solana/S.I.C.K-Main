@@ -88,8 +88,11 @@ const CrateCreator: React.FC = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+   
     const walletAddress = localStorage.getItem('tipLink_pk_connected');
-    if (!walletAddress) {
+     console.log(walletAddress);
+   
+     if (!walletAddress) {
       setError('Wallet address not found. Please connect your wallet.');
       return;
     }
@@ -134,6 +137,7 @@ const CrateCreator: React.FC = () => {
   };
 
   const handleCreateCrate = async () => {
+   
     if (totalAllocation !== 100) {
       setError('Total allocation must be 100%');
       return;
@@ -201,57 +205,48 @@ window.location.href = '/crates/' + result.id;
 
   if (!isLoggedIn) {
     return (
-      <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>
+      <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">
           Sign Up to Create a Crate
         </h1>
-        <form onSubmit={handleSignup}>
+        <form onSubmit={handleSignup} className="space-y-4">
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Full Name"
-            style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
-            style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Username"
-            style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="text"
             value={profileImage}
             onChange={(e) => setProfileImage(e.target.value)}
             placeholder="Profile Image URL"
-            style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             type="submit"
-            style={{
-              width: '100%',
-              padding: '10px',
-              backgroundColor: '#4CAF50',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              marginBottom: '10px'
-            }}
+            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition duration-300 ease-in-out"
           >
             Sign Up
           </button>
         </form>
         {error && (
-          <div style={{ backgroundColor: '#ffcccb', color: '#d8000c', padding: '10px', marginTop: '20px', borderRadius: '4px' }}>
+          <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md">
             {error}
           </div>
         )}
@@ -260,92 +255,80 @@ window.location.href = '/crates/' + result.id;
   }
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
-      <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>Create a Crate</h1>
+    <div className="max-w-3xl mx-auto p-8 bg-gray-900 rounded-xl shadow-lg text-gray-100">
+      <h1 className="text-4xl font-bold mb-8 text-lime-400">Create a Crate</h1>
       
       <input
         type="text"
         value={crateName}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setCrateName(e.target.value)}
         placeholder="Enter crate name"
-        style={{ width: '100%', padding: '10px', marginBottom: '20px', border: '1px solid #ccc', borderRadius: '4px' }}
+        className="w-full p-4 mb-6 bg-gray-800 border border-green-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-500 text-gray-100"
       />
 
-      <div style={{ position: 'relative' }}>
+      <div className="relative mb-6">
         <input
           type="text"
           onChange={handleSearchChange}
-          placeholder=" or Search tokens"
-          style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
+          placeholder="Search tokens"
+          className="w-full p-4 bg-gray-800 border border-green-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-500 text-gray-100"
         />
         {filteredTokens.length > 0 && (
-          <div style={{
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            right: 0,
-            backgroundColor: 'white',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            zIndex: 1000,
-          }}>
+          <div className="absolute top-full left-0 right-0 mt-2 bg-gray-800 border border-green-700 rounded-lg shadow-lg z-10">
             {filteredTokens.map((token) => (
               <div
                 key={token.address}
                 onClick={() => handleTokenSelect(token)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '10px',
-                  cursor: 'pointer',
-                  borderBottom: '1px solid #eee',
-                }}
+                className="flex items-center p-4 hover:bg-green-900 cursor-pointer transition duration-150 ease-in-out"
               >
-                <img src={token.logoURI} alt={token.name} style={{ width: '24px', height: '24px', marginRight: '10px' }} />
-                <span>{token.name} ({token.symbol})</span>
+                <img src={token.logoURI} alt={token.name} className="w-8 h-8 mr-4" />
+                <span className="text-lime-200">{token.name} ({token.symbol})</span>
               </div>
             ))}
           </div>
         )}
-        
       </div>
-     <div style={{ marginBottom: '20px' }}>
-  <select 
-    onChange={handleSelectChange}
-    style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
-  >
-    <option value="">Select a token</option>
-    {tokens.map((token) => (
-      <option key={token.address} value={token.address}>
-        {token.name} ({token.symbol})
-      </option>
-    ))}
-  </select>
-</div>
+
+      <div className="mb-6">
+        <select 
+          onChange={handleSelectChange}
+          className="w-full p-4 bg-gray-800 border border-green-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-500 text-gray-100"
+        >
+          <option value="">Select a token</option>
+          {tokens.map((token) => (
+            <option key={token.address} value={token.address}>
+              {token.name} ({token.symbol})
+            </option>
+          ))}
+        </select>
+      </div>
+
       {selectedTokens.map((token, index) => (
-        <div key={token.address} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-          <img src={token.logoURI} alt={token.name} style={{ width: '24px', height: '24px', marginRight: '10px' }} />
-          <span style={{ flexGrow: 1 }}>{token.name} ({token.symbol})</span>
+        <div key={token.address} className="flex items-center mb-4 bg-green-900 p-4 rounded-lg shadow">
+          <img src={token.logoURI} alt={token.name} className="w-8 h-8 mr-4" />
+          <span className="flex-grow text-lime-200">{token.name} ({token.symbol})</span>
           <input
             type="number"
             value={token.allocation}
             onChange={(e: ChangeEvent<HTMLInputElement>) => handleAllocationChange(index, e.target.value)}
-            style={{ width: '60px', padding: '5px', border: '1px solid #ccc', borderRadius: '4px' }}
+            className="w-20 p-2 bg-gray-800 border border-green-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-lime-500 text-gray-100"
             min="0"
             max="100"
           />
-          <span style={{ marginLeft: '5px' }}>%</span>
+          <span className="ml-2 text-lime-400">%</span>
         </div>
       ))}
       
-
-      <div style={{ backgroundColor: '#f0f0f0', height: '20px', marginTop: '20px', borderRadius: '10px', overflow: 'hidden' }}>
-        <div style={{ width: `${totalAllocation}%`, height: '100%', backgroundColor: '#4CAF50', transition: 'width 0.3s ease-in-out' }}></div>
+      <div className="mt-8 bg-green-900 h-4 rounded-full overflow-hidden">
+        <div 
+          className="h-full bg-lime-500 transition-all duration-300 ease-in-out"
+          style={{ width: `${totalAllocation}%` }}
+        ></div>
       </div>
-      <div style={{ textAlign: 'right', marginTop: '5px' }}>{totalAllocation}% allocated</div>
+      <div className="text-right mt-2 text-lime-400">{totalAllocation}% allocated</div>
 
       {error && (
-        <div style={{ backgroundColor: '#ffcccb', color: '#d8000c', padding: '10px', marginTop: '20px', borderRadius: '4px' }}>
+        <div className="mt-6 p-4 bg-red-900 border border-red-700 text-red-100 rounded-lg">
           {error}
         </div>
       )}
@@ -353,16 +336,11 @@ window.location.href = '/crates/' + result.id;
       <button 
         onClick={handleCreateCrate}
         disabled={totalAllocation !== 100 || selectedTokens.length === 0}
-        style={{
-          width: '100%',
-          padding: '10px',
-          marginTop: '20px',
-          backgroundColor: totalAllocation === 100 && selectedTokens.length > 0 ? '#4CAF50' : '#ccc',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: totalAllocation === 100 && selectedTokens.length > 0 ? 'pointer' : 'not-allowed'
-        }}
+        className={`w-full p-4 mt-8 text-gray-900 font-semibold rounded-lg transition duration-300 ease-in-out ${
+          totalAllocation === 100 && selectedTokens.length > 0
+            ? 'bg-lime-500 hover:bg-lime-600 cursor-pointer'
+            : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+        }`}
       >
         Create Crate
       </button>
