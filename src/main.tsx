@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+
 import { createRoot } from 'react-dom/client'
 import { WalletProvider } from '@solana/wallet-adapter-react'
 import { TipLinkWalletAdapter } from "@tiplink/wallet-adapter"
@@ -17,7 +17,7 @@ const wallets = [
 ]
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+
     <WalletProvider wallets={wallets} autoConnect >
       <TipLinkWalletAutoConnectV2 isReady query={new URLSearchParams(window.location.search)}>
         <WalletModalProvider>
@@ -25,5 +25,5 @@ createRoot(document.getElementById('root')!).render(
         </WalletModalProvider>
       </TipLinkWalletAutoConnectV2>
     </WalletProvider>
-  </StrictMode>,
+  
 )

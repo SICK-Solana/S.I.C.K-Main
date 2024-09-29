@@ -7,6 +7,7 @@ import CrateCreator from './pages/createcrate/index';
 import CrateDetailPage from './pages/crates/index';
 import Dashboard from './pages/dashboard';
 import ExploreCrate from './pages/explorecrate/ExploreCrate';
+import Graphtest from './pages/graphtest.tsx';
 const App: React.FC = () => {
   return (
     <Router>
@@ -18,6 +19,7 @@ const App: React.FC = () => {
         <Route path="/whitepaper" element={<WhitepaperSICK />} />
         <Route path="/cratecreator" element={<CrateCreator />} />
         <Route path="/crates/:id" element={<CrateDetailPage />} />
+        <Route path="/graphtest/:id" element={<Graphtest />} />
       </Routes>
     </Router>
   );
