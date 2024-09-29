@@ -1,7 +1,11 @@
 import React, { useState, useEffect, ChangeEvent, useMemo } from 'react';
 import tokenData from './tokens.json';
 import debounce from 'lodash/debounce';
-
+import BackendApi from '../../constants/api.ts';
+import fetchUserData from '../../constants/fetchUserData.ts';
+import Sidebar from '../../components/ui/sidebar.tsx';
+import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
+import SignUpPopup from './SignUpPopup.tsx';
 interface Token {
   address: string;
   name: string;
@@ -40,14 +44,12 @@ const CrateCreator: React.FC = () => {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [selectedTokens, setSelectedTokens] = useState<SelectedToken[]>([]);
   const [crateName, setCrateName] = useState<string>('');
+  const [isCreating, setIsCreating] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [totalAllocation, setTotalAllocation] = useState<number>(0);
   const [error, setError] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [name, setName] = useState<string>('');
-  const [profileImage, setProfileImage] = useState<string>('');
+ 
 
   useEffect(() => {
     setTokens(tokenData);
@@ -63,8 +65,7 @@ const CrateCreator: React.FC = () => {
 
   const checkLoginStatus = async () => {
     const creatorId = localStorage.getItem('creatorId');
-    const walletAddress = localStorage.getItem('tipLink_pk_connected');
-
+  
     if (creatorId) {
       setIsLoggedIn(true);
     } else if (walletAddress) {
@@ -88,11 +89,8 @@ const CrateCreator: React.FC = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-   
     const walletAddress = localStorage.getItem('tipLink_pk_connected');
-     console.log(walletAddress);
-   
-     if (!walletAddress) {
+    if (!walletAddress) {
       setError('Wallet address not found. Please connect your wallet.');
       return;
     }
@@ -114,6 +112,8 @@ const CrateCreator: React.FC = () => {
       setError('Signup failed. Please try again.');
     }
   };
+  
+
 
   const handleTokenSelect = (selectedToken: Token) => {
    
@@ -160,9 +160,10 @@ const CrateCreator: React.FC = () => {
       creatorId,
       picture: selectedTokens[0].logoURI
     };
+    setIsCreating(true);  // Disable the button
 
     try {
-      const response = await fetch('https://sickb.vercel.app/api/crates', {
+      const response = await fetch(`${BackendApi}/crates`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(crateData)
@@ -178,8 +179,9 @@ window.location.href = '/crates/' + result.id;
         setError('Failed to create crate: ' + error.message);
       } else {
         setError('An unknown error occurred');
+      } } finally {
+        setIsCreating(false);  // Re-enable the button
       }
-    }
   };
 
   const debouncedSearch = useMemo(
@@ -205,48 +207,57 @@ window.location.href = '/crates/' + result.id;
 
   if (!isLoggedIn) {
     return (
-      <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">
+      <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>
           Sign Up to Create a Crate
         </h1>
-        <form onSubmit={handleSignup} className="space-y-4">
+        <form onSubmit={handleSignup}>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Full Name"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
           />
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
           />
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Username"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
           />
           <input
             type="text"
             value={profileImage}
             onChange={(e) => setProfileImage(e.target.value)}
             placeholder="Profile Image URL"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
           />
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition duration-300 ease-in-out"
+            style={{
+              width: '100%',
+              padding: '10px',
+              backgroundColor: '#4CAF50',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              marginBottom: '10px'
+            }}
           >
             Sign Up
           </button>
         </form>
         {error && (
-          <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md">
+          <div style={{ backgroundColor: '#ffcccb', color: '#d8000c', padding: '10px', marginTop: '20px', borderRadius: '4px' }}>
             {error}
           </div>
         )}
@@ -255,8 +266,8 @@ window.location.href = '/crates/' + result.id;
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-8 bg-gray-900 rounded-xl shadow-lg text-gray-100">
-      <h1 className="text-4xl font-bold mb-8 text-lime-400">Create a Crate</h1>
+    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
+      <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>Create a Crate</h1>
       
       <input
         type="text"
@@ -334,16 +345,25 @@ window.location.href = '/crates/' + result.id;
       )}
 
       <button 
+      className='mb-20'
         onClick={handleCreateCrate}
         disabled={totalAllocation !== 100 || selectedTokens.length === 0}
-        className={`w-full p-4 mt-8 text-gray-900 font-semibold rounded-lg transition duration-300 ease-in-out ${
-          totalAllocation === 100 && selectedTokens.length > 0
-            ? 'bg-lime-500 hover:bg-lime-600 cursor-pointer'
-            : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-        }`}
+        style={{
+          width: '100%',
+          padding: '10px',
+          marginTop: '20px',
+          backgroundColor: totalAllocation === 100 && selectedTokens.length > 0 ? '#4CAF50' : '#ccc',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: totalAllocation === 100 && selectedTokens.length > 0 ? 'pointer' : 'not-allowed'
+        }}
       >
-        Create Crate
+                {isCreating ? 'Creating...' : 'Create Crate'}
+
       </button>
+      <Sidebar/>
+      <SideBarPhone/>
     </div>
   );
 };

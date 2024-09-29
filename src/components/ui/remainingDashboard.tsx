@@ -24,12 +24,19 @@ const CryptoCard = ({ name, ticker, price, change, changePercent }:any) => {
     );
   };
 export default function CashBoard(){
+   // Get user data directly from localStorage (will only run once when the component is initialized)
+   const userData = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+   const user = userData ? JSON.parse(userData) : { name: "User" };
+  // Truncate the username if it's longer than 10 characters
+  const truncatedName = user.name.length > 10 ? user.name.substring(0, 10) + "..." : user.name;
+ 
+ 
     return(
         <>
         <div className="bg-[#0d1117] w-full md:w-[calc(100%-5rem)] min-h-screen p-4 sm:p-6 md:ml-20  font-mono text-white">
         <header className="flex flex-col sm:flex-row justify-between items-center mb-8">
           <h1 className="text-xl sm:text-2xl bg-gradient-to-b from-[#FFFFFF] to-[#494949] bg-clip-text text-transparent mb-4 sm:mb-0">
-            hello_Rishabh (&gt;_•)
+          hello_{truncatedName} (&gt;_•)
           </h1>
           <div className="flex items-center">
             <Button className="text-gray-400 hover:text-white">

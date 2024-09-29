@@ -1,16 +1,21 @@
 import { Button } from "../components/ui/button";
 import { BentoGrid } from "../components/ui/bentogrid";
-import { WalletMultiButton } from '@tiplink/wallet-adapter-react-ui'
+import { WalletMultiButton } from "@tiplink/wallet-adapter-react-ui";
 
 export default function Landing() {
   return (
     <>
       <div
-        className="min-h-screen justify-center items-center bg-gradient-to-br from-gray-900 to-gray-800 text-white relative overflow-hidden"
+        className="min-h-screen justify-center items-center bg-black text-white relative overflow-hidden"
         style={{ fontFamily: "Poppins, sans-serif" }}
       >
-        <div className="absolute inset-0 bg-[url('/images/SICK_LOGO2.png?height=1080&width=1920')] opacity-10"></div>
-        <div className="container mx-auto px-4 py-8 relative z-10 ">
+        <div className="absolute lg:-mt-72 inset-0 bg-[url('/images/bgplus.png')] bg-no-repeat bg-cover opacity-100 z-0"></div>
+
+        <div className="absolute opacity-50 top-0 left-0 w-1/6 h-5/6 border-b-4 border-r-4 border-[#185519] hidden lg:block rounded-br-full z-10"></div>
+        <div className="absolute opacity-50 top-0 right-0 w-1/6 h-5/6 border-t-4 border-l-4 border-[#185519] hidden lg:block rounded-tl-full z-10"></div>
+
+        {/* Main Content */}
+        <div className="container mx-auto px-4 py-8 relative z-10">
           <header className="flex justify-between items-center mb-28">
             <img
               src="/images/Group 9.png"
@@ -19,9 +24,9 @@ export default function Landing() {
             />
             <WalletMultiButton  />
           </header>
-          
+
           <main className="text-center mb-16 justify-center items-center">
-            <h2 className="text-lg mb-4  p-2 mx-auto">
+            <h2 className="text-lg mb-4 p-2 mx-auto">
               Revolutionizing <span className="text-lime-400">Web3</span>{" "}
               Investments
             </h2>
@@ -41,13 +46,17 @@ export default function Landing() {
             </Button>
             </a>
           </main>
-          
+
           <div className="text-center mb-16 text-xl">
             Follow us on: <span className="text-lime-500">X</span>
           </div>
         </div>
       </div>
-      <BentoGrid />
+
+      {/* BentoGrid */}
+      <div className="relative z-20">
+        <BentoGrid />
+      </div>
     </>
   );
 }

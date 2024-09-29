@@ -3,11 +3,19 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { createJupiterApiClient, QuoteResponse } from '@jup-ag/api';
 import tokenData from '../createcrate/tokens.json';
-
+import BackendApi from '../../constants/api.ts'
+import Sidebar from '../../components/ui/sidebar.tsx';
+import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
 const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 import { Buffer } from 'buffer';
 
 // Ensure the global Buffer is available
+declare global {
+  interface Window {
+    Buffer: typeof Buffer;
+  }
+}
+
 if (typeof window !== 'undefined') {
   window.Buffer = Buffer;
 }
@@ -74,7 +82,7 @@ const CrateDetailPage: React.FC = () => {
   useEffect(() => {
     const fetchCrateData = async () => {
       try {
-        const response = await fetch(`https://sickb.vercel.app/api/crates/${id}`);
+        const response = await fetch(`${BackendApi}/crates/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch crate data');
         }
@@ -247,37 +255,32 @@ const getSwapQuotes = async (amount: number) => {
         </div>
       </div>
 
-      <div className="bg-gray-800 shadow-2xl rounded-3xl mb-12 p-8">
-        <h3 className="text-3xl font-bold mb-6 text-lime-400">Tokens</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {crateData.tokens.map((token) => (
-            <div key={token.id} className="bg-gray-700 p-6 rounded-2xl transition-all duration-300 hover:shadow-lg hover:bg-gray-600">
-              <p className="font-semibold text-white text-lg mb-2">{token.name} ({token.symbol})</p>
-              <p className="text-lime-300">Quantity: {token.quantity}</p>
-            </div>
-          ))}
-        </div>
+      <div className="bg-white shadow-md rounded-lg mb-6 p-4">
+        <h3 className="text-xl font-bold mb-2">Tokens</h3>
+        {crateData.tokens.map((token) => (
+          <div key={token.id} className="mb-2">
+         
+            <TokenBar key={token.id} token={token} />
+    
+          </div>
+        ))}
       </div>
 
-      <div className="bg-gray-800 shadow-2xl rounded-3xl p-8">
-        <h3 className="text-3xl font-bold mb-6 text-lime-400">Buy Crate</h3>
-        <div className="flex flex-col md:flex-row md:items-end space-y-4 md:space-y-0 md:space-x-4">
-          <div className="flex-grow">
-            <input
-              type="number"
-              value={inputAmount}
-              onChange={handleInputChange}
-              placeholder="Enter USDC amount"
-              className="w-full p-4 bg-gray-700 border-2 border-lime-500 rounded-xl focus:ring-2 focus:ring-lime-400 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
-            />
-          </div>
-          <button 
-            onClick={handleGetQuotes}
-            className="w-full md:w-auto bg-lime-600 text-gray-900 px-8 py-4 rounded-xl hover:bg-lime-500 transition duration-300 ease-in-out font-bold text-lg"
-          >
-            Get Quotes
-          </button>
-        </div>
+      <div className="bg-white shadow-md rounded-lg p-4 mb-20">
+        <h3 className="text-xl font-bold mb-2">Buy Crate</h3>
+        <input
+          type="number"
+          value={inputAmount}
+          onChange={handleInputChange}
+          placeholder="Enter USDC amount"
+          className="w-full p-2 border rounded mb-4"
+        />
+        <button 
+          onClick={handleGetQuotes}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Put Your Life Savings in this Crate 🚀
+        </button>
 
         {swapQuotes.length > 0 && (
           <div className="mt-12">
@@ -299,8 +302,29 @@ const getSwapQuotes = async (amount: number) => {
           </div>
         )}
       </div>
+      <Sidebar/>
+      <SideBarPhone/>
     </div>
   );
 };
 
 export default CrateDetailPage;
+const TokenBar: React.FC<{ token: Token }> = ({ token }) => {
+  const barWidth = `${token.quantity}%`;
+  const hue = Math.floor(Math.random() * 360); // Generate a random hue for color variety
+
+  return (
+    <div className="mb-2">
+      <div className="flex justify-between mb-1">
+        <span className="text-sm font-medium">{token.name} ({token.symbol})</span>
+        <span className="text-sm font-medium">{token.quantity}%</span>
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2.5">
+        <div 
+          className="h-2.5 rounded-full" 
+          style={{ width: barWidth, backgroundColor: `hsl(${hue}, 70%, 50%)` }}
+        ></div>
+      </div>
+    </div>
+  );
+};
