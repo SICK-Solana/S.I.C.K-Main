@@ -4,7 +4,7 @@ import BackendApi from '../constants/api';
 import Sidebar from '../components/ui/sidebar';
 import SideBarPhone from '../components/ui/sidebarPhone';
 import CombinedPriceChart from '../components/ui/CombinedPriceChart.tsx';
-
+import ReturnCalculator from '../components/ui/ReturnCalculator.tsx';
 interface Token {
   id: string;
   symbol: string;
@@ -85,8 +85,11 @@ const Graphtest: React.FC = () => {
         <h3 className="text-xl font-bold mb-2">Combined Price Chart</h3>
         <div className="bg-gray-900 p-4 rounded-lg">
   <CombinedPriceChart tokens={crateData.tokens} />
-</div>      </div>
-
+</div>    
+  </div>
+  <div className="bg-gray-900 p-4 rounded-lg mb-6">
+  <ReturnCalculator tokens={crateData.tokens} />
+</div>
       <div className="bg-white shadow-md rounded-lg p-4 mb-20">
         <h3 className="text-xl font-bold mb-2">Buy Crate</h3>
         <input
