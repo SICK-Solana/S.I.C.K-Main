@@ -90,9 +90,9 @@ const CrateDetailPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [inputAmount, setInputAmount] = useState<string>('');
   const [swapQuotes, setSwapQuotes] = useState<SwapQuote[]>([]);
-  const [returnAmount, setReturnAmount] = useState<number>(479);
+  const [returnAmount] = useState<number>(479);
   const [investmentPeriod, setInvestmentPeriod] = useState<number>(1);
-
+  
 
   // Retrieve wallet public key from localStorage (TipLink)
   const publicKeyFromLocalStorage = localStorage.getItem('tipLink_pk_connected');
@@ -295,33 +295,35 @@ const getSwapQuotes = async (amount: number) => {
   };
 
   return (
-    <div className="flex min-h-screen pl-24 bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white">
-      <Sidebar />
+    <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white">
+      <Sidebar  />
      
-      <div className="flex-1 p-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-lime-400">{crateData.name}</h1>
+      <div className="flex-1 p-4 md:p-8 md:pl-24">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-lime-400 mb-4 md:mb-0">{crateData.name}</h1>
           <div className="bg-gray-800 rounded-full px-4 py-2 text-sm">
             {userPublicKey ? truncatePublicKey(userPublicKey.toString()) : 'Wallet not connected'}
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-8">
-          <div className="col-span-2 bg-gray-800/10 rounded-xl p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="col-span-1 md:col-span-2 bg-gray-800/10 rounded-xl p-4 md:p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Performance</h2>
+              <h2 className="text-lg md:text-xl font-semibold">Performance</h2>
               <select className="bg-gray-700/10 rounded px-2 py-1">
                 <option>All</option>
               </select>
             </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={chartData}>
-                <XAxis dataKey="name" stroke="#6b7280" />
-                <YAxis stroke="#6b7280" />
-                <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#84cc16" strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
+            <div className="h-64 md:h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData}>
+                  <XAxis dataKey="name" stroke="#6b7280" />
+                  <YAxis stroke="#6b7280" />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="value" stroke="#84cc16" strokeWidth={2} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
             <div className="flex justify-between mt-4 text-sm">
               <span>↑ {crateData.upvotes}</span>
               <span>↓ {crateData.downvotes}</span>
@@ -330,20 +332,39 @@ const getSwapQuotes = async (amount: number) => {
           </div> 
 
           <div className="space-y-8">
-            <div className="bg-gradient-to-b from-gray-800/10 to-green-800/10 rounded-xl p-6">
-              <h2 className="text-xl font-semibold mb-4">Buy / Sell</h2>
+            <div className="bg-gradient-to-b from-gray-800/10 to-green-800/10 rounded-xl p-4 md:p-6">
+              <h2 className="text-lg md:text-xl font-semibold mb-4">Buy / Sell</h2>
+              
+              <input type="number" placeholder="Enter amount" className="w-full bg-gray-700/30 text-white px-4 py-2 rounded-xl mb-4" value={inputAmount} onChange={handleInputChange} />
+
               <div className="flex gap-4">
-                <button className="flex-1  text-red-700 border-2 border-red-700 bg-transparent px-4 py-2 rounded-xl ">SELL</button>
-                <button className="flex-1 bg-gradient-to-b from-lime-500 to-lime-700 text-black px-4 py-2 rounded-xl ">BUY</button>
+                <button className="flex-1 text-red-700 border-2 border-red-700 bg-transparent px-4 py-2 rounded-xl">SELL</button>
+                <button className="flex-1 bg-gradient-to-b from-lime-500 to-lime-700 text-black px-4 py-2 rounded-xl" onClick={handleGetQuotes}>BUY</button>
+
+                {swapQuotes.length > 0 && (
+          <div className="mt-4">
+            <h4 className="text-lg font-semibold mb-2">Swap Quotes:</h4>
+            {swapQuotes.map((quote, index) => (
+              <div key={index} className="bg-gray-100 p-3 mb-2 rounded">
+                <p>{quote.symbol}: {quote.quote.outAmount} output tokens</p>
+                <button
+                  onClick={() => handleSwap(quote)}
+                  className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mt-2"
+                >
+                  Swap
+                </button>
+              </div>
+            ))}
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="bg-gradient-to-b from-gray-800/10 to-green-800/10 rounded-xl p-6">
-              
-              <h2 className="text-xl mb-4 font-sans">Return_calculator</h2>
+            <div className="bg-gradient-to-b from-gray-800/10 to-green-800/10 rounded-xl p-4 md:p-6">
+              <h2 className="text-lg md:text-xl mb-4 font-sans">Return_calculator</h2>
              
               <div className="flex items-center justify-between mb-4">
-                <span className="text-2xl font-semibold text-lime-400">$169</span>
+                <span className="text-xl md:text-2xl font-semibold text-lime-400">$169</span>
                 <select className="bg-gray-700/10 rounded px-2 py-1">
                   <option>Monthly</option>
                 </select>
@@ -381,33 +402,27 @@ const getSwapQuotes = async (amount: number) => {
                 }
               `}</style>
               <div className="flex flex-col mt-4">
-                <div className="flex justify-between gap-2 ">
-                
-                <span className="mb-2">Investment Period</span>
-                  <div className="flex gap-3 ">
-                
-                  <button className=" hover:bg-lime-700/50 text-lime-100  p-1 bg-lime-700 rounded-xl  text-sm">6 months</button>
-                 
-                 <button className=" hover:bg-lime-700/50 text-lime-100  p-1 bg-lime-700 rounded-xl  text-sm">1 year</button>
-
-                 <button className=" hover:bg-lime-700/50 text-lime-100  p-1 bg-lime-700 rounded-xl  text-sm">3 years</button>
+                <div className="flex flex-col md:flex-row justify-between gap-2">
+                  <span className="mb-2">Investment Period</span>
+                  <div className="flex gap-2 md:gap-3">
+                    <button className="hover:bg-lime-700/50 text-lime-100 p-1 bg-lime-700 rounded-xl text-xs md:text-sm">6 months</button>
+                    <button className="hover:bg-lime-700/50 text-lime-100 p-1 bg-lime-700 rounded-xl text-xs md:text-sm">1 year</button>
+                    <button className="hover:bg-lime-700/50 text-lime-100 p-1 bg-lime-700 rounded-xl text-xs md:text-sm">3 years</button>
                   </div>
-                
                 </div>
               </div>
-              <div className="mt-4 pl-10">
-                <span className="text-2xl ">Return: </span>
-                <span className="text-2xl font-bold text-lime-400">${returnAmount}</span>
+              <div className="mt-4 text-center md:text-left md:pl-10">
+                <span className="text-xl md:text-2xl">Return: </span>
+                <span className="text-xl md:text-2xl font-bold text-lime-400">${returnAmount}</span>
               </div>
             </div>
           </div>
         </div> 
 
-        <div className="pr-[700px]">
-        <div className="mt-8 bg-gradient-to-b from-lime-400/10 to-green-800/10 rounded-xl p-6">
-          <h2 className="text-xl font-semibold mb-4 text-lime-400">token_Split</h2>
-          <div className="flex">
-            <div className="space-y-2 flex-1">
+        <div className="mt-8 bg-gradient-to-b from-lime-400/10 to-green-800/10 rounded-xl p-4 md:p-6">
+          <h2 className="text-lg md:text-xl font-semibold mb-4 text-lime-400">token_Split</h2>
+          <div className="flex flex-col md:flex-row">
+            <div className="space-y-2 flex-1 mb-4 md:mb-0">
               {crateData.tokens.map((token, index) => (
                 <div key={token.id}>
                   <div className="flex items-center">
@@ -421,11 +436,10 @@ const getSwapQuotes = async (amount: number) => {
                 </div>
               ))}
             </div>
-            <div style={{ width: '150px', height: '150px' }} className="ml-16">
+            <div className="w-full md:w-40 h-40 md:h-40 mx-auto md:ml-16">
               <Doughnut data={pieData} options={pieOptions} />
             </div>
           </div>
-        </div>
         </div>
        
       </div>
@@ -436,22 +450,22 @@ const getSwapQuotes = async (amount: number) => {
 
 export default CrateDetailPage;
  
-const TokenBar: React.FC<{ token: Token }> = ({ token }) => {
-  const barWidth = `${token.quantity}%`;
-  const hue = Math.floor(Math.random() * 360); // Generate a random hue for color variety
+// const TokenBar : React.FC<{ token: Token }> = ({ token }) => {
+//   const barWidth = `${token.quantity}%`;
+//   const hue = Math.floor(Math.random() * 360); // Generate a random hue for color variety
 
-  return (
-    <div className="mb-2">
-      <div className="flex justify-between mb-1">
-        <span className="text-sm font-medium">{token.name} ({token.symbol})</span>
-        <span className="text-sm font-medium">{token.quantity}%</span>
-      </div>
-      <div className="w-full bg-gray-200 rounded-full h-2.5">
-        <div 
-          className="h-2.5 rounded-full" 
-          style={{ width: barWidth, backgroundColor: `hsl(${hue}, 70%, 50%)` }}
-        ></div>
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div className="mb-2">
+//       <div className="flex justify-between mb-1">
+//         <span className="text-sm font-medium">{token.name} ({token.symbol})</span>
+//         <span className="text-sm font-medium">{token.quantity}%</span>
+//       </div>
+//       <div className="w-full bg-gray-200 rounded-full h-2.5">
+//         <div 
+//           className="h-2.5 rounded-full" 
+//           style={{ width: barWidth, backgroundColor: `hsl(${hue}, 70%, 50%)` }}
+//         ></div>
+//       </div>
+//     </div>
+//   );
+// };
