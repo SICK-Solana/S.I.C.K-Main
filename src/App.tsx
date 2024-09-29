@@ -3,6 +3,9 @@ import Landing from './pages/landing';
 import WhitepaperSICK from './pages/whitepaper';
 import Home from './pages/home';
 import Dashboard from './pages/dashboard';
+import CrateCreator from './pages/createcrate';
+import CrateDetailPage from './pages/crates';
+import ExploreCrate from './pages/explorecrate/ExploreCrate';
 
 const App: React.FC = () => {
   return (
