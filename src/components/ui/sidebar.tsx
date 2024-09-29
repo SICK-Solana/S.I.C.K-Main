@@ -1,5 +1,5 @@
 import * as Icons from "lucide-react";
-import React from "react";
+// import React from "react";
 import { Tooltip } from "react-tooltip";
 import { BsBoxSeam } from "react-icons/bs";
 import { RxDashboard } from "react-icons/rx";
@@ -11,12 +11,12 @@ import { useLocation } from 'react-router-dom';
 
 
 const Sidebar = () => {
-  const Menus = [
-    { title: "/dashboard", src: "Layout", path: "/dashboard" },
-    { title: "/crates", src: "LayoutGrid", path: "/explorecrate" },
-    { title: "/scroll", src: "Sparkle", path: "/scroll" },
-    { title: "/cratecreator", src: "PackageOpen", path: "/cratecreator" },
-  ];
+  // const Menus = [
+  //   { title: "/dashboard", src: "Layout", path: "/dashboard" },
+  //   { title: "/crates", src: "LayoutGrid", path: "/explorecrate" },
+  //   { title: "/scroll", src: "Sparkle", path: "/scroll" },
+  //   { title: "/cratecreator", src: "PackageOpen", path: "/cratecreator" },
+  // ];
 
   //href, logo(react element) , path
 

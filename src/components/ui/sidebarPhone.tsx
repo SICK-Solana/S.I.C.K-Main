@@ -1,5 +1,5 @@
-import React from 'react';
-import * as Icons from "lucide-react";
+// import React from 'react';
+// import * as Icons from "lucide-react";
 import { useLocation } from 'react-router-dom';
 import { BsBoxSeam } from "react-icons/bs";
 import { RxDashboard } from "react-icons/rx";
@@ -7,12 +7,12 @@ import { GiDiamonds } from "react-icons/gi";
 import { RiFunctionAddLine } from "react-icons/ri";
 
 export const SideBarPhone = () => {
-  const Menus = [
-    { title: "Dashboard", src: "Layout", path: "/dashboard" },
-    { title: "Crates", src: "LayoutGrid", path: "/explorecrate" },
-    { title: "Scroll", src: "Sparkle", path: "/scroll" },
-    { title: "Create Crate", src: "PackageOpen", path: "/cratecreator" },
-  ];
+  // const Menus = [
+  //   { title: "Dashboard", src: "Layout", path: "/dashboard" },
+  //   { title: "Crates", src: "LayoutGrid", path: "/explorecrate" },
+  //   { title: "Scroll", src: "Sparkle", path: "/scroll" },
+  //   { title: "Create Crate", src: "PackageOpen", path: "/cratecreator" },
+  // ];
 
   
   const location = useLocation();
