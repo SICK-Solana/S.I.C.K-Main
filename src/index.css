@@ -24,3 +24,22 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
+
+  .innerscroll::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+  }
+  
+  .innerscroll::-webkit-scrollbar-track {
+    background: #2b2b2b;
+  }
+  
+  .innerscroll::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+  }
+  
+  .innerscroll::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
