@@ -52,6 +52,7 @@ interface Token {
 }
 
 interface CrateData {
+  creator: any;
   id: string;
   name: string;
   image: string;
