@@ -1,6 +1,7 @@
 import { Button } from "./button";
 import {  ShoppingCart, Wallet } from "lucide-react";
-import CrateCard from "./CrateCard";
+import CrateCard from "../CrateCard";
+
 export default function CryptoDashboard() {
 
   // Get user data directly from localStorage (will only run once when the component is initialized)
@@ -70,6 +71,8 @@ export default function CryptoDashboard() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-20">
             <CrateCard
+              upvotes={0}
+              downvotes={0}
               title="Solana Mid Cap"
               subtitle="Mid Cap: 8"
               percentage={12.2}
@@ -88,7 +91,9 @@ export default function CryptoDashboard() {
                 },
               ]}
             />
-            <CrateCard
+              <CrateCard
+              upvotes={0}
+              downvotes={0}
               title="Meme Crate"
               subtitle="Meme Tokens: 4"
               percentage={-12.2}
