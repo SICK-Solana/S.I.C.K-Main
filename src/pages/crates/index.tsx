@@ -55,6 +55,7 @@ interface Token {
 }
 
 interface CrateData {
+  creator: any;
   id: string;
   name: string;
   image: string;
@@ -347,7 +348,7 @@ const getSwapQuotes = async (amount: number) => {
      
       <div className="flex-1 p-4 md:p-8 md:pl-24">
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-lime-400 mb-4 md:mb-0">{crateData.name}</h1>
+          <h1 className="text-2xl flex justify-center items-center gap-1 md:text-3xl font-bold text-lime-400 mb-4 md:mb-0"><img className='w-10 h-10 rounded-full' src={crateData.image} alt="createimage"></img>{crateData.name}</h1>
           <div className="bg-gray-800 rounded-full px-4 py-2 text-sm">
             {userPublicKey ? truncatePublicKey(userPublicKey.toString()) : 'Wallet not connected'}
           </div>
@@ -374,7 +375,7 @@ const getSwapQuotes = async (amount: number) => {
             <div className="flex justify-between mt-4 text-sm">
               <span>↑ {crateData.upvotes}</span>
               <span>↓ {crateData.downvotes}</span>
-              <span>Created by: {crateData.creatorId}</span>
+              <span>Created by: {crateData.creator.name}</span>
             </div>
           </div> 
 
@@ -486,7 +487,7 @@ const getSwapQuotes = async (amount: number) => {
                 </div>
               ))}
             </div>
-            <div className="w-full md:w-40 h-40 md:h-40 mx-auto md:ml-16">
+            <div className="w-full md:w-40 h-40 md:h-40 mx-auto md:ml-16 mb-20 md:mb-0">
               <Doughnut  data={pieData}  options={pieOptions} />
             </div>
           </div>
