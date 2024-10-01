@@ -113,7 +113,7 @@ const CombinedPriceChart: React.FC<CombinedPriceChartProps> = ({ tokens }) => {
         <YAxis 
           domain={yAxisDomain}
           tickFormatter={formatYAxis}
-          width={80}
+          hide
         />
         <Tooltip
           contentStyle={{ backgroundColor: '#2a2a2a', border: 'none' }}
