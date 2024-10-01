@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { PublicKey, Connection, VersionedTransaction } from '@solana/web3.js';

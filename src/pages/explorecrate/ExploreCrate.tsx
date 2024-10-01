@@ -27,6 +27,11 @@ const ExploreCrate: React.FC = () => {
       try {
         const response = await fetch('https://sickb.vercel.app/api/crates');
         const data = await response.json();
+         // Sort by 'createdAt' by default
+         const sortedData = data.sort((a: Crate, b: Crate) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        setCrates(sortedData);
         setCrates(data);
       } catch (error) {
         console.error('Error fetching crates:', error);
