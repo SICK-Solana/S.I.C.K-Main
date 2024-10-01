@@ -237,7 +237,7 @@ window.location.href = '/crates/' + result.id;
     <div className="max-w-6xl mx-auto p-8 bg-gradient-to-b from-gray-900 via-lime-950 to-gray-900 text-white rounded-3xl shadow-2xl">
       {!isLoggedIn && <SignUpPopup />}
       
-      <h1 className="text-6xl font-semibold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-lime-500 via-green-300 to-emerald-600 animate-gradient-y font-mono ">Forge Your Crate</h1>
+      <h1 className="md:text-4xl  text-2xl font-semibold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-lime-500 via-green-300 to-emerald-600 animate-gradient-y font-mono ">Forge Your Crate</h1>
       
       <input
         type="text"
