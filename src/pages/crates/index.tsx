@@ -275,41 +275,41 @@ const CrateDetailPage: React.FC = () => {
   //   { name: 'Jun', value: 5500 },
   // ];
 
-  const pieData = {
-    labels: crateData.tokens.map(token => token.name),
-    datasets: [
-      {
-        data: crateData.tokens.map(token => token.quantity),
-        backgroundColor: crateData.tokens.map((_, index) => `hsl(${50 + index * 80 / crateData.tokens.length}, 70%, ${50 + index * 10 / crateData.tokens.length}%)`),
-        borderColor: '#228B22', // Forest Green for borders
-        borderWidth: 1,
-      },
-    ],
-  };
+  // const pieData = {
+  //   labels: crateData.tokens.map(token => token.name),
+  //   datasets: [
+  //     {
+  //       data: crateData.tokens.map(token => token.quantity),
+  //       backgroundColor: crateData.tokens.map((_, index) => `hsl(${50 + index * 80 / crateData.tokens.length}, 70%, ${50 + index * 10 / crateData.tokens.length}%)`),
+  //       borderColor: '#228B22', // Forest Green for borders
+  //       borderWidth: 1,
+  //     },
+  //   ],
+  // };
 
-  const pieOptions = {
-    cutout: '50%', // Makes it a donut chart
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        callbacks: {
-          label: (context: any) => {
-            const token = crateData.tokens[context.dataIndex];
-            return `${token.name}: ${token.quantity}%`;
-          },
-        },
-      },
-    },
-    elements: {
-      arc: {
-        borderWidth: 0,
-      },
-    },
-  };
+  // const pieOptions = {
+  //   cutout: '50%', // Makes it a donut chart
+  //   responsive: true,
+  //   maintainAspectRatio: false,
+  //   plugins: {
+  //     legend: {
+  //       display: false,
+  //     },
+  //     tooltip: {
+  //       callbacks: {
+  //         label: (context: any) => {
+  //           const token = crateData.tokens[context.dataIndex];
+  //           return `${token.name}: ${token.quantity}%`;
+  //         },
+  //       },
+  //     },
+  //   },
+  //   elements: {
+  //     arc: {
+  //       borderWidth: 0,
+  //     },
+  //   },
+  // };
 
   // const renderTokenIcons = () => {
   //   return crateData.tokens.map((token, index) => {
@@ -397,8 +397,9 @@ const CrateDetailPage: React.FC = () => {
             />
           </div>
         </div>
+        <div className='md:mb-0 mb-20'>
         <TokenSplit crateData={crateData} />
-        
+        </div>
       </div>
       <SideBarPhone />
     </div>
