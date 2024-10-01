@@ -30,11 +30,11 @@ const Sidebar = () => {
   const sidebarData = [
     {
       path: "/dashboard",
-      logo: <BsBoxSeam className={`${location.pathname === "/dashboard" ? "text-[#B6FF1B]" :"" }`} /> 
+      logo: <RxDashboard className={`${location.pathname === "/dashboard" ? "text-[#B6FF1B]" :"" }`} /> 
     },
     {
       path: "/explorecrate",
-      logo: <RxDashboard className={`${location.pathname === "/explorecrate" ? "text-[#B6FF1B]" :"" }`} />
+      logo: <BsBoxSeam className={`${location.pathname === "/explorecrate" ? "text-[#B6FF1B]" :"" }`} />
 
     },
     {
@@ -53,17 +53,19 @@ const Sidebar = () => {
     <div className="fixed left-0 top-0 h-full z-40 hidden md:block">
       <div 
         className={`
-          flex flex-col justify-between h-full bg-gradient-to-b from-[#0A1019] to-[#02050A] text-gray-400 transition-all duration-300 ease-in-out
+          flex flex-col justify-between h-full border-r border-[#B6FF1B]/[6%] bg-gradient-to-b from-[#0A1019] to-[#02050A] text-gray-400 transition-all duration-300 ease-in-out
           w-16 sm:w-20
         `}
       >
         <div>
           <div className="flex items-center justify-center h-16 sm:h-20 mb-4 sm:mb-8">
+            <a href="/home">
             <img
               src="/sickLogo.png"
               alt="Logo"
               className="w-10 h-10 cursor-pointer transition-all duration-300 ease-in-out hover:scale-110"
             />
+            </a>
           </div>
           <nav>
             <ul className="px-4 space-y-4">
