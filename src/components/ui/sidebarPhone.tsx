@@ -23,34 +23,34 @@ export const SideBarPhone = () => {
   const sidebarData = [
     {
       path: "/dashboard",
-      logo: <BsBoxSeam className={`${location.pathname === "/dashboard" ? "text-[#B6FF1B]" :"" }`} />,
-      name: <p className={`${location.pathname === "/dashboard" ? "text-[#B6FF1B] text-xs" :"text-xs" }`}>{location.pathname === "/dashboard" ? "/": ""}dashboard </p>
+      logo: <RxDashboard className={` ${location.pathname === "/dashboard" ? "text-[#B6FF1B]" :" text-gray-400" }`} />,
+      name: <p className={` ${location.pathname === "/dashboard" ? "text-[#B6FF1B] text-xs" :"text-xs text-gray-400" }`}>{location.pathname === "/dashboard" ? "/": ""}dashboard </p>
 
     },
     {
       path: "/explorecrate",
-      logo: <RxDashboard className={`${location.pathname === "/explorecrate" ? "text-[#B6FF1B]" :"" }`} />,
-      name: <p className={`${location.pathname === "/explorecrate" ? "text-[#B6FF1B] text-xs" :"text-xs" }`}>{location.pathname === "/explorecrate" ? "/": ""}explore-crate </p>
+      logo: <BsBoxSeam className={` ${location.pathname === "/explorecrate" ? "text-[#B6FF1B]" :" text-gray-400" }`} />,
+      name: <p className={` ${location.pathname === "/explorecrate" ? "text-[#B6FF1B] text-xs" :"text-xs text-gray-400" }`}>{location.pathname === "/explorecrate" ? "/": ""}explore-crate </p>
 
 
     },
     {
       path: "/scroll",
-      logo: <GiDiamonds className={`${location.pathname === "/scroll" ? "text-[#B6FF1B]" :"" }`} />,
-      name: <p className={`${location.pathname === "/scroll" ? "text-[#B6FF1B] text-xs" :"text-xs" }`}>{location.pathname === "/scroll" ? "/": ""}scroll </p>
+      logo: <GiDiamonds className={` ${location.pathname === "/scroll" ? "text-[#B6FF1B]" :" text-gray-400" }`} />,
+      name: <p className={` ${location.pathname === "/scroll" ? "text-[#B6FF1B] text-xs" :"text-xs  text-gray-400" }`}>{location.pathname === "/scroll" ? "/": ""}scroll </p>
 
 
     },
     {
       path: "/cratecreator",
-      logo: <RiFunctionAddLine className={`${location.pathname === "/cratecreator" ? "text-[#B6FF1B]" :"" } `}/>,
-      name: <p className={`${location.pathname === "/cratecreator" ? "text-[#B6FF1B] text-xs" :"text-xs" }`}>{location.pathname === "/cratecreator" ? "/": ""}crate-creator </p>
+      logo: <RiFunctionAddLine className={` ${location.pathname === "/cratecreator" ? "text-[#B6FF1B]" :"text-gray-400" } `}/>,
+      name: <p className={` ${location.pathname === "/cratecreator" ? "text-[#B6FF1B] text-xs" :"text-xs text-gray-400" }`}>{location.pathname === "/cratecreator" ? "/": ""}crate-creator </p>
 
     }
   ]
 
   return (
-    <div className="block md:hidden fixed bottom-0 left-0 right-0 bg-[#02050ac0] backdrop-blur-md  z-50">
+    <div className="block md:hidden fixed bottom-0 left-0 right-0 bg-[#02050a]/10 backdrop-blur-md  z-50">
       <nav className="flex justify-around items-center h-20 px-4">
         {sidebarData.map((menu, index) => {
           return (

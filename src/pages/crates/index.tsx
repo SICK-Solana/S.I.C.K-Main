@@ -5,7 +5,6 @@ import { QuoteResponse } from '@jup-ag/api';
 import { Buffer } from 'buffer';
 import Sidebar from '../../components/ui/sidebar.tsx';
 import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
-import PerformanceChart from '../../components/chart/performanceChart';
 import BuySellSection from '../../components/chart/BuySellSection';
 import ReturnCalculator from '../../components/chart/ReturnCalculator';
 import TokenSplit from '../../components/chart/TokenSplit';
@@ -14,6 +13,26 @@ import { createJupiterApiClient } from '@jup-ag/api';
 import tokenData from '../../pages/createcrate/tokens.json';
 
 const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+
+// chart.js imports
+import CombinedPriceChart from './CombinedPriceChart.tsx';
+import CrateValueDisplay from './CombinedTokenPrice.tsx';
+//recharts imports
+import truncate from '../../constants/truncate.ts';
+
+
+
+
+// Ensure the global Buffer is available
+declare global {
+  interface Window {
+    Buffer: typeof Buffer;
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.Buffer = Buffer;
+}
 
 const getTokenMintAddress = (symbol: string): string => {
   const token = tokenData.find((t) => t.symbol.toUpperCase() === symbol.toUpperCase());
@@ -242,9 +261,91 @@ const CrateDetailPage: React.FC = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className='bg-black'>Loading... <Sidebar/> 
+  <SideBarPhone/>
+  </div>;
   if (error) return <div>Error: {error}</div>;
   if (!crateData) return <div>No crate data found</div>;
+
+
+  // const chartData = [
+  //   { name: 'Jan', value: 4000 },
+  //   { name: 'Feb', value: 3000 },
+  //   { name: 'Mar', value: 5000 },
+  //   { name: 'Apr', value: 4500 },
+  //   { name: 'May', value: 6000 },
+  //   { name: 'Jun', value: 5500 },
+  // ];
+
+  // const pieData = {
+  //   labels: crateData.tokens.map(token => token.name),
+  //   datasets: [
+  //     {
+  //       data: crateData.tokens.map(token => token.quantity),
+  //       backgroundColor: crateData.tokens.map((_, index) => `hsl(${50 + index * 80 / crateData.tokens.length}, 70%, ${50 + index * 10 / crateData.tokens.length}%)`),
+  //       borderColor: '#228B22', // Forest Green for borders
+  //       borderWidth: 1,
+  //     },
+  //   ],
+  // };
+
+  // const pieOptions = {
+  //   cutout: '50%', // Makes it a donut chart
+  //   responsive: true,
+  //   maintainAspectRatio: false,
+  //   plugins: {
+  //     legend: {
+  //       display: false,
+  //     },
+  //     tooltip: {
+  //       callbacks: {
+  //         label: (context: any) => {
+  //           const token = crateData.tokens[context.dataIndex];
+  //           return `${token.name}: ${token.quantity}%`;
+  //         },
+  //       },
+  //     },
+  //   },
+  //   elements: {
+  //     arc: {
+  //       borderWidth: 0,
+  //     },
+  //   },
+  // };
+
+  // const renderTokenIcons = () => {
+  //   return crateData.tokens.map((token, index) => {
+  //     const angle = (index / crateData.tokens.length) * 2 * Math.PI - Math.PI / 2;
+  //     const radius = 80; // Adjust this value to position icons
+  //     const x = Math.cos(angle) * radius + 100; // 100 is half of chart size
+  //     const y = Math.sin(angle) * radius + 100;
+
+  //     return (
+  //       <img
+  //         key={token.id}
+  //         src={tokenData.find(t => t.symbol === token.symbol)?.logoURI || `/path/to/${token.symbol}-icon.png`}
+  //         alt={token.name}
+  //         className="absolute w-8 h-8 rounded-full"
+  //         style={{
+  //           left: `${x}px`,
+  //           top: `${y}px`,
+  //           transform: 'translate(-50%, -50%)',
+  //         }}
+  //       />
+  //     );
+  //   });
+  // };
+
+  // const pieOptions = {
+  //   cutout: '50%', // Makes it a donut chart
+  //   responsive: true,
+  //   maintainAspectRatio: false,
+  //   plugins: {
+  //     legend: {
+  //       display: false,
+  //     },
+  //   },
+  // };
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white">
@@ -254,8 +355,36 @@ const CrateDetailPage: React.FC = () => {
           <h1 className="text-2xl md:text-3xl font-bold text-lime-400 mb-4 md:mb-0">{crateData.name}</h1>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <PerformanceChart crateData={crateData} />
+          <div className="col-span-1 md:col-span-2 bg-gray-800/10 rounded-xl p-4 md:p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg md:text-xl font-semibold">Performance</h2>
+              <select className="bg-gray-700/10 rounded px-2 py-1">
+                <option>All</option>
+              </select>
+            </div>
+            <div className="h-64 md:h-80">
+              {/* <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData}>
+                  <XAxis dataKey="name" stroke="#6b7280" />
+                  <YAxis stroke="#6b7280" />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="value" stroke="#84cc16" strokeWidth={2} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+              */}
+              <CombinedPriceChart tokens={crateData.tokens} />
+            </div>
+            <div className="flex justify-between mt-4 text-sm">
+              <span>↑ {crateData.upvotes}</span>
+              <span>↓ {crateData.downvotes}</span>
+              <span>Created by: {truncate(crateData.creator.name , 10)}</span>
+            </div>
+          </div>
           <div className="space-y-8">
+          <div>
+<CrateValueDisplay crateData={crateData} />
+
+          </div> 
             <BuySellSection
               inputAmount={inputAmount}
               handleInputChange={handleInputChange}
@@ -270,7 +399,9 @@ const CrateDetailPage: React.FC = () => {
             />
           </div>
         </div>
+        <div className='md:mb-0 mb-20'>
         <TokenSplit crateData={crateData} />
+        </div>
       </div>
       <SideBarPhone />
     </div>

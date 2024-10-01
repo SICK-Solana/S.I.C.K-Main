@@ -97,7 +97,7 @@ export default function DashboardTable() {
   return (
     <>
       
-      <div className="overflow-x-auto  rounded-3xl bg-black border border-yellow-500 p-4 ml-4 mb-14 lg:mb-0 lg:ml-24 font-mono">
+      <div className="overflow-x-auto  rounded-3xl bg-black border border-yellow-500 p-4 ml-4 pb-10 lg:mb-0 lg:ml-24 font-mono">
       <h3 className="text-[#B6FF1B] text-sm ">// active_crates({noofCrates})</h3>
 
         <table className="min-w-full px-10  table-auto text-left text-yellow-400">

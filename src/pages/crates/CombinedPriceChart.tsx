@@ -89,7 +89,7 @@ const CombinedPriceChart: React.FC<CombinedPriceChartProps> = ({ tokens }) => {
   if (error) return <div>Error loading chart data: {error}</div>;
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer width="100%" >
       <LineChart data={chartData}>
         <XAxis 
           dataKey="timestamp" 
@@ -100,9 +100,9 @@ const CombinedPriceChart: React.FC<CombinedPriceChartProps> = ({ tokens }) => {
         />
         <YAxis domain={['dataMin', 'dataMax']} hide />
         <Tooltip
-          contentStyle={{ backgroundColor: '#ffffff', border: 'none' }}
-          itemStyle={{ color: '#000' }}
-          formatter={(value: number) => [`$${value}`, 'Combined Value']}
+          contentStyle={{ backgroundColor: '#2a2a2a', border: 'none' }}
+          itemStyle={{ color: '#fff' }}
+          formatter={(value: number) => [`$${value.toFixed(2)}`, 'Combined Value']}
           labelFormatter={(label) => new Date(label).toLocaleString()}
         />
         <Line 

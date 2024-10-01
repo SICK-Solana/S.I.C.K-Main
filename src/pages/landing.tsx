@@ -3,7 +3,7 @@ import { BentoGrid } from "../components/ui/bentogrid";
 import { WalletMultiButton } from "@tiplink/wallet-adapter-react-ui";
 import { FaXTwitter } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState , useEffect } from "react";
 
 export default function Landing() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -12,6 +12,14 @@ export default function Landing() {
     const randomY = Math.floor(Math.random() * 300)-150; // Random value between -100 and 100
     setPosition({ x: randomX, y: randomY });
   };
+
+  useEffect(() => {
+    // Check if user data exists in localStorage
+    const user = localStorage.getItem("user");
+    if (user) {
+
+window.location.href = "/dashboard";  }
+  }, []);
 
   return (
     <>
