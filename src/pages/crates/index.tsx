@@ -18,9 +18,11 @@ import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
 const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 import { Buffer } from 'buffer';
 
-
+// chart.js imports
+import CombinedPriceChart from './CombinedPriceChart.tsx';
+import CrateValueDisplay from './CombinedTokenPrice.tsx';
 //recharts imports
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import truncate from '../../constants/truncate.ts';
 
 
 
@@ -263,14 +265,14 @@ const getSwapQuotes = async (amount: number) => {
   if (!crateData) return <div>No crate data found</div>;
 
 
-  const chartData = [
-    { name: 'Jan', value: 4000 },
-    { name: 'Feb', value: 3000 },
-    { name: 'Mar', value: 5000 },
-    { name: 'Apr', value: 4500 },
-    { name: 'May', value: 6000 },
-    { name: 'Jun', value: 5500 },
-  ];
+  // const chartData = [
+  //   { name: 'Jan', value: 4000 },
+  //   { name: 'Feb', value: 3000 },
+  //   { name: 'Mar', value: 5000 },
+  //   { name: 'Apr', value: 4500 },
+  //   { name: 'May', value: 6000 },
+  //   { name: 'Jun', value: 5500 },
+  // ];
 
   const pieData = {
     labels: crateData.tokens.map(token => token.name),
@@ -363,7 +365,7 @@ const getSwapQuotes = async (amount: number) => {
               </select>
             </div>
             <div className="h-64 md:h-80">
-              <ResponsiveContainer width="100%" height="100%">
+              {/* <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
                   <XAxis dataKey="name" stroke="#6b7280" />
                   <YAxis stroke="#6b7280" />
@@ -371,15 +373,20 @@ const getSwapQuotes = async (amount: number) => {
                   <Line type="monotone" dataKey="value" stroke="#84cc16" strokeWidth={2} dot={false} />
                 </LineChart>
               </ResponsiveContainer>
+              */}
+              <CombinedPriceChart tokens={crateData.tokens} />
             </div>
             <div className="flex justify-between mt-4 text-sm">
               <span>↑ {crateData.upvotes}</span>
               <span>↓ {crateData.downvotes}</span>
-              <span>Created by: {crateData.creator.name}</span>
+              <span>Created by: {truncate(crateData.creator.name , 10)}</span>
             </div>
-          </div> 
-
+          </div>
           <div className="space-y-8">
+          <div>
+<CrateValueDisplay crateData={crateData} />
+
+          </div> 
             <div className="bg-gradient-to-b from-gray-800/10 to-green-800/10 rounded-xl p-4 md:p-6">
               <h2 className="text-lg md:text-xl font-semibold mb-4">Buy / Sell</h2>
               
