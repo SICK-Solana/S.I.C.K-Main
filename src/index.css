@@ -2,8 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply bg-gray-900 text-gray-100;
+  }
+}
+
 .custom-border-gradient {
-    
     border-radius: 9999px;
     border-width: 1px;
     border-style: solid;
@@ -12,8 +17,8 @@
   }
 
   .loader {
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #3498db;
+    border: 5px solid #2d3748;
+    border-top: 5px solid #4299e1;
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -31,15 +36,14 @@
   }
   
   .innerscroll::-webkit-scrollbar-track {
-    background: #2b2b2b;
+    background: #1a202c;
   }
   
   .innerscroll::-webkit-scrollbar-thumb {
-    background: #888;
+    background: #4a5568;
     border-radius: 5px;
   }
   
   .innerscroll::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: #718096;
   }
-  
