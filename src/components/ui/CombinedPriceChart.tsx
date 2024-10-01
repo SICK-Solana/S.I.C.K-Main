@@ -102,7 +102,7 @@ const CombinedPriceChart: React.FC<CombinedPriceChartProps> = ({ tokens }) => {
         <Tooltip
           contentStyle={{ backgroundColor: '#ffffff', border: 'none' }}
           itemStyle={{ color: '#000' }}
-          formatter={(value: number) => [`$${value.toFixed(2)}`, 'Combined Value']}
+          formatter={(value: number) => [`$${value}`, 'Combined Value']}
           labelFormatter={(label) => new Date(label).toLocaleString()}
         />
         <Line 

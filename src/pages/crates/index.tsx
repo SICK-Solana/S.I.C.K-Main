@@ -261,7 +261,9 @@ const CrateDetailPage: React.FC = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className='bg-black'>Loading... <Sidebar/> 
+  <SideBarPhone/>
+  </div>;
   if (error) return <div>Error: {error}</div>;
   if (!crateData) return <div>No crate data found</div>;
 
