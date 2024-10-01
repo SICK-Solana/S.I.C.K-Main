@@ -120,7 +120,8 @@ const CrateCreator: React.FC = () => {
       tokens: selectedTokens.map(token => ({
         symbol: token.symbol,
         name: token.name,
-        quantity: token.allocation
+        quantity: token.allocation,
+        coingeckoId: token.extensions.coingeckoId
       })),
       totalCost: 0,
       creatorId,

@@ -36,6 +36,7 @@ interface Token {
   quantity: number;
   createdAt: string;
   crateId: string;
+  coingeckoId: string;  
 }
 
 interface CrateData {
