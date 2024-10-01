@@ -67,7 +67,7 @@ export const BentoGrid = () => {
 
                       <div className="flex items-center space-x-2 opacity-40 p-2 rounded-2xl hover:scale-105 hover:text-yellow-400 hover:border hover:border-yellow-400 transition-transform duration-300">
                         <Box />
-                        <span className="text-lg">Invest</span>
+                        <span className="text-lg">Calculate</span>
                       </div>
 
                       <div className="flex items-center space-x-2 opacity-40 p-2 rounded-2xl hover:scale-105 hover:text-yellow-400 hover:border hover:border-yellow-400 transition-transform duration-300">
