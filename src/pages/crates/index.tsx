@@ -215,11 +215,12 @@ const CrateDetailPage: React.FC = () => {
         <div className='md:mb-0 mb-20'>
           <TokenSplit crateData={crateData} />
         </div>
-        {quoteResults && (
-         
-         <div className="bg-gray-800/10 rounded-xl p-4 md:p-6 mt-8">
+      </div>
+      <SideBarPhone />
+      {quoteResults && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <h2 className="text-2xl font-bold mb-4 text-lime-400">Quote Results</h2>
-           
             <ul className="space-y-4">
               {quoteResults.map(({ mint, quote }: { mint: string; quote: any }, index: number) => {
                 const token = tokenData.find(t => t.address === mint);
@@ -238,14 +239,16 @@ const CrateDetailPage: React.FC = () => {
                   </li>
                 );
               })}
-            
             </ul>
+            <button 
+              onClick={() => setQuoteResults(null)} 
+              className="mt-4 bg-lime-500 text-black px-4 py-2 rounded hover:bg-lime-600 transition-colors"
+            >
+              Close
+            </button>
           </div>
-        )}
-      </div>
-
-      
-      <SideBarPhone />
+        </div>
+      )}
     </div>
   
 
