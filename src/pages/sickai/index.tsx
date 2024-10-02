@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, ChangeEvent, KeyboardEvent } from 'react';
+import { useState, useEffect, useRef, ChangeEvent, KeyboardEvent } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { SendIcon, Loader2, Bot, User } from 'lucide-react';
 
