@@ -77,8 +77,6 @@ const CrateDetailPage: React.FC = () => {
   const [returnAmount] = useState<number>(479);
   const [investmentPeriod, setInvestmentPeriod] = useState<number>(1);
 
-  const publicKeyFromLocalStorage = localStorage.getItem('tipLink_pk_connected');
-  const userPublicKey = publicKeyFromLocalStorage ? new PublicKey(publicKeyFromLocalStorage) : null;
 
   const navigate = useNavigate();
 
