@@ -21,6 +21,7 @@
     "@tiplink/api": "^0.2.7",
     "@tiplink/wallet-adapter": "^2.1.21",
     "@tiplink/wallet-adapter-react-ui": "^1.0.0",
+    "bs58": "^6.0.0",
     "buffer": "^6.0.3",
     "chart.js": "^4.4.4",
     "class-variance-authority": "^0.7.0",
