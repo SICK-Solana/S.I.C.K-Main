@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-gray-900 text-gray-100;
+    @apply bg-gradient-to-b from-[#0A1019] to-[#02050A] text-gray-100;
   }
 }
 
@@ -16,34 +16,4 @@
     border-image-slice: 1;
   }
 
-  .loader {
-    border: 5px solid #2d3748;
-    border-top: 5px solid #4299e1;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  .innerscroll::-webkit-scrollbar {
-    width: 2px;
-    height: 2px;
-  }
-  
-  .innerscroll::-webkit-scrollbar-track {
-    background: #1a202c;
-  }
-  
-  .innerscroll::-webkit-scrollbar-thumb {
-    background: #4a5568;
-    border-radius: 5px;
-  }
-  
-  .innerscroll::-webkit-scrollbar-thumb:hover {
-    background: #718096;
-  }
+ 

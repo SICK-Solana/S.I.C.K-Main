@@ -24,7 +24,7 @@ const CryptoCard = ({ name, ticker, price, change, changePercent }:any) => {
       </div>
     );
   };
-export default function CashBoard(){
+ export default function CashBoard(){
    const userData = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
    const user = userData ? JSON.parse(userData) : { name: "User" };
   // Truncate the username if it's longer than 10 characters
@@ -114,10 +114,18 @@ export default function CashBoard(){
 />
 
         </div>
+        <Portfolio />
+        
+        </div>
+        </>
+    )
+}
 
-        <div className="bg-gradient-to-b from-[#111817] to-[#070C14]   font-mono mb-10 ">
-            <div className="grid grid-cols-1 sm:grid-cols-3">
-              <div className="border p-4 sm:p-6 border-[#223115]">
+export const Portfolio = () =>{
+ return (
+  <div className="bg-gradient-to-b from-[#111817] to-[#070C14] font-mono rounded-xl mb-10 ">
+            <div className="grid grid-cols-1 sm:grid-cols-3 rounded-xl">
+              <div className="border p-4 sm:p-6 border-[#223115] sm:rounded-l-xl max-sm:rounded-t-xl">
                 <p className="text-[#238636] text-sm mb-2">▲ 10.0%</p>
                 <h2 className="text-4xl sm:text-6xl font-semibold bg-gradient-to-b from-[#B7FC24] to-[#486900] bg-clip-text text-transparent">
                   $1980
@@ -137,14 +145,13 @@ export default function CashBoard(){
                   XIRR: <span className="text-[#B6FF1B]">78.4%</span>
                 </p>
               </div>
-              <div className="text-right p-4 sm:p-6 border border-[#223115]">
+              <div className="text-right p-4 sm:p-6 border border-[#223115] max-sm:rounded-b-xl sm:rounded-r-xl">
                 <a href="#" className="text-[#238636] hover:underline text-sm">
                   view_dashboard ↗
                 </a>
               </div>
             </div>
           </div>
-        </div>
-        </>
-    )
-}
+ )
+} 
+
