@@ -16,8 +16,7 @@ import CombinedPriceChart from './CombinedPriceChart.tsx';
 import CrateValueDisplay from './CombinedTokenPrice.tsx';
 import truncate from '../../constants/truncate.ts';
 import Loader from '../../components/Loading.tsx';
-import { FaChevronLeft } from 'react-icons/fa6';
-import { useNavigate } from 'react-router-dom';
+import { BiArrowBack } from "react-icons/bi";
 
 
 // import handleSwap from './handleSwap.tsx';
@@ -78,12 +77,8 @@ const CrateDetailPage: React.FC = () => {
   const [investmentPeriod, setInvestmentPeriod] = useState<number>(1);
 
 
-  const navigate = useNavigate();
 
-  const handleBack = () => {
-    navigate(-1); // Go back to the previous route
-  };
-
+ 
   useEffect(() => {
     const fetchCrateData = async () => {
       try {
@@ -264,13 +259,23 @@ const CrateDetailPage: React.FC = () => {
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white">
       <Sidebar />
       <div className="flex-1 p-4 md:p-8 md:pl-24">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-          <div className='flex items-center gap-2'>
-          <FaChevronLeft onClick={handleBack} className='cursor-pointer h-5'/>
-          <h1 className="text-2xl md:text-3xl font-bold text-lime-400 mb-4 md:mb-0">{crateData.name}</h1>
-          </div>
+        
+        <div className="relative flex items-center mb-8">
+  
+  <div 
+  onClick={()=>{window.history.back()}}
+  className="">
+    <BiArrowBack size={20} />
+  </div>
+  <h1 className="text-2xl flex justify-center items-center gap-2 md:text-3xl font-bold text-lime-400 mx-auto">
+    <div className='w-10 h-10'>
+      <img src={crateData.image} alt="icon" />
+    </div>
+    {crateData.name}
+  </h1>
+</div>
           
-        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="col-span-1 md:col-span-2 bg-gray-800/10 rounded-xl p-4 md:p-6">
             <div className="flex justify-between items-center mb-4">

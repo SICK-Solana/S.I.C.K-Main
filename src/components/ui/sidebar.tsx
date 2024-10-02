@@ -38,8 +38,8 @@ const Sidebar = () => {
 
     },
     {
-      path: "/scroll",
-      logo: <GiDiamonds className={`${location.pathname === "/scroll" ? "text-[#B6FF1B]" :"" }`} />
+      path: "/sai",
+      logo: <GiDiamonds className={`${location.pathname === "/sai" ? "text-[#B6FF1B]" :"" }`} />
 
     },
     {
