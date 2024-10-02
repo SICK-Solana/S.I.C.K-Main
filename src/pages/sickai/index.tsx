@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { SendIcon, Loader2 } from 'lucide-react';
+import { SendIcon, Loader2, Bot, User } from 'lucide-react';
 
 export default function SickAi() {
     const [inputValue, setInputValue] = useState('');
@@ -133,31 +133,46 @@ export default function SickAi() {
     }, []);
 
     return (
-        <div className="flex flex-col h-screen bg-gray-100">
+        <div className="flex flex-col h-screen bg-[#02050A] text-gray-200">
             <div className="flex-1 overflow-hidden">
                 <div className="h-full overflow-y-auto px-4 py-6" ref={chatContainerRef}>
                     {chatHistory.map((chat, index) => (
                         <div key={index} className={`flex ${chat.type === 'user' ? 'justify-end' : 'justify-start'} mb-4`}>
-                            <div className={`rounded-lg px-4 py-2 max-w-[70%] ${chat.type === 'user' ? 'bg-blue-500 text-white' : 'bg-white text-gray-800'}`}>
-                                {chat.message}
+                            <div className={`flex items-start space-x-2 max-w-[70%] ${chat.type === 'user' ? 'flex-row-reverse' : ''}`}>
+                                <div className="flex-shrink-0 flex">
+                                    {chat.type === 'user' ? (
+                                        <div className="w-8 h-8 ml-2 bg-gray-700 rounded-full flex items-center justify-center">
+                                            <User className="h-5 w-5 text-gray-300" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
+                                            <Bot className="h-5 w-5 text-gray-300" />
+                                        </div>
+                                    )}
+                                </div>
+                                <div className={`rounded-xl px-4 py-2 ${
+                                    chat.type === 'user' ? 'bg-[#A4E734] text-[#02050A]' : 'bg-gray-800 text-gray-200'
+                                }`}>
+                                    {chat.message}
+                                </div>
                             </div>
                         </div>
                     ))}
                     {loading && (
                         <div className="flex justify-center items-center">
-                            <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+                            <Loader2 className="h-6 w-6 animate-spin text-[#A4E734]" />
                         </div>
                     )}
                 </div>
             </div>
-            <div className="bg-white border-t border-gray-200 px-4 py-4">
+            <div className="bg-gray-900 border-t border-gray-800 px-4 py-4">
                 <div className="flex items-center">
                     <input
                         type="text"
                         value={inputValue}
                         onChange={handleInputChange}
                         placeholder={currentStep < 4 ? "Type your answer here..." : "Ask me anything about the recommended crates"}
-                        className="flex-1 border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 bg-gray-800 text-gray-200 border border-gray-700 rounded-l-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#A4E734]"
                         onKeyPress={(e) => {
                             if (e.key === 'Enter') {
                                 e.preventDefault();
@@ -167,9 +182,10 @@ export default function SickAi() {
                     />
                     <button
                         onClick={handleUserInfoSubmit}
-                        className="bg-blue-500 text-white rounded-r-lg px-4 py-2 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="bg-[#A4E734] text-white rounded-r-xl px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-[#A4E734] flex items-center"
                     >
-                        <SendIcon className="h-5 w-5" />
+                        <SendIcon className="h-5 w-5 mr-2" />
+                        Send
                     </button>
                 </div>
             </div>
