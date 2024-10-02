@@ -1,26 +1,35 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ChangeEvent, KeyboardEvent } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { SendIcon, Loader2, Bot, User } from 'lucide-react';
 
+interface UserInfo {
+    age: string;
+    salary: string;
+    familyMembers: string;
+    netWorth: string;
+}
+
+interface ChatMessage {
+    type: 'user' | 'bot';
+    message: string;
+}
+
 export default function SickAi() {
-    const [inputValue, setInputValue] = useState('');
-    const [promptResponses, setPromptResponses] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [userInfo, setUserInfo] = useState({
+    const [inputValue, setInputValue] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
+    const [userInfo, setUserInfo] = useState<UserInfo>({
         age: '',
         salary: '',
         familyMembers: '',
         netWorth: ''
     });
-    const [currentStep, setCurrentStep] = useState(0);
-    const [chatHistory, setChatHistory] = useState([]);
-    const chatContainerRef = useRef(null);
+    const [currentStep, setCurrentStep] = useState<number>(0);
+    const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+    const chatContainerRef = useRef<HTMLDivElement>(null);
 
-    const genAI = new GoogleGenerativeAI(
-        import.meta.env.VITE_GEMINI_KEY
-    );
+    const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_KEY as string);
 
-    const fetchCrates = async () => {
+    const fetchCrates = async (): Promise<any[]> => {
         try {
             const response = await fetch('https://sickb.vercel.app/api/crates');
             if (!response.ok) {
@@ -34,11 +43,11 @@ export default function SickAi() {
         }
     };
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
         setInputValue(e.target.value);
     };
 
-    const handleUserInfoSubmit = () => {
+    const handleUserInfoSubmit = (): void => {
         const steps = ['age', 'salary', 'familyMembers', 'netWorth'];
         const currentField = steps[currentStep];
         setUserInfo(prevState => ({
@@ -59,7 +68,7 @@ export default function SickAi() {
         }
     };
 
-    const getNextQuestion = () => {
+    const getNextQuestion = (): string => {
         const questions = [
             "Great! Now, what's your annual salary?",
             "Thanks! How many family members do you have?",
@@ -69,17 +78,17 @@ export default function SickAi() {
         return questions[currentStep];
     };
 
-    const getResponseForGivenPrompt = async () => {
+    const getResponseForGivenPrompt = async (): Promise<void> => {
         try {
             setLoading(true);
             const crates = await fetchCrates();
             console.log("Fetched Crates:", crates);
 
-            async function getTokenData(tokens) {
+            async function getTokenData(tokens: string[]): Promise<string> {
                 if (!Array.isArray(tokens) || tokens.length === 0) {
                     return 'empty crate';
                 }
-                const formatToken = (token) => {
+                const formatToken = (token: string): string => {
                     return token.charAt(0).toUpperCase() + token.slice(1).toLowerCase();
                 };
                 try {
@@ -173,7 +182,7 @@ export default function SickAi() {
                         onChange={handleInputChange}
                         placeholder={currentStep < 4 ? "Type your answer here..." : "Ask me anything about the recommended crates"}
                         className="flex-1 bg-gray-800 text-gray-200 border border-gray-700 rounded-l-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#A4E734]"
-                        onKeyPress={(e) => {
+                        onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
                             if (e.key === 'Enter') {
                                 e.preventDefault();
                                 handleUserInfoSubmit();
