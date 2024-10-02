@@ -6,6 +6,7 @@ import fetchUserData from '../../constants/fetchUserData.ts';
 import Sidebar from '../../components/ui/sidebar.tsx';
 import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
 import SignUpPopup from './SignUpPopup.tsx';
+import { MdDelete } from 'react-icons/md';
 interface Token {
   address: string;
   name: string;
@@ -231,20 +232,34 @@ window.location.href = '/crates/' + result.id;
   //     </div>
   //   );
   // }
+  const handleDeleteToken = (index: number) => {
+    const newSelectedTokens = [...selectedTokens]
+    newSelectedTokens.splice(index, 1)
+    setSelectedTokens(newSelectedTokens)
+    const newTotalAllocation = newSelectedTokens.reduce((sum, token) => sum + token.allocation, 0)
+    setTotalAllocation(newTotalAllocation)
+  }
 
   return (
-    
-    <div className="max-w-6xl mx-auto p-8 bg-gradient-to-b from-gray-900 via-lime-950 to-gray-900 text-white rounded-3xl shadow-2xl">
+    <div className="h-screen">
+    <div className="max-w-3xl mx-auto p-8 bg-gradient-to-b mt-20 from-zinc-950 to-black text-white rounded-3xl shadow-2xl relative">
+      <img src="/forgeGradient.png" draggable="false" className="absolute top-0 left-0 rounded-tl-xl z-0 " alt="" />
       {!isLoggedIn && <SignUpPopup />}
+      <div className='flex gap-4 items-center relative '>
+      <img src="/forgeIcon.png" className='relative rounded-full h-10 ' alt="" />
+      <h1 className="text-xl rounded-full border px-4 py-1 z-10 relative font-semibold text-white">Crates</h1>
       
-      <h1 className="md:text-4xl  text-2xl font-semibold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-lime-500 via-green-300 to-emerald-600 animate-gradient-y font-mono ">Forge Your Crate</h1>
+      </div>
+      <h1 className="relative mt-4 text-5xl max-sm:text-3xl font-bold">
+        Forge your own crate
+      </h1>
       
       <input
         type="text"
         value={crateName}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setCrateName(e.target.value)}
         placeholder="Name your crate"
-        className="w-full p-4 mb-8 bg-gray-800/50 backdrop-blur-sm border-2 border-lime-500/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lime-600/50 text-white placeholder-gray-400 transition-all duration-300 ease-in-out hover:border-lime-400/50 text-2xl"
+        className="w-full p-4 mb-8 mt-6 bg-gray-800/50 backdrop-blur-sm border-2 border-lime-500/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-lime-600/50 text-white placeholder-gray-400 transition-all duration-300 ease-in-out hover:border-lime-400/50 text-2xl"
       />
 
       <div className="relative mb-8">
@@ -277,7 +292,7 @@ window.location.href = '/crates/' + result.id;
         >
           <option value="">Select a token</option>
           {tokens.map((token) => (
-            <option key={token.address} value={token.address}>
+            <option className='bg-black' key={token.address} value={token.address}>
               {token.name} ({token.symbol})
             </option>
           ))}
@@ -297,6 +312,12 @@ window.location.href = '/crates/' + result.id;
             max="100"
           />
           <span className="ml-2 text-lime-400">%</span>
+          <button
+                  onClick={() => handleDeleteToken(index)}
+                  className="p-2 bg-red-500 rounded-full ml-2 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                >
+                  <MdDelete size={16} />
+                </button>
         </div>
       ))}
       
@@ -337,6 +358,7 @@ window.location.href = '/crates/' + result.id;
       </div>
       <Sidebar/>
       <SideBarPhone/>
+    </div>
     </div>
   );
 };
