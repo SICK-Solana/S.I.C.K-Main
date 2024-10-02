@@ -35,9 +35,9 @@ export const SideBarPhone = () => {
 
     },
     {
-      path: "/scroll",
-      logo: <GiDiamonds className={` ${location.pathname === "/scroll" ? "text-[#B6FF1B]" :" text-gray-400" }`} />,
-      name: <p className={` ${location.pathname === "/scroll" ? "text-[#B6FF1B] text-xs" :"text-xs  text-gray-400" }`}>{location.pathname === "/scroll" ? "/": ""}scroll </p>
+      path: "/sai",
+      logo: <GiDiamonds className={` ${location.pathname === "/sai" ? "text-[#B6FF1B]" :" text-gray-400" }`} />,
+      name: <p className={` ${location.pathname === "/sai" ? "text-[#B6FF1B] text-xs" :"text-xs  text-gray-400" }`}>{location.pathname === "/sai" ? "/": ""}s--ai </p>
 
 
     },

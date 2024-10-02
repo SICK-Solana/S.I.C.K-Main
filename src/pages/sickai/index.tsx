@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, ChangeEvent, KeyboardEvent } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { SendIcon, Loader2, Bot, User } from 'lucide-react';
+import SideBarPhone from '../../components/ui/sidebarPhone';
+import SideBar from '../../components/ui/sidebar';
 
 interface UserInfo {
     age: string;
@@ -142,7 +144,7 @@ export default function SickAi() {
     }, []);
 
     return (
-        <div className="flex flex-col h-screen bg-[#02050A] text-gray-200">
+        <div className="flex md:ml-20 md:mb-0 mb-20 flex-col h-[90vh] bg-[#02050A] text-gray-200">
             <div className="flex-1 overflow-hidden">
                 <div className="h-full overflow-y-auto px-4 py-6" ref={chatContainerRef}>
                     {chatHistory.map((chat, index) => (
@@ -198,6 +200,8 @@ export default function SickAi() {
                     </button>
                 </div>
             </div>
+            <SideBarPhone />
+            <SideBar />
         </div>
     );
 }

@@ -8,6 +8,7 @@ import CrateDetailPage from './pages/crates';
 import ExploreCrate from './pages/explorecrate/ExploreCrate';
 import Graphtest from './pages/graphtest';
 import SickAi from './pages/sickai';
+import SwapFunction from './pages/swap';
 
 const App: React.FC = () => {
   return (
@@ -22,6 +23,7 @@ const App: React.FC = () => {
         <Route path="/crates/:id" element={<CrateDetailPage />} />
         <Route path="/graphtest/:id" element={<Graphtest />} />   
         <Route path="/sai" element={<SickAi />} />
+        <Route path="/swap" element={<SwapFunction />} />
         </Routes>
     </Router>
   );
