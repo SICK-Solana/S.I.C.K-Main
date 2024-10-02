@@ -15,7 +15,10 @@ import tokenData from '../../pages/createcrate/tokens.json';
 import CombinedPriceChart from './CombinedPriceChart.tsx';
 import CrateValueDisplay from './CombinedTokenPrice.tsx';
 import truncate from '../../constants/truncate.ts';
-import { BiArrowBack } from "react-icons/bi";
+import Loader from '../../components/Loading.tsx';
+import { FaChevronLeft } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
+
 
 // import handleSwap from './handleSwap.tsx';
 const USDC_MINT = 'So11111111111111111111111111111111111111112';
@@ -74,7 +77,15 @@ const CrateDetailPage: React.FC = () => {
   const [returnAmount] = useState<number>(479);
   const [investmentPeriod, setInvestmentPeriod] = useState<number>(1);
 
-  
+  const publicKeyFromLocalStorage = localStorage.getItem('tipLink_pk_connected');
+  const userPublicKey = publicKeyFromLocalStorage ? new PublicKey(publicKeyFromLocalStorage) : null;
+
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate(-1); // Go back to the previous route
+  };
+
   useEffect(() => {
     const fetchCrateData = async () => {
       try {
@@ -247,7 +258,7 @@ const CrateDetailPage: React.FC = () => {
     }
   };
 
-  if (loading) return <div className='bg-black'>Loading... <Sidebar/> <SideBarPhone/></div>;
+  if (loading) return <div className=' h-screen'> <div className='mt-72'><Loader /></div>  <Sidebar/> <SideBarPhone/></div>;
   if (error) return <div>Error: {error}</div>;
   if (!crateData) return <div>No crate data found</div>;
 
@@ -255,22 +266,13 @@ const CrateDetailPage: React.FC = () => {
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white">
       <Sidebar />
       <div className="flex-1 p-4 md:p-8 md:pl-24">
-      <div className="relative flex items-center mb-8">
-  
-  <div 
-  onClick={()=>{window.history.back()}}
-  className="absolute left-0">
-    <BiArrowBack size={20} />
-  </div>
-  <h1 className="text-2xl flex justify-center items-center gap-2 md:text-3xl font-bold text-lime-400 mx-auto">
-    <div className='w-10 h-10'>
-      <img src={crateData.image} alt="icon" />
-    </div>
-    {crateData.name}
-  </h1>
-</div>
-
-
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+          <div className='flex items-center gap-2'>
+          <FaChevronLeft onClick={handleBack} className='cursor-pointer h-5'/>
+          <h1 className="text-2xl md:text-3xl font-bold text-lime-400 mb-4 md:mb-0">{crateData.name}</h1>
+          </div>
+          
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="col-span-1 md:col-span-2 bg-gray-800/10 rounded-xl p-4 md:p-6">
             <div className="flex justify-between items-center mb-4">
@@ -279,13 +281,16 @@ const CrateDetailPage: React.FC = () => {
                 <option>All</option>
               </select>
             </div>
-            <div className="h-64 md:h-80">
+            <div className="h-fit">
               <CombinedPriceChart tokens={crateData.tokens} />
+            <div className="flex gap-4 justify-between mt-4 text-sm">
+              <div className='flex gap-2 p-2 rounded-full border items-center border-white/20 bg-gradient-to-b from-[#ffffff]/[10%] to-[#999999]/[10%]'>
+              <div className="cursor-pointer pr-1 border-r border-gray-600"> <img src="/upvote.png" className='h-6' alt="" /></div>
+              <div className='font-medium px-1 text-[#B6FF1B]'>{crateData.upvotes - crateData.downvotes}</div>
+              <div className="cursor-pointer pl-1 border-l border-gray-600"> <img src="/downvote.png" className='h-6' alt="" /> </div>
+              </div>
+              <span className="text-[#b7ff1b98]">Created by: <a href="" className='underline text-medium text-[#B6FF1B]'>{truncate(crateData.creator.name, 10)}</a></span>
             </div>
-            <div className="flex justify-between mt-4 text-sm">
-              <span>↑ {crateData.upvotes}</span>
-              <span>↓ {crateData.downvotes}</span>
-              <span>Created by: {truncate(crateData.creator.name, 10)}</span>
             </div>
           </div>
           <div className="space-y-8">
