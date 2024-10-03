@@ -1,6 +1,6 @@
 
 import { Button } from "./button";
-import { ShoppingCart, Wallet } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 
