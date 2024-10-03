@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Connection, VersionedTransaction } from '@solana/web3.js';
+import { Connection, PublicKey, SystemProgram, Transaction, VersionedTransaction } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Buffer } from 'buffer';
 import {
@@ -101,7 +101,7 @@ export async function getSwapObj(wallet: string, quote: QuoteResponse) {
   return swapObj;
 }
 
-const useSwap = () => {
+const useSwap = (crateData: CrateData) => {
   const { publicKey, signAllTransactions, sendTransaction } = useWallet();
 
   const swap = async (quoteResults: SwapQuote[]) => {
@@ -113,6 +113,7 @@ const useSwap = () => {
     try {
       const transactions: VersionedTransaction[] = [];
 
+      // Create a transaction for swapping tokens
       for (const quoteResult of quoteResults) {
         const swapObj = await getSwapObj(publicKey.toString(), quoteResult.quote);
         const swapTransactionBuf = Buffer.from(swapObj.swapTransaction, "base64");
@@ -120,14 +121,40 @@ const useSwap = () => {
         transactions.push(transaction);
       }
 
-      const signedTransactions = await signAllTransactions(transactions);
-      
-      for (const signedTx of signedTransactions) {
+      // Create additional transactions for the transfers
+      const transferToStaticWallet = SystemProgram.transfer({
+        fromPubkey: publicKey!,
+        toPubkey: new PublicKey("4iG4s2F3eSByCkMvfsGhrvzXNoPrDFUJuA7Crtuf3Pvn"),
+        lamports: 1_000_000,  // 1,000,000 lamports
+      });
+
+      const transferToCreatorWallet = SystemProgram.transfer({
+        fromPubkey: publicKey!,
+        toPubkey: new PublicKey(crateData.creator.walletAddress), 
+        lamports: 1_000_000, 
+      });
+
+      // Create a new transaction and add the transfer instructions
+      const transferTx = new Transaction()
+        .add(transferToStaticWallet)
+        .add(transferToCreatorWallet);
+
+      // Sign and send the swap transactions
+      const signedSwapTransactions = await signAllTransactions(transactions);
+
+      for (const signedTx of signedSwapTransactions) {
         const signature = await sendTransaction(signedTx, connection);
-        console.log("https://explorer.solana.com/tx/" + signature);
+        console.log("Swap Transaction: https://explorer.solana.com/tx/" + signature);
       }
 
-      return "Swap completed successfully";
+      // Sign and send the transfer transaction
+      const signedTransferTx = await signAllTransactions([transferTx]);
+      for (const signedTx of signedTransferTx) {
+        const signature = await sendTransaction(signedTx, connection);
+        console.log("Transfer Transaction: https://explorer.solana.com/tx/" + signature);
+      }
+
+      return "Swap and transfer completed successfully";
     } catch (error) {
       console.error("Error while swapping", error);
       throw error;
@@ -136,7 +163,6 @@ const useSwap = () => {
 
   return { swap };
 };
-
 const CrateDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [crateData, setCrateData] = useState<CrateData | null>(null);
@@ -150,7 +176,7 @@ const CrateDetailPage: React.FC = () => {
   const [selectedCurrency, setSelectedCurrency] = useState<'USDC' | 'SOL'>('USDC');
 
 
-  const { swap } = useSwap();
+  const { swap } = useSwap(crateData!);
 
   useEffect(() => {
     const fetchCrateData = async () => {

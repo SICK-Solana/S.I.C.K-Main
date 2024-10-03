@@ -37,13 +37,7 @@ const useCrateCharts = (crates: Crate[]) => {
         const ids = Array.from(allCoingeckoIds).join(',');
         if (ids) {
             const response = await fetch(
-              `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=${allCoingeckoIds.size}&page=1&sparkline=true&price_change_percentage=24h`,
-              {
-                headers: {
-                  accept: 'application/json',
-                  'x-cg-pro-api-key': 'CG-pQUizaXSABJu6ipTw8UFJ8ny'
-                }
-              }
+              `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=${allCoingeckoIds.size}&page=1&sparkline=true&price_change_percentage=24h`
             );
             const data: PriceData[] = await response.json();
 
@@ -70,7 +64,7 @@ const useCrateCharts = (crates: Crate[]) => {
     };
 
     fetchBatchPriceData();
-  }, [crates]);
+  }, [crates , setChartsData]);
   const processChartData = (
     priceData: PriceData[],
     tokens: Token[]
