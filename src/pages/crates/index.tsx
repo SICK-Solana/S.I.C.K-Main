@@ -184,9 +184,14 @@ const CrateDetailPage: React.FC = () => {
       console.log('tokenAllocations', tokenAllocations);  
   
       const inputMint = selectedCurrency === 'USDC' ? USDC_MINT : SOL_MINT;
+      const inputDecimals = selectedCurrency === 'USDC' ? 6 : 9;  // USDC has 6 decimals, SOL has 9
+      
       const quotePromises = tokenAllocations.map(async ({ mint, amount }) => {
         try {
-          const quote = await getQuote(inputMint, mint, Math.floor(amount * 1000000));
+            // Convert amount to lamports or USDC atomic units
+        const atomicAmount = Math.floor(amount * Math.pow(10, inputDecimals));
+        
+          const quote = await getQuote(inputMint, mint, atomicAmount);
           console.log(`Quote for ${mint}:`, quote);
           const token = tokenData.find(t => t.address === mint);
           return token ? { symbol: token.symbol, quote } : null;
