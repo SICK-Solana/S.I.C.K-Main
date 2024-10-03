@@ -1,10 +1,10 @@
-import { Button } from "../components/ui/button";
 import { BentoGrid } from "../components/ui/bentogrid";
 import { WalletMultiButton } from "@tiplink/wallet-adapter-react-ui";
 import { FaXTwitter } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState , useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react"; // Import useWallet hook
+import  fetchUserData from '../constants/fetchUserData.ts';
 
 
 export default function Landing() {
@@ -18,20 +18,32 @@ export default function Landing() {
   };
 
   useEffect(() => {
-    // Check if user data exists in localStorage
-    const user = localStorage.getItem("user");
-    if (user) {
+    const checkLoginStatus = async () => {
+      const storedWalletAddress = localStorage.getItem("walletAddress");
+      
+      if (storedWalletAddress) {
+        // Wallet address is already stored, proceed to explore crate
+        window.location.href = "/explorecrate";
+        return;
+      }
 
-window.location.href = "/dashboard";  }
-else {
+      if (connected && publicKey) {
+        // Store the wallet address in localStorage
+        localStorage.setItem("walletAddress", publicKey.toString());
+        
+        // Fetch user data
+        const user = await fetchUserData();
+        if (user) {
+          localStorage.setItem('creatorId', user.id);
+          window.location.href = "/explorecrate";
+        }else{
+        window.location.href = "/explorecrate";
+        }
+      }
+    };
 
-  // Store the wallet address in localStorage if connected
-  if (connected && publicKey) {
-    localStorage.setItem("walletAddress", publicKey.toString());
-  }
-}
-  },  [connected, publicKey]); 
-
+    checkLoginStatus();
+  }, [connected, publicKey]);
   return (
     <>
       <img
@@ -96,14 +108,17 @@ else {
               <span className="text-white">"Crates"</span> and get acknowledged
               with a Social angle
             </p>
-            <a
-              href="/cratecreator"
-              className="border px-1 py-4 border-[#797979ad]  rounded-full"
-            >
-              <Button className="text-gray-900 px-[23px] font-semibold py-[20px] rounded-full text-[14px] bg-gradient-to-b from-[#A9F605] to-[#5e8d00] hover:shadow-[0_12px_24px_rgba(182,255,27,0.3)] transition-shadow duration-300">
-                Get Started
-              </Button>
-            </a>
+           
+              {/* <Button className="text-gray-900 px-[23px] font-semibold py-[20px] rounded-full text-[14px] bg-gradient-to-b from-[#A9F605] to-[#5e8d00] hover:shadow-[0_12px_24px_rgba(182,255,27,0.3)] transition-shadow duration-300"> */}
+              <WalletMultiButton
+              style={{
+                background: "#A9F605",
+                color: "black",
+                borderRadius: "180px",
+              }}
+            />
+              {/* </Button> */}
+         
             <AnimatePresence>
               <motion.img
                 src="/sickCursor.png"
