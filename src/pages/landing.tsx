@@ -4,8 +4,12 @@ import { WalletMultiButton } from "@tiplink/wallet-adapter-react-ui";
 import { FaXTwitter } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState , useEffect } from "react";
+import { useWallet } from "@solana/wallet-adapter-react"; // Import useWallet hook
+
 
 export default function Landing() {
+  const { publicKey, connected } = useWallet(); // Get the wallet address and connection status
+
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const getRandomPosition = () => {
     const randomX = Math.floor(Math.random() * 300)-150; // Random value between -100 and 100
@@ -19,7 +23,14 @@ export default function Landing() {
     if (user) {
 
 window.location.href = "/dashboard";  }
-  }, []);
+else {
+
+  // Store the wallet address in localStorage if connected
+  if (connected && publicKey) {
+    localStorage.setItem("walletAddress", publicKey.toString());
+  }
+}
+  },  [connected, publicKey]); 
 
   return (
     <>
