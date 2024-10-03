@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import {  Connection, VersionedTransaction } from '@solana/web3.js';
+import {  Connection, VersionedTransaction ,  sendAndConfirmTransaction, PublicKey, TransactionMessage } from '@solana/web3.js';
 // wallet 
 import { useWallet } from '@solana/wallet-adapter-react';
 import { QuoteResponse } from '@jup-ag/api';
@@ -65,6 +65,9 @@ type SwapQuote = {
 
 export type { SwapQuote };
 
+const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=a95e3765-35c7-459e-808a-9135a21acdf6');
+
+
 const CrateDetailPage: React.FC = () => {
   const wallet = useWallet();
   const { id } = useParams<{ id: string }>();
@@ -105,80 +108,121 @@ const CrateDetailPage: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputAmount(e.target.value);
   };
+  
+const handleSwap = async (quoteResults: SwapQuote[], wallet: any) => {
+  if (!wallet.publicKey || !wallet.signTransaction) {
+    console.error('Wallet not connected');
+    return;
+  }
 
-  const handleSwap = async (quote: QuoteResponse, wallet: any) => {
-    if (!wallet.publicKey || !wallet.signTransaction) {
-      console.error('Wallet not connected');
-      return;
-    }
+  try {
+    // Ensure wallet.publicKey is a PublicKey object
+    const publicKey = wallet.publicKey instanceof PublicKey 
+      ? wallet.publicKey 
+      : new PublicKey(wallet.publicKey);
 
-    try {
-      console.log('Swapping:', quote);
-
-      const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=a95e3765-35c7-459e-808a-9135a21acdf6');
-
-      // Prepare the swap request
+    let allInstructions: any[] = [];
+    
+    for (const quote of quoteResults) {
+      // console.log('quote', quote);
       const swapRequestBody = {
-        quoteResponse: quote,
-        userPublicKey: wallet.publicKey.toString(),
+        quoteResponse: quote.quote,
+        userPublicKey: publicKey.toString(),
         wrapUnwrapSOL: true
       };
-//       const quoteResponse = await (
-//         await fetch('https://quote-api.jup.ag/v6/quote?inputMint=So11111111111111111111111111111111111111112&outputMint=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&amount=100000000&slippageBps=50')
-//       ).json();
-// console.log(quoteResponse);
-      console.log('Swap Request Body:', swapRequestBody);
 
       const swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(swapRequestBody)
       });
 
       if (!swapResponse.ok) {
-        const errorText = await swapResponse.text();
-        throw new Error(`Swap API error: ${swapResponse.status} ${errorText}`);
+        throw new Error(`Swap API error: ${swapResponse.status}`);
       }
 
       const swapResponseJson = await swapResponse.json();
-      console.log('Swap Response:', swapResponseJson);
-
+      
       if (!swapResponseJson.swapTransaction) {
         throw new Error('Swap transaction is missing from the response');
       }
+// console.log(swapResponseJson.swapTransaction)
 
       const swapTransactionBuf = Buffer.from(swapResponseJson.swapTransaction, 'base64');
-      const transaction = VersionedTransaction.deserialize(swapTransactionBuf);
-
-      console.log('Deserialized transaction:', transaction);
-
-      const signedTransaction = await wallet.signTransaction(transaction);
-
-      const rawTransaction = signedTransaction.serialize();
-      const txid = await connection.sendRawTransaction(rawTransaction, {
-        skipPreflight: true,
-        maxRetries: 2
-      });
-
-      console.log('Transaction sent:', txid);
-      await connection.confirmTransaction(txid);
-      console.log('Transaction confirmed:', txid);
-
-      return txid;
-    } catch (error) {
-      console.error('Failed to send transaction:', error);
-      if (error instanceof Error) {
-        console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
-      }
-      throw error;
+      const swapTx = VersionedTransaction.deserialize(swapTransactionBuf);
+      // console.log(swapTx);
+      // console.log(swapTransactionBuf);
+      
+      const message = swapTx.message;
+      // console.log(message)
+      allInstructions = allInstructions.concat(message.compiledInstructions);
     }
-  };
+
+    const latestBlockhash = await connection.getLatestBlockhash();
+    console.log('Blockhash:', latestBlockhash.blockhash);
+      // Check if all necessary properties are defined
+      console.log('Checking transaction message properties:');
+      console.log('payerKey:', publicKey);
+      console.log('recentBlockhash:', latestBlockhash.blockhash);
+      console.log('instructions length:', allInstructions.length);
+  
+    const messageV0 = new TransactionMessage({
+      payerKey: publicKey,
+      instructions: allInstructions,
+      recentBlockhash: latestBlockhash.blockhash,
+    }).compileToV0Message();
+    console.log('MessageV0:', messageV0);
+    const transaction = new VersionedTransaction(messageV0);
+console.log(transaction, "jhu")
+    // Have the user sign the transaction
+    const signedTransaction = await wallet.signTransaction(transaction);
+    // console.log('PublicKey:', publicKey.toBase58());
+    console.log('Blockhash:', latestBlockhash.blockhash);
+    console.log('Instructions:', allInstructions);
+    // Send and confirm the transaction
+    const txid = await sendAndConfirmTransaction(
+      connection,
+      signedTransaction,
+      [],
+      { maxRetries: 5 }
+    );
+    // console.log('PublicKey:', publicKey.toBase58());
+console.log('Blockhash:', latestBlockhash.blockhash);
+console.log('Instructions:', allInstructions);
+
+    console.log('Swap transaction sent:', txid);
+    return txid;
+
+  } catch (error) {
+    
+    console.error('Failed to send swap transaction:', error);
+    throw error;
+  }
+};
+const onSwap = async () => {
+  if (!quoteResults || quoteResults.length === 0) {
+    setError("No quotes available. Please get quotes first.");
+    return;
+  }
+
+  setLoading(true);
+  setError(null);
+
+  try {
+    const txid = await handleSwap(quoteResults, wallet);
+    console.log(`Swap successful for all tokens, transaction ID:`, txid);
+    // Update UI or state as needed after successful swaps
+    setQuoteResults(null); // Clear quotes after successful swaps
+  } catch (error) {
+    console.error('Swap failed:', error);
+    setError("Swap failed. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
   const getSwapQuotes = async (tokenAllocations: { mint: string; amount: number }[]) => {
     try {
-      console.log('tokenAllocations', tokenAllocations);
+      console.log('tokenAllocations', tokenAllocations);  
 
       const quotePromises = tokenAllocations.map(async ({ mint, amount }) => {
         try {
@@ -226,31 +270,7 @@ const CrateDetailPage: React.FC = () => {
     }
   };
 
-  const onSwap = async () => {
-    if (!quoteResults || quoteResults.length === 0) {
-      setError("No quotes available. Please get quotes first.");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      for (const result of quoteResults) {
-        const txid = await handleSwap(result.quote, wallet);
-        console.log(`Swap successful for ${result.mint}, transaction ID:`, txid);
-      }
-      // Update UI or state as needed after all swaps are complete
-      setQuoteResults(null); // Clear quotes after successful swaps
-    } catch (error) {
-      console.error('Swap failed:', error);
-      setError("Swap failed. Please try again.");
-      window.location.reload();
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  
   if (loading) return <div className=' h-screen'> <div className='mt-72'><Loader /></div>  <Sidebar/> <SideBarPhone/></div>;
   if (error) return <div>Error: {error}</div>;
   if (!crateData) return <div>No crate data found</div>;
