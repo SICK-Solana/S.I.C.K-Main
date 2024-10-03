@@ -133,15 +133,14 @@ export default function CryptoDashboard() {
                   title={crate.name}
                   subtitle="Mid Cap: 8" // fix backend
                   percentage={12.2}
-                  tokens={
-                    crate.tokens.map(token => {
-                      return {
-                        icon: `https://cryptologos.cc/logos/${token.name}-logo.png`,
-                        percentage: 10
-                      }
-                    })
-                  }
-                />
+                  tokens={crate.tokens.map(token => {
+                    return {
+                      symbol: token.name,
+                      quantity: 0, // Set a default value or fetch the actual quantity
+                      icon: `https://cryptologos.cc/logos/${token.name}-logo.png`,
+                      percentage: 10
+                    };
+                  })} creator={''} chartData={[]}                />
               ))
             )}
           </div>
