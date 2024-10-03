@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import {  Connection, VersionedTransaction ,  sendAndConfirmTransaction, PublicKey, TransactionMessage } from '@solana/web3.js';
+import {  Connection, VersionedTransaction ,  sendAndConfirmTransaction, TransactionMessage } from '@solana/web3.js';
 // wallet 
 import { useWallet } from '@solana/wallet-adapter-react';
 import { QuoteResponse } from '@jup-ag/api';
@@ -116,10 +116,7 @@ const handleSwap = async (quoteResults: SwapQuote[], wallet: any) => {
   }
 
   try {
-    // Ensure wallet.publicKey is a PublicKey object
-    const publicKey = wallet.publicKey instanceof PublicKey 
-      ? wallet.publicKey 
-      : new PublicKey(wallet.publicKey);
+
 
     let allInstructions: any[] = [];
     
@@ -127,7 +124,7 @@ const handleSwap = async (quoteResults: SwapQuote[], wallet: any) => {
       // console.log('quote', quote);
       const swapRequestBody = {
         quoteResponse: quote.quote,
-        userPublicKey: publicKey.toString(),
+        userPublicKey: wallet.publicKey.toBase58(),
         wrapUnwrapSOL: true
       };
 
@@ -162,12 +159,14 @@ const handleSwap = async (quoteResults: SwapQuote[], wallet: any) => {
     console.log('Blockhash:', latestBlockhash.blockhash);
       // Check if all necessary properties are defined
       console.log('Checking transaction message properties:');
-      console.log('payerKey:', publicKey);
+ 
       console.log('recentBlockhash:', latestBlockhash.blockhash);
       console.log('instructions length:', allInstructions.length);
-  
+  console.log({ payerKey: wallet.publicKey,
+    instructions: allInstructions,
+    recentBlockhash: latestBlockhash.blockhash})
     const messageV0 = new TransactionMessage({
-      payerKey: publicKey,
+      payerKey: wallet.publicKey,
       instructions: allInstructions,
       recentBlockhash: latestBlockhash.blockhash,
     }).compileToV0Message();
