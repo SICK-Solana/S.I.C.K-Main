@@ -45,7 +45,7 @@ const CrateCard: React.FC<CrateCardProps> = ({
   downvotes,
   chartData,
 }) => {
-  const [error, setError] = useState<string | null>(null);
+
   const [yAxisDomain, setYAxisDomain] = useState<number[]>([0, 0]);
 
   useEffect(() => {
@@ -53,8 +53,6 @@ const CrateCard: React.FC<CrateCardProps> = ({
       const minValue = Math.min(...chartData.map((d) => d.value));
       const maxValue = Math.max(...chartData.map((d) => d.value));
       setYAxisDomain([minValue * 0.99, maxValue * 1.01]);
-    }else{
-      setError('No data found');
     }
   }, [chartData]);
 
@@ -71,14 +69,7 @@ const CrateCard: React.FC<CrateCardProps> = ({
 
     return (
       <>
-        {error ? (
-          <div className="mb-10">
-            <img src="/errorgraph.png" className="h-96 mx-auto opacity-50" alt="Error Graph" />
-            <h1 className="text-xl max-sm:text-base text-white font-bold text-center">
-              Sorry, We couldn't fetch any graphs {":("}
-            </h1>
-          </div>
-        ) : (
+     
           <ResponsiveContainer width="100%" height={130}>
             <LineChart data={chartData}>
               <XAxis
@@ -106,7 +97,7 @@ const CrateCard: React.FC<CrateCardProps> = ({
               />
             </LineChart>
           </ResponsiveContainer>
-        )}
+        
       </>
     );
   };
@@ -163,7 +154,7 @@ const CrateCard: React.FC<CrateCardProps> = ({
         </span>
       </span>
     </div>
-  );
-};
+
+  );};
 
 export default CrateCard;
