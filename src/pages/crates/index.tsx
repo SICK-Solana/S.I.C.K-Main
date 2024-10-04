@@ -174,7 +174,7 @@ const CrateDetailPage: React.FC = () => {
   const [returnAmount] = useState<number>(479);
   const [investmentPeriod, setInvestmentPeriod] = useState<number>(1);
   const [selectedCurrency, setSelectedCurrency] = useState<'USDC' | 'SOL'>('USDC');
-
+  const [loadingvote, setLoadingvote] = useState(false);
 
   const { swap } = useSwap(crateData!);
 
@@ -288,6 +288,70 @@ const CrateDetailPage: React.FC = () => {
   if (error) return <div>Error: {error}</div>;
   if (!crateData) return <div>No crate data found</div>;
 
+  const userId = "cm1ispv1h0001aafmawouos0i";
+  const handleUpvote = async () => {
+    setLoadingvote(true); // Start loading
+    console.log("Upvoting crate:", id, "by user:", userId); // Debug
+    try {
+      const response = await fetch(
+        'https://sickb.vercel.app/api/crates/${id}/upvote',
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user: userId, // Passing the user ID in the body
+          }),
+        }
+      );
+      if (response.ok) {
+        console.log("Upvote successful"); // Debug
+        setCrateData((prevState: any) => ({
+          ...prevState,
+          upvotes: prevState.upvotes + 1,
+        }));
+      } else {
+        throw new Error('Failed to upvote. Status: ${response.status}');
+      }
+    } catch (error) {
+      console.error("Failed to upvote:", error); // Debug
+    } finally {
+      setLoadingvote(false); // End loading
+    }
+  };
+  const handleDownvote = async () => {
+    setLoadingvote(true);
+    console.log("Downvoting crate:", id, "by user:", userId); // Debug
+    try {
+      const response = await fetch(
+        'https://sickb.vercel.app/api/crates/${id}/downvote',
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user: userId, // Passing the user ID in the body
+          }),
+        }
+      );
+      if (response.ok) {
+        console.log("Downvote successful"); // Debug
+        setCrateData((prevState: any) => ({
+          ...prevState,
+          downvotes: prevState.downvotes + 1,
+        }));
+      } else {
+        throw new Error('Failed to downvote. Status: ${response.status}');
+      }
+    } catch (error) {
+      console.error("Failed to downvote:", error); // Debug
+    } finally {
+      setLoadingvote(false); // End loading
+    }
+  };
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white">
       <Sidebar />
@@ -314,12 +378,51 @@ const CrateDetailPage: React.FC = () => {
             <div className="h-fit">
               <CombinedPriceChart tokens={crateData.tokens} />
               <div className="flex gap-4 justify-between mt-4 text-sm">
-                <div className='flex gap-2 p-2 rounded-full border items-center border-white/20 bg-gradient-to-b from-[#ffffff]/[10%] to-[#999999]/[10%]'>
-                  <div className="cursor-pointer pr-1 border-r border-gray-600"> <img src="/upvote.png" className='h-6' alt="" /></div>
-                  <div className='font-medium px-1 text-[#B6FF1B]'>{crateData.upvotes - crateData.downvotes}</div>
-                  <div className="cursor-pointer pl-1 border-l border-gray-600"> <img src="/downvote.png" className='h-6' alt="" /> </div>
+              <div className="flex gap-4 justify-between mt-4 text-sm">
+                <div className="flex gap-3 p-2 min-w-[120px] rounded-full border items-center border-white/20 bg-gradient-to-b from-[#ffffff]/[10%] to-[#999999]/[10%]">
+                  {loadingvote ? (
+                    <div className="flex justify-center items-center max-h-[20px] w-full">
+                      <div className="newtons-cradle">
+                        <div className="newtons-cradle__dot"></div>
+                        <div className="newtons-cradle__dot"></div>
+                        <div className="newtons-cradle__dot"></div>
+                        <div className="newtons-cradle__dot"></div>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div
+                        className="cursor-pointer space-x-2 pr-1 flex flex-row"
+                        onClick={handleUpvote}
+                      >
+                        <img src="/upvote.png" className="h-6" alt="Upvote" />
+                        <div className="font-medium text-[#B6FF1B] text-center">
+                          {crateData.upvotes}
+                        </div>
+                      </div>
+                      <div
+                        className="cursor-pointer space-x-2 pl-1 border-l border-gray-600 flex flex-row"
+                        onClick={handleDownvote}
+                      >
+                        <img
+                          src="/downvote.png"
+                          className="h-6"
+                          alt="Downvote"
+                        />
+                        <div className="font-medium text-[#FF4B4B] text-center">
+                          {crateData.downvotes}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
-                <span className="text-[#b7ff1b98]">Created by: <a href="" className='underline text-medium text-[#B6FF1B]'>{truncate(crateData.creator.name, 10)}</a></span>
+                <span className="text-[#b7ff1b98]">
+                  Created by:{" "}
+                  <a href="" className="underline text-medium text-[#B6FF1B]">
+                    {truncate(crateData.creator.name, 10)}
+                  </a>
+                </span>
+                </div>
               </div>
             </div>
           </div>
