@@ -131,6 +131,7 @@ export default function CryptoDashboard() {
                   upvotes={crate.upvotes}
                   downvotes={crate.downvotes} // Fixed to use downvotes
                   title={crate.name}
+                  weightedPriceChange={0} // Placeholder
                   subtitle="Mid Cap: 8" // fix backend
                   percentage={12.2}
                   tokens={crate.tokens.map(token => {
