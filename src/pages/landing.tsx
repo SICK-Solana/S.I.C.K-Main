@@ -24,21 +24,13 @@ export default function Landing() {
       if (storedWalletAddress) {
         // Wallet address is already stored, proceed to explore crate
         window.location.href = "/explorecrate";
-        return;
       }
 
       if (connected && publicKey) {
         // Store the wallet address in localStorage
         localStorage.setItem("walletAddress", publicKey.toString());
-        
-        // Fetch user data
-        const user = await fetchUserData();
-        if (user) {
-          localStorage.setItem('creatorId', user.id);
-          window.location.href = "/explorecrate";
-        }else{
+        await fetchUserData();
         window.location.href = "/explorecrate";
-        }
       }
     };
 
