@@ -1,0 +1,25 @@
+{
+    "name": "S.I.C.K.",
+    "short_name": "S.I.C.K.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0A1019",
+    "theme_color": "#0A1019",
+    "icons": [
+      {
+        "src": "/icon-192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/icon-512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      },
+      {
+        "src": "/icon-1080.png",
+        "sizes": "1080x1080",
+        "type": "image/png"
+      }
+    ]
+  }
