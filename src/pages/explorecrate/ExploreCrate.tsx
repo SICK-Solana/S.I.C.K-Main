@@ -32,7 +32,7 @@ const ExploreCrate: React.FC = () => {
   const [crates, setCrates] = useState<Crate[]>([]);
   const [sortOption, setSortOption] = useState<string>('createdAt');
   const [loading, setLoading] = useState<boolean>(true);
-  const {  chartsData } = useCrateCharts(crates);
+  const {  chartsData , weightedPriceChanges } = useCrateCharts(crates);
    useEffect(() => {
     const fetchCrates = async () => {
       try {
@@ -122,6 +122,7 @@ const ExploreCrate: React.FC = () => {
                   subtitle={`Created: ${new Date(crate.createdAt).toLocaleDateString()}`}
                   percentage={0} // Placeholder
                   tokens={crate.tokens}
+                  weightedPriceChange={weightedPriceChanges[crate.id] || 0} // Placeholder
                   upvotes={crate.upvotes}
                   downvotes={crate.downvotes}
                 />

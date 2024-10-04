@@ -19,7 +19,8 @@ const SignUpPopup: React.FC = () => {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [username, setUsername] = useState<string>('');
-  const [profileImage, setProfileImage] = useState<string>('');
+  //@ts-ignore
+  const [profileImage, setProfileImage] = useState<string>('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQz1GMaWQT_r5ZX7kSoIHsRUM4ppivo5s7xnQ&s');
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
@@ -110,13 +111,13 @@ const SignUpPopup: React.FC = () => {
             placeholder="Username"
             className="w-full px-4 py-3 bg-black/50 border border-lime-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-lime-500/50 text-white placeholder-gray-400 transition-all duration-300"
           />
-          <input
+          {/* <input
             type="text"
             value={profileImage}
             onChange={(e) => setProfileImage(e.target.value)}
             placeholder="Profile Image URL"
             className="w-full px-4 py-3 bg-black/50 border border-lime-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-lime-500/50 text-white placeholder-gray-400 transition-all duration-300"
-          />
+          /> */}
           <button
             type="submit"
             className={`w-full px-6 py-4 text-black font-bold rounded-xl ${

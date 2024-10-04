@@ -1,6 +1,5 @@
-import React, {  useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Bookmark, ArrowBigUp, ArrowBigDown } from "lucide-react";
-import tokenData from '../pages/createcrate/tokens.json';
 import {
   LineChart,
   Line,
@@ -9,6 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import tokenData from '../pages/createcrate/tokens.json';
 import truncate from '../constants/truncate';
 
 interface ChartDataPoint {
@@ -16,22 +16,25 @@ interface ChartDataPoint {
   value: number;
 }
 
+interface Token {
+  symbol: string;
+  quantity: number;
+  icon: string;
+  percentage: number;
+}
+
 interface CrateCardProps {
   title: string;
   creator: string;
   subtitle: string;
   percentage: number;
-  tokens: {
-    symbol: string | undefined;
-    quantity: number;
-    icon: string;
-    percentage: number;
-  }[];
+  tokens: Token[];
   isFilled?: boolean;
   handleClick?: () => void;
   upvotes: number;
   downvotes: number;
   chartData: ChartDataPoint[];
+  weightedPriceChange: number;
 }
 
 const CrateCard: React.FC<CrateCardProps> = ({
@@ -44,8 +47,8 @@ const CrateCard: React.FC<CrateCardProps> = ({
   upvotes,
   downvotes,
   chartData,
+  weightedPriceChange,
 }) => {
-
   const [yAxisDomain, setYAxisDomain] = useState<number[]>([0, 0]);
 
   useEffect(() => {
@@ -56,49 +59,47 @@ const CrateCard: React.FC<CrateCardProps> = ({
     }
   }, [chartData]);
 
-  const formatYAxis = (value: number) => value.toFixed(2);
+  const formatYAxis = (value: number) => {
+    if (value >= 1) return value.toFixed(2);
+    if (value >= 0.01) return value.toFixed(4);
+    return value.toFixed(8);
+  };
 
   const priceChangeColor = useMemo(() => {
-    if (!chartData || chartData.length === 0) return "#ffffff";
-    const isChartPositive = chartData[0].value <= chartData[chartData.length - 1].value;
-    return isChartPositive ? "#4ade80" : "#ef4444";
-  }, [chartData]);
+    return weightedPriceChange >= 0 ? "#4ade80" : "#ef4444";
+  }, [weightedPriceChange]);
 
   const renderChart = () => {
     if (!chartData || chartData.length === 0) return null;
 
     return (
-      <>
-     
-          <ResponsiveContainer width="100%" height={130}>
-            <LineChart data={chartData}>
-              <XAxis
-                dataKey="timestamp"
-                type="number"
-                domain={["dataMin", "dataMax"]}
-                tickFormatter={(timestamp) =>
-                  new Date(timestamp).toLocaleDateString()
-                }
-                hide
-              />
-              <YAxis domain={yAxisDomain} tickFormatter={formatYAxis} hide />
-              <Tooltip
-                contentStyle={{ backgroundColor: "#2a2a2a", border: "none" }}
-                itemStyle={{ color: "#fff" }}
-                formatter={(value: number) => [`$${formatYAxis(value)}`, "Combined Value"]}
-                labelFormatter={(label) => new Date(label).toLocaleString()}
-              />
-              <Line
-                type="monotone"
-                dataKey="value"
-                stroke={priceChangeColor}
-                strokeWidth={2}
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        
-      </>
+      <ResponsiveContainer width="100%" height={130}>
+        <LineChart data={chartData}>
+          <XAxis
+            dataKey="timestamp"
+            type="number"
+            domain={["dataMin", "dataMax"]}
+            tickFormatter={(timestamp) =>
+              new Date(timestamp).toLocaleDateString()
+            }
+            hide
+          />
+          <YAxis domain={yAxisDomain} tickFormatter={formatYAxis} hide />
+          <Tooltip
+            contentStyle={{ backgroundColor: "#2a2a2a", border: "none" }}
+            itemStyle={{ color: "#fff" }}
+            formatter={(value: number) => [`$${formatYAxis(value)}`, "Combined Value"]}
+            labelFormatter={(label) => new Date(label).toLocaleString()}
+          />
+          <Line
+            type="monotone"
+            dataKey="value"
+            stroke={priceChangeColor}
+            strokeWidth={2}
+            dot={false}
+          />
+        </LineChart>
+      </ResponsiveContainer>
     );
   };
 
@@ -130,7 +131,7 @@ const CrateCard: React.FC<CrateCardProps> = ({
       </div>
 
       <div className="flex items-center space-x-1">
-        {tokens.slice(0, 3).map((token, index) => (
+        {tokens.slice(0, 2).map((token, index) => (
           <div key={index} className="flex items-center space-x-1">
             <img
               src={
@@ -143,18 +144,22 @@ const CrateCard: React.FC<CrateCardProps> = ({
             <span className="text-xs text-gray-400">{token.quantity}%</span>
           </div>
         ))}
-        {tokens.length > 3 && (
-          <span className="text-xs text-gray-400">+{tokens.length - 3}</span>
+        {tokens.length > 2 && (
+          <span className="text-xs text-gray-400">+{tokens.length - 2}</span>
         )}
       </div>
 
-      <span className="text-[#b7ff1b98] absolute bottom-4 right-4">
-        Created by: <span className="underline text-medium text-[#B6FF1B]">
+      <span className="text-[#b7ff1b98] text-xs absolute bottom-4 right-4">
+     
+        Created by: <span className="underline text-medium text-sm text-[#B6FF1B]">
           {truncate(creator, 10)}
+        </span>
+        <span className={`text-xs ml-2 ${weightedPriceChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+          {weightedPriceChange >= 0 ? '▲ ': '▼ '}{weightedPriceChange.toFixed(2)}%
         </span>
       </span>
     </div>
-
-  );};
+  );
+};
 
 export default CrateCard;

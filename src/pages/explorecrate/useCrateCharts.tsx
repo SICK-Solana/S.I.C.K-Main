@@ -27,6 +27,7 @@ interface ChartDataPoint {
 
 const useCrateCharts = (crates: Crate[]) => {
   const [chartsData, setChartsData] = useState<{ [crateId: string]: ChartDataPoint[] }>({});
+  const [weightedPriceChanges, setWeightedPriceChanges] = useState<{ [crateId: string]: number }>({});
 
   useEffect(() => {
     const fetchBatchPriceData = async () => {
@@ -35,47 +36,50 @@ const useCrateCharts = (crates: Crate[]) => {
           crates.flatMap(crate => crate.tokens.map(token => token.coingeckoId))
         );
         const ids = Array.from(allCoingeckoIds).join(',');
-        console.log("Fetching data for these ids:", ids); // Log the ids
+        console.log("Fetching data for these ids:", ids);
         const response = await fetch(
           `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=${allCoingeckoIds.size}&page=1&sparkline=true&price_change_percentage=24h`
         );
         const data: PriceData[] = await response.json();
-        console.log("Received price data:", data); // Log the data
-  
+        console.log("Received price data:", data);
+
         const processedData: { [crateId: string]: ChartDataPoint[] } = {};
-  
+        const processedWeightedPriceChanges: { [crateId: string]: number } = {};
+
         crates.forEach(crate => {
-          const chartData = processChartData(data, crate.tokens);
-          console.log("Processed chart data for crate", crate.id, chartData); // Log chart data
+          const { chartData, weightedPriceChange } = processChartData(data, crate.tokens);
+          console.log("Processed chart data for crate", crate.id, chartData);
           processedData[crate.id] = chartData;
+          processedWeightedPriceChanges[crate.id] = weightedPriceChange;
         });
-  
+
         setChartsData(processedData);
+        setWeightedPriceChanges(processedWeightedPriceChanges);
       } catch (err) {
         console.error("Error fetching price data:", err);
       }
     };
-  
+
     fetchBatchPriceData();
   }, [crates]);
-  
+
   const processChartData = (
     priceData: PriceData[],
     tokens: Token[]
-  ): ChartDataPoint[] => {
-    const quantityMap = new Map(
-      tokens.map((token) => [token.coingeckoId, token.quantity])
-    ); // Percentage, not actual quantity
+  ): { chartData: ChartDataPoint[], weightedPriceChange: number } => {
     const combinedData: ChartDataPoint[] = [];
+    let totalWeightedPriceChange = 0;
+    let totalWeight = 0;
 
     const dataPoints = priceData[0]?.sparkline_in_7d.price.length || 0;
 
     for (let i = 0; i < dataPoints; i++) {
       let combinedValue = 0;
-      priceData.forEach((coin) => {
-        const quantityPercentage = quantityMap.get(coin.id) || 0; // This is a percentage (0-100)
-        combinedValue +=
-          (coin.sparkline_in_7d.price[i] * quantityPercentage) / 100; // Adjust for percentage
+      tokens.forEach((token) => {
+        const coinData = priceData.find(p => p.id === token.coingeckoId);
+        if (coinData) {
+          combinedValue += (coinData.sparkline_in_7d.price[i] * token.quantity) / 100;
+        }
       });
 
       combinedData.push({
@@ -84,10 +88,20 @@ const useCrateCharts = (crates: Crate[]) => {
       });
     }
 
-    return  combinedData 
-};
+    tokens.forEach((token) => {
+      const coinData = priceData.find(p => p.id === token.coingeckoId);
+      if (coinData) {
+        totalWeightedPriceChange += coinData.price_change_percentage_24h * (token.quantity / 100);
+        totalWeight += token.quantity / 100;
+      }
+    });
 
-  return { chartsData };
+    const weightedPriceChange = totalWeight > 0 ? totalWeightedPriceChange / totalWeight : 0;
+
+    return { chartData: combinedData, weightedPriceChange };
+  };
+
+  return { chartsData, weightedPriceChanges };
 };
 
 export default useCrateCharts;
