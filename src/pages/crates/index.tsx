@@ -294,7 +294,7 @@ const CrateDetailPage: React.FC = () => {
     console.log("Upvoting crate:", id, "by user:", userId); // Debug
     try {
       const response = await fetch(
-        'https://sickb.vercel.app/api/crates/${id}/upvote',
+        `https://sickb.vercel.app/api/crates/${id}/upvote`,
         {
           method: "POST",
           headers: {
@@ -325,7 +325,7 @@ const CrateDetailPage: React.FC = () => {
     console.log("Downvoting crate:", id, "by user:", userId); // Debug
     try {
       const response = await fetch(
-        'https://sickb.vercel.app/api/crates/${id}/downvote',
+        `https://sickb.vercel.app/api/crates/${id}/downvote`,
         {
           method: "POST",
           headers: {
