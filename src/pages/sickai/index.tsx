@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { SendIcon, Loader2, Bot, User } from 'lucide-react';
 import SideBarPhone from '../../components/ui/sidebarPhone';
 import SideBar from '../../components/ui/sidebar';
-
+import Header from '../../components/ui/headerPhone';
 interface UserInfo {
     age: string;
     salary: string;
@@ -144,7 +144,13 @@ export default function SickAi() {
     }, []);
 
     return (
-        <div className="flex md:ml-20 md:mb-0 mb-20 flex-col h-[90vh] bg-[#02050A] text-gray-200">
+        <div>
+            <div className='mx-4'>
+            <Header/>
+
+        </div>
+        <div className="flex md:ml-20 md:mb-0 mb-20 flex-col h-[82vh] bg-[#02050A] text-gray-200">
+            
             <div className="flex-1 overflow-hidden">
                 <div className="h-full overflow-y-auto px-4 py-6" ref={chatContainerRef}>
                     {chatHistory.map((chat, index) => (
@@ -193,7 +199,7 @@ export default function SickAi() {
                     />
                     <button
                         onClick={handleUserInfoSubmit}
-                        className="bg-[#A4E734] text-white rounded-r-xl px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-[#A4E734] flex items-center"
+                        className="bg-[#A4E734] text-black rounded-r-xl px-4 py-2 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-[#A4E734] flex items-center"
                     >
                         <SendIcon className="h-5 w-5 mr-2" />
                         Send
@@ -202,6 +208,7 @@ export default function SickAi() {
             </div>
             <SideBarPhone />
             <SideBar />
+        </div>
         </div>
     );
 }
