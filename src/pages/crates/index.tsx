@@ -358,7 +358,7 @@ const CrateDetailPage: React.FC = () => {
       <div className="flex-1 p-4 md:p-8 md:pl-24">
         <div className="relative flex items-center mb-8">
           <div onClick={() => { window.history.back() }} className="">
-            <BiArrowBack size={20} />
+            <BiArrowBack size={20} className='cursor-pointer' />
           </div>
           <h1 className="text-2xl flex justify-center items-center gap-2 md:text-3xl font-bold text-lime-400 mx-auto">
             <div className='w-10 rounded-full h-10'>

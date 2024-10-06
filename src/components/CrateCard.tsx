@@ -104,7 +104,7 @@ const CrateCard: React.FC<CrateCardProps> = ({
   };
 
   return (
-    <div className="relative w-full max-w-sm bg-[#0D1117] rounded-2xl border border-gray-800 p-4 text-white">
+    <div className="relative w-full max-w-sm bg-[#0D1117] rounded-2xl border border-green-900 p-4 text-white">
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-lg font-semibold">{title}</h2>
         <div className="flex items-center space-x-2">

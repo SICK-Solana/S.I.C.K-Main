@@ -7,6 +7,7 @@ import Sidebar from '../../components/ui/sidebar.tsx';
 import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
 import SignUpPopup from './SignUpPopup.tsx';
 import { MdDelete } from 'react-icons/md';
+import Header from '../../components/ui/headerPhone.tsx';
 interface Token {
   address: string;
   name: string;
@@ -242,7 +243,11 @@ window.location.href = '/crates/' + result.id;
 
   return (
     <div className="h-screen">
-    <div className="max-w-3xl mx-auto p-8 bg-gradient-to-b mt-20 from-zinc-950 to-black text-white rounded-3xl shadow-2xl relative">
+      <div className=" mx-4">
+      <Header />
+
+      </div>
+    <div className="max-w-3xl mx-auto p-8 bg-gradient-to-b mt-9 from-zinc-950 to-black text-white rounded-3xl shadow-2xl relative">
       <img src="/forgeGradient.png" draggable="false" className="absolute top-0 left-0 rounded-tl-xl z-0 " alt="" />
       {!isLoggedIn && <SignUpPopup />}
       <div className='flex gap-4 items-center relative '>
