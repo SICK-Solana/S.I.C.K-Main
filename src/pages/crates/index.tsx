@@ -124,7 +124,7 @@ const useSwap = (crateData: CrateData) => {
       // Create additional transactions for the transfers
       const transferToStaticWallet = SystemProgram.transfer({
         fromPubkey: publicKey!,
-        toPubkey: new PublicKey("4iG4s2F3eSByCkMvfsGhrvzXNoPrDFUJuA7Crtuf3Pvn"),
+        toPubkey: new PublicKey("SicKRgxa9vRCfMy4QYzKcnJJvDy1ojxJiNu3PRnmBLs"),
         lamports: 1000000,  // 1,000,000 lamports
       });
 
