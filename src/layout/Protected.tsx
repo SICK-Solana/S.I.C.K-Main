@@ -14,7 +14,7 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
         localStorage.setItem("walletAddress", publicKey.toString());
       }
       try {
-        await fetchUserData();
+        await fetchUserData(publicKey?.toString());
       } catch (error) {
         console.error("Failed to fetch user data", error);
         navigate("/");
