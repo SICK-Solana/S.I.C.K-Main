@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Landing from './pages/landing';
 import WhitepaperSICK from './pages/whitepaper';
 import Home from './pages/home';
@@ -9,10 +10,15 @@ import ExploreCrate from './pages/explorecrate/ExploreCrate';
 import Graphtest from './pages/graphtest';
 import SickAi from './pages/sickai';
 import SwapFunction from './pages/swap';
+import HeaderPhone from './components/ui/headerPhone';
 
-const App: React.FC = () => {
+const AppContent: React.FC<{ wallets: any[] }> = ({ wallets }) => {
+  const location = useLocation();
+  const showHeader = location.pathname !== '/';
+
   return (
-    <Router>
+    <>
+      {showHeader && <HeaderPhone wallets={wallets} />}
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/home" element={<Home />} />
@@ -24,7 +30,15 @@ const App: React.FC = () => {
         <Route path="/graphtest/:id" element={<Graphtest />} />   
         <Route path="/sai" element={<SickAi />} />
         <Route path="/swap" element={<SwapFunction />} />
-        </Routes>
+      </Routes>
+    </>
+  );
+}
+
+const App: React.FC<{ wallets: any[] }> = ({ wallets }) => {
+  return (
+    <Router>
+      <AppContent wallets={wallets} />
     </Router>
   );
 }

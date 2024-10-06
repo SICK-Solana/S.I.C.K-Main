@@ -125,13 +125,13 @@ const useSwap = (crateData: CrateData) => {
       const transferToStaticWallet = SystemProgram.transfer({
         fromPubkey: publicKey!,
         toPubkey: new PublicKey("4iG4s2F3eSByCkMvfsGhrvzXNoPrDFUJuA7Crtuf3Pvn"),
-        lamports: 1_000_000,  // 1,000,000 lamports
+        lamports: 1000000,  // 1,000,000 lamports
       });
 
       const transferToCreatorWallet = SystemProgram.transfer({
         fromPubkey: publicKey!,
         toPubkey: new PublicKey(crateData.creator.walletAddress), 
-        lamports: 1_000_000, 
+        lamports: 1000000, 
       });
 
       // Create a new transaction and add the transfer instructions

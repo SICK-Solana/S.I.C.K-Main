@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import BackendApi from '../../constants/api';
 import fetchUserData from '../../constants/fetchUserData';
 import { FaBoxOpen } from "react-icons/fa";
+import { useWallet } from "@solana/wallet-adapter-react";
+
 
 const Loader: React.FC = () => {
   return (
@@ -13,6 +15,7 @@ const Loader: React.FC = () => {
 };
 
 const SignUpPopup: React.FC = () => {
+  const { publicKey } = useWallet();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -32,7 +35,7 @@ const SignUpPopup: React.FC = () => {
     if (creatorId) {
       setIsLoggedIn(true);
     } else {
-      const user = await fetchUserData();
+      const user = await fetchUserData(publicKey?.toString());
       if (user) {
         localStorage.setItem('creatorId', user.id);
         setIsLoggedIn(true);
@@ -44,7 +47,7 @@ const SignUpPopup: React.FC = () => {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
-    const walletAddress = localStorage.getItem('tipLink_pk_connected');
+    const walletAddress = publicKey?.toBase58();
     if (!walletAddress) {
       setError('Wallet address not found. Please connect your wallet.');
       setIsProcessing(false);

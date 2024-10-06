@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState , useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import  fetchUserData from '../constants/fetchUserData.ts';
+import { Button } from "../components/ui/button.tsx";
 
 
 export default function Landing() {
@@ -26,9 +27,12 @@ export default function Landing() {
     const storedWalletAddress = localStorage.getItem("walletAddress");
     
     if (storedWalletAddress) {
-      await fetchUserData();
+      
+        
+      await fetchUserData(publicKey?.toString());
+      
       // Wallet address is already stored, proceed to explore crate
-      window.location.href = "/explorecrate";
+      // window.location.href = "/explorecrate";
     }
 
     if (connected && publicKey) {
@@ -40,8 +44,11 @@ export default function Landing() {
 
     if(storedWalletAddress2){
  
-await fetchUserData();
-window.location.href = "/explorecrate";
+     
+        
+        await fetchUserData(publicKey?.toString());
+        
+// window.location.href = "/explorecrate";
   };
 }
 
@@ -112,14 +119,18 @@ window.location.href = "/explorecrate";
             </p>
            
               {/* <Button className="text-gray-900 px-[23px] font-semibold py-[20px] rounded-full text-[14px] bg-gradient-to-b from-[#A9F605] to-[#5e8d00] hover:shadow-[0_12px_24px_rgba(182,255,27,0.3)] transition-shadow duration-300"> */}
-              <WalletMultiButton
+           {connected? <div>             <a href="/explorecrate"> <Button className="text-gray-900 px-[23px] font-semibold py-[20px] rounded-full text-[14px] bg-gradient-to-b from-[#A9F605] to-[#5e8d00] hover:shadow-[0_12px_24px_rgba(182,255,27,0.3)] transition-shadow duration-300">
+         Get Started
+            </Button>
+            </a>
+           </div>  : <WalletMultiButton
               style={{
                 background: "#A9F605",
                 color: "black",
                 borderRadius: "180px",
               }}
-            />
-              {/* </Button> */}
+            /> }
+   
          
             <AnimatePresence>
               <motion.img
@@ -164,10 +175,11 @@ window.location.href = "/explorecrate";
               />
             </AnimatePresence>
           </main>
-
+<a href="https://x.com/sickonsolana" target="_blank">
           <div className="text-center mx-auto justify-center w-full mt-52 mb-16 text-xl text-gray-400 flex items-center gap-2">
             Follow us on: <FaXTwitter className="text-lime-500" />
           </div>
+          </a>
         </div>
         
       </div>

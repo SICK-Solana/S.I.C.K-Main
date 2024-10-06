@@ -4,7 +4,6 @@ import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
 import CrateCard from '../../components/CrateCard';
 import Loader from '../../components/Loading';
 import useCrateCharts from './useCrateCharts.tsx';
-import Header from '../../components/ui/headerPhone.tsx';
 interface Token {
   icon: string;
   percentage: number;
@@ -72,7 +71,6 @@ const ExploreCrate: React.FC = () => {
     <div className="flex flex-col md:flex-row bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white min-h-screen">
       <Sidebar  />
       <div className="flex-1 pr-4 pl-4 pb-4 md:ml-20 mb-20 md:mb-0">
-        <Header />
         
         
         <h1 className="text-4xl md:text-6xl mb-6 md:mb-12 text-trans</div>parent bg-clip-text bg-gradient-to-r from-[#B6FF1B] to-[#1c9b00] font-sans">explore<span className="text-lime-500">_</span>Crates</h1>

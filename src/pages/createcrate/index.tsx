@@ -7,7 +7,7 @@ import Sidebar from '../../components/ui/sidebar.tsx';
 import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
 import SignUpPopup from './SignUpPopup.tsx';
 import { MdDelete } from 'react-icons/md';
-import Header from '../../components/ui/headerPhone.tsx';
+import { useWallet } from "@solana/wallet-adapter-react"; 
 interface Token {
   address: string;
   name: string;
@@ -44,6 +44,7 @@ interface CrateData {
 
 const CrateCreator: React.FC = () => {
   const [tokens, setTokens] = useState<Token[]>([]);
+const { publicKey } = useWallet();
   const [selectedTokens, setSelectedTokens] = useState<SelectedToken[]>([]);
   const [crateName, setCrateName] = useState<string>('');
   const [isCreating, setIsCreating] = useState<boolean>(false);
@@ -72,8 +73,14 @@ const CrateCreator: React.FC = () => {
       setIsLoggedIn(true);
     } else {
       // Call the reusable function
-      const user = await fetchUserData();
+      let user;
+        //@ts-nocheck
+        console.log(publicKey?.toString());
+        //@ts-nocheck
+         user = await fetchUserData(publicKey?.toString());
       
+      
+    
       // Set creatorId in localStorage if the user is found
       if (user) {
         localStorage.setItem('creatorId', user.id);
@@ -244,7 +251,6 @@ window.location.href = '/crates/' + result.id;
   return (
     <div className="h-screen">
       <div className=" mx-4">
-      <Header />
 
       </div>
     <div className="max-w-3xl mx-auto p-8 bg-gradient-to-b mt-9 from-zinc-950 to-black text-white rounded-3xl shadow-2xl relative">

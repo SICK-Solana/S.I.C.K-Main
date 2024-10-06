@@ -3,7 +3,6 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { SendIcon, Loader2, Bot, User } from 'lucide-react';
 import SideBarPhone from '../../components/ui/sidebarPhone';
 import SideBar from '../../components/ui/sidebar';
-import Header from '../../components/ui/headerPhone';
 interface UserInfo {
     age: string;
     salary: string;
@@ -146,7 +145,6 @@ export default function SickAi() {
     return (
         <div>
             <div className='mx-4'>
-            <Header/>
 
         </div>
         <div className="flex md:ml-20 md:mb-0 mb-20 flex-col h-[82vh] bg-[#02050A] text-gray-200">
