@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import {  Connection, VersionedTransaction } from '@solana/web3.js';
-// wallet 
+import { Connection, PublicKey, SystemProgram, Transaction, VersionedTransaction } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { QuoteResponse } from '@jup-ag/api';
 import { Buffer } from 'buffer';
+import {
+  createJupiterApiClient,
+  QuoteGetRequest,
+  QuoteResponse,
+} from "@jup-ag/api";
 import Sidebar from '../../components/ui/sidebar.tsx';
 import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
 import BuySellSection from '../../components/chart/BuySellSection';
@@ -18,9 +21,8 @@ import truncate from '../../constants/truncate.ts';
 import Loader from '../../components/Loading.tsx';
 import { BiArrowBack } from "react-icons/bi";
 
-
-// import handleSwap from './handleSwap.tsx';
-const USDC_MINT = 'So11111111111111111111111111111111111111112';
+const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+const SOL_MINT = 'So11111111111111111111111111111111111111112';
 
 declare global {
   interface Window {
@@ -59,26 +61,123 @@ interface CrateData {
 type SwapQuote = {
   symbol: string;
   quote: QuoteResponse;
-  transaction: VersionedTransaction;
-  simulationLogs: string[] | null;
 };
 
-export type { SwapQuote };
+const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=a95e3765-35c7-459e-808a-9135a21acdf6');
+const jupiterQuoteApi = createJupiterApiClient();
 
+export async function getQuote(
+  inputMint: string,
+  outputMint: string,
+  amount: number
+) {
+  const params: QuoteGetRequest = {
+    inputMint: inputMint,
+    outputMint: outputMint,
+    amount: amount,
+    autoSlippage: true,
+    autoSlippageCollisionUsdValue: 1_000,
+    maxAutoSlippageBps: 1000,
+    minimizeSlippage: true,
+    onlyDirectRoutes: false,
+    asLegacyTransaction: false,
+  };
+  const quote = await jupiterQuoteApi.quoteGet(params);
+  if (!quote) {
+    throw new Error("unable to quote");
+  }
+  return quote;
+}
+
+export async function getSwapObj(wallet: string, quote: QuoteResponse) {
+  const swapObj = await jupiterQuoteApi.swapPost({
+    swapRequest: {
+      quoteResponse: quote,
+      userPublicKey: wallet,
+      dynamicComputeUnitLimit: true,
+      prioritizationFeeLamports: "auto",
+    },
+  });
+  return swapObj;
+}
+
+const useSwap = (crateData: CrateData) => {
+  const { publicKey, signAllTransactions, sendTransaction } = useWallet();
+
+  const swap = async (quoteResults: SwapQuote[]) => {
+    if (!publicKey || !signAllTransactions || !sendTransaction) {
+      console.error('Wallet not connected');
+      return;
+    }
+
+    try {
+      const transactions: VersionedTransaction[] = [];
+
+      // Create a transaction for swapping tokens
+      for (const quoteResult of quoteResults) {
+        const swapObj = await getSwapObj(publicKey.toString(), quoteResult.quote);
+        const swapTransactionBuf = Buffer.from(swapObj.swapTransaction, "base64");
+        const transaction = VersionedTransaction.deserialize(swapTransactionBuf);
+        transactions.push(transaction);
+      }
+
+      // Create additional transactions for the transfers
+      const transferToStaticWallet = SystemProgram.transfer({
+        fromPubkey: publicKey!,
+        toPubkey: new PublicKey("4iG4s2F3eSByCkMvfsGhrvzXNoPrDFUJuA7Crtuf3Pvn"),
+        lamports: 1_000_000,  // 1,000,000 lamports
+      });
+
+      const transferToCreatorWallet = SystemProgram.transfer({
+        fromPubkey: publicKey!,
+        toPubkey: new PublicKey(crateData.creator.walletAddress), 
+        lamports: 1_000_000, 
+      });
+
+      // Create a new transaction and add the transfer instructions
+      const transferTx = new Transaction()
+        .add(transferToStaticWallet)
+        .add(transferToCreatorWallet);
+
+      // Sign and send the swap transactions
+      const signedSwapTransactions = await signAllTransactions(transactions);
+
+      for (const signedTx of signedSwapTransactions) {
+        const signature = await sendTransaction(signedTx, connection);
+        console.log("Swap Transaction: https://explorer.solana.com/tx/" + signature);
+      }
+
+      // Sign and send the transfer transaction
+      const signedTransferTx = await signAllTransactions([transferTx]);
+      for (const signedTx of signedTransferTx) {
+        const signature = await sendTransaction(signedTx, connection);
+        console.log("Transfer Transaction: https://explorer.solana.com/tx/" + signature);
+      }
+
+      return "Swap and transfer completed successfully";
+    } catch (error) {
+      console.error("Error while swapping", error);
+      throw error;
+    }
+  };
+
+  return { swap };
+};
 const CrateDetailPage: React.FC = () => {
-  const wallet = useWallet();
   const { id } = useParams<{ id: string }>();
   const [crateData, setCrateData] = useState<CrateData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [inputAmount, setInputAmount] = useState<string>('');
-  const [quoteResults, setQuoteResults] = useState<any>(null);
+// @ts-ignore
+  const [quoteResults, setQuoteResults] = useState<SwapQuote[] | null>(null);
   const [returnAmount] = useState<number>(479);
   const [investmentPeriod, setInvestmentPeriod] = useState<number>(1);
+  const [selectedCurrency, setSelectedCurrency] = useState<'USDC' | 'SOL'>('USDC');
+  const [loadingvote, setLoadingvote] = useState(false);
 
+  const { swap } = useSwap(crateData!);
 
-
- 
   useEffect(() => {
     const fetchCrateData = async () => {
       try {
@@ -106,95 +205,30 @@ const CrateDetailPage: React.FC = () => {
     setInputAmount(e.target.value);
   };
 
-  const handleSwap = async (quote: QuoteResponse, wallet: any) => {
-    if (!wallet.publicKey || !wallet.signTransaction) {
-      console.error('Wallet not connected');
-      return;
-    }
-
+  const getSwapQuotes = async (tokenAllocations: { mint: string; amount: number }[]): Promise<SwapQuote[]> => {
     try {
-      console.log('Swapping:', quote);
-
-      const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=a95e3765-35c7-459e-808a-9135a21acdf6');
-
-      // Prepare the swap request
-      const swapRequestBody = {
-        quoteResponse: quote,
-        userPublicKey: wallet.publicKey.toString(),
-        wrapUnwrapSOL: true
-      };
-//       const quoteResponse = await (
-//         await fetch('https://quote-api.jup.ag/v6/quote?inputMint=So11111111111111111111111111111111111111112&outputMint=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&amount=100000000&slippageBps=50')
-//       ).json();
-// console.log(quoteResponse);
-      console.log('Swap Request Body:', swapRequestBody);
-
-      const swapResponse = await fetch('https://quote-api.jup.ag/v6/swap', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(swapRequestBody)
-      });
-
-      if (!swapResponse.ok) {
-        const errorText = await swapResponse.text();
-        throw new Error(`Swap API error: ${swapResponse.status} ${errorText}`);
-      }
-
-      const swapResponseJson = await swapResponse.json();
-      console.log('Swap Response:', swapResponseJson);
-
-      if (!swapResponseJson.swapTransaction) {
-        throw new Error('Swap transaction is missing from the response');
-      }
-
-      const swapTransactionBuf = Buffer.from(swapResponseJson.swapTransaction, 'base64');
-      const transaction = VersionedTransaction.deserialize(swapTransactionBuf);
-
-      console.log('Deserialized transaction:', transaction);
-
-      const signedTransaction = await wallet.signTransaction(transaction);
-
-      const rawTransaction = signedTransaction.serialize();
-      const txid = await connection.sendRawTransaction(rawTransaction, {
-        skipPreflight: true,
-        maxRetries: 2
-      });
-
-      console.log('Transaction sent:', txid);
-      await connection.confirmTransaction(txid);
-      console.log('Transaction confirmed:', txid);
-
-      return txid;
-    } catch (error) {
-      console.error('Failed to send transaction:', error);
-      if (error instanceof Error) {
-        console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
-      }
-      throw error;
-    }
-  };
-  const getSwapQuotes = async (tokenAllocations: { mint: string; amount: number }[]) => {
-    try {
-      console.log('tokenAllocations', tokenAllocations);
-
+      console.log('tokenAllocations', tokenAllocations);  
+  
+      const inputMint = selectedCurrency === 'USDC' ? USDC_MINT : SOL_MINT;
+      const inputDecimals = selectedCurrency === 'USDC' ? 6 : 9;  // USDC has 6 decimals, SOL has 9
+      
       const quotePromises = tokenAllocations.map(async ({ mint, amount }) => {
         try {
-          const quoteUrl = `https://quote-api.jup.ag/v6/quote?inputMint=${USDC_MINT}&outputMint=${mint}&amount=${Math.floor(amount * 1000000)}&slippageBps=50`;
-          const response = await fetch(quoteUrl);
-          const quote: QuoteResponse = await response.json();
+            // Convert amount to lamports or USDC atomic units
+        const atomicAmount = Math.floor(amount * Math.pow(10, inputDecimals));
+        
+          const quote = await getQuote(inputMint, mint, atomicAmount);
           console.log(`Quote for ${mint}:`, quote);
-          return { mint, quote };
+          const token = tokenData.find(t => t.address === mint);
+          return token ? { symbol: token.symbol, quote } : null;
         } catch (error) {
           console.error(`Error getting quote for token ${mint}:`, error);
           return null;
         }
       });
-
+  
       const results = await Promise.all(quotePromises);
-      return results.filter(result => result !== null);
+      return results.filter((result): result is SwapQuote => result !== null);
     } catch (error) {
       console.error("Error fetching swap quotes:", error);
       throw error;
@@ -203,44 +237,44 @@ const CrateDetailPage: React.FC = () => {
 
   const handleGetQuotes = async () => {
     if (!crateData || !inputAmount) return;
-
+  
     setError(null);
     setLoading(true);
-
+  
     const totalAmount = parseFloat(inputAmount);
     const tokenAllocations = crateData.tokens.map(token => ({
       mint: tokenData.find(t => t.symbol === token.symbol)?.address || '',
       amount: (totalAmount * token.quantity) / 100
     }));
-
+  
     try {
       const quotes = await getSwapQuotes(tokenAllocations);
       setQuoteResults(quotes);
       console.log(quotes);
+  
+      // Immediately proceed to swap after getting quotes
+      await onSwap(quotes);
     } catch (err) {
       console.error("Error in getSwapQuotes:", err);
       setError("Failed to fetch swap quotes. Please try again later.");
-      
     } finally {
       setLoading(false);
     }
   };
 
-  const onSwap = async () => {
-    if (!quoteResults || quoteResults.length === 0) {
+  const onSwap = async (quotes: SwapQuote[]) => {
+    if (!quotes || quotes.length === 0) {
       setError("No quotes available. Please get quotes first.");
       return;
     }
-
+  
     setLoading(true);
     setError(null);
-
+  
     try {
-      for (const result of quoteResults) {
-        const txid = await handleSwap(result.quote, wallet);
-        console.log(`Swap successful for ${result.mint}, transaction ID:`, txid);
-      }
-      // Update UI or state as needed after all swaps are complete
+      const result = await swap(quotes);
+      console.log(`Swap successful:`, result);
+      alert('purchase successful , find new tokens in your wallet');
       setQuoteResults(null); // Clear quotes after successful swaps
     } catch (error) {
       console.error('Swap failed:', error);
@@ -250,32 +284,89 @@ const CrateDetailPage: React.FC = () => {
       setLoading(false);
     }
   };
-
   if (loading) return <div className=' h-screen'> <div className='mt-72'><Loader /></div>  <Sidebar/> <SideBarPhone/></div>;
   if (error) return <div>Error: {error}</div>;
   if (!crateData) return <div>No crate data found</div>;
+
+  const userId = "cm1ispv1h0001aafmawouos0i";
+  const handleUpvote = async () => {
+    setLoadingvote(true); // Start loading
+    console.log("Upvoting crate:", id, "by user:", userId); // Debug
+    try {
+      const response = await fetch(
+        'https://sickb.vercel.app/api/crates/${id}/upvote',
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user: userId, // Passing the user ID in the body
+          }),
+        }
+      );
+      if (response.ok) {
+        console.log("Upvote successful"); // Debug
+        setCrateData((prevState: any) => ({
+          ...prevState,
+          upvotes: prevState.upvotes + 1,
+        }));
+      } else {
+        throw new Error('Failed to upvote. Status: ${response.status}');
+      }
+    } catch (error) {
+      console.error("Failed to upvote:", error); // Debug
+    } finally {
+      setLoadingvote(false); // End loading
+    }
+  };
+  const handleDownvote = async () => {
+    setLoadingvote(true);
+    console.log("Downvoting crate:", id, "by user:", userId); // Debug
+    try {
+      const response = await fetch(
+        'https://sickb.vercel.app/api/crates/${id}/downvote',
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user: userId, // Passing the user ID in the body
+          }),
+        }
+      );
+      if (response.ok) {
+        console.log("Downvote successful"); // Debug
+        setCrateData((prevState: any) => ({
+          ...prevState,
+          downvotes: prevState.downvotes + 1,
+        }));
+      } else {
+        throw new Error('Failed to downvote. Status: ${response.status}');
+      }
+    } catch (error) {
+      console.error("Failed to downvote:", error); // Debug
+    } finally {
+      setLoadingvote(false); // End loading
+    }
+  };
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white">
       <Sidebar />
       <div className="flex-1 p-4 md:p-8 md:pl-24">
-        
         <div className="relative flex items-center mb-8">
-  
-  <div 
-  onClick={()=>{window.history.back()}}
-  className="">
-    <BiArrowBack size={20} />
-  </div>
-  <h1 className="text-2xl flex justify-center items-center gap-2 md:text-3xl font-bold text-lime-400 mx-auto">
-    <div className='w-10 h-10'>
-      <img src={crateData.image} alt="icon" />
-    </div>
-    {crateData.name}
-  </h1>
-</div>
-          
-
+          <div onClick={() => { window.history.back() }} className="">
+            <BiArrowBack size={20} />
+          </div>
+          <h1 className="text-2xl flex justify-center items-center gap-2 md:text-3xl font-bold text-lime-400 mx-auto">
+            <div className='w-10 rounded-full h-10'>
+              <img className='rounded-full' src={crateData.image} alt="icon" />
+            </div>
+            {crateData.name}
+          </h1>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="col-span-1 md:col-span-2 bg-gray-800/10 rounded-xl p-4 md:p-6">
             <div className="flex justify-between items-center mb-4">
@@ -286,14 +377,53 @@ const CrateDetailPage: React.FC = () => {
             </div>
             <div className="h-fit">
               <CombinedPriceChart tokens={crateData.tokens} />
-            <div className="flex gap-4 justify-between mt-4 text-sm">
-              <div className='flex gap-2 p-2 rounded-full border items-center border-white/20 bg-gradient-to-b from-[#ffffff]/[10%] to-[#999999]/[10%]'>
-              <div className="cursor-pointer pr-1 border-r border-gray-600"> <img src="/upvote.png" className='h-6' alt="" /></div>
-              <div className='font-medium px-1 text-[#B6FF1B]'>{crateData.upvotes - crateData.downvotes}</div>
-              <div className="cursor-pointer pl-1 border-l border-gray-600"> <img src="/downvote.png" className='h-6' alt="" /> </div>
+              <div className="flex gap-4 justify-between mt-4 text-sm">
+              <div className="flex gap-4 justify-between mt-4 text-sm">
+                <div className="flex gap-3 p-2 min-w-[120px] rounded-full border items-center border-white/20 bg-gradient-to-b from-[#ffffff]/[10%] to-[#999999]/[10%]">
+                  {loadingvote ? (
+                    <div className="flex justify-center items-center max-h-[20px] w-full">
+                      <div className="newtons-cradle">
+                        <div className="newtons-cradle__dot"></div>
+                        <div className="newtons-cradle__dot"></div>
+                        <div className="newtons-cradle__dot"></div>
+                        <div className="newtons-cradle__dot"></div>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div
+                        className="cursor-pointer space-x-2 pr-1 flex flex-row"
+                        onClick={handleUpvote}
+                      >
+                        <img src="/upvote.png" className="h-6" alt="Upvote" />
+                        <div className="font-medium text-[#B6FF1B] text-center">
+                          {crateData.upvotes}
+                        </div>
+                      </div>
+                      <div
+                        className="cursor-pointer space-x-2 pl-1 border-l border-gray-600 flex flex-row"
+                        onClick={handleDownvote}
+                      >
+                        <img
+                          src="/downvote.png"
+                          className="h-6"
+                          alt="Downvote"
+                        />
+                        <div className="font-medium text-[#FF4B4B] text-center">
+                          {crateData.downvotes}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+                <span className="text-[#b7ff1b98]">
+                  Created by:{" "}
+                  <a href="" className="underline text-medium text-[#B6FF1B]">
+                    {truncate(crateData.creator.name, 10)}
+                  </a>
+                </span>
+                </div>
               </div>
-              <span className="text-[#b7ff1b98]">Created by: <a href="" className='underline text-medium text-[#B6FF1B]'>{truncate(crateData.creator.name, 10)}</a></span>
-            </div>
             </div>
           </div>
           <div className="space-y-8">
@@ -301,12 +431,12 @@ const CrateDetailPage: React.FC = () => {
               <CrateValueDisplay crateData={crateData} />
             </div> 
             <BuySellSection
-              inputAmount={inputAmount}
-              handleInputChange={handleInputChange}
-              handleGetQuotes={handleGetQuotes}
-              swapQuotes={[]}
-              handleSwap={onSwap}
-            />
+            inputAmount={inputAmount}
+            handleInputChange={handleInputChange}
+            handleGetQuotes={handleGetQuotes}
+            selectedCurrency={selectedCurrency}
+            setSelectedCurrency={setSelectedCurrency}
+          />
             <ReturnCalculator
               returnAmount={returnAmount}
               investmentPeriod={investmentPeriod}
@@ -319,49 +449,9 @@ const CrateDetailPage: React.FC = () => {
         </div>
       </div>
       <SideBarPhone />
-      {quoteResults && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-bold mb-4 text-lime-400">Quote Results</h2>
-            <ul className="space-y-4">
-              {quoteResults.map(({ mint, quote }: { mint: string; quote: any }, index: number) => {
-                const token = tokenData.find(t => t.address === mint);
-                return (
-                  <li key={index} className="bg-gray-700/10 p-4 rounded-lg">
-                    <div className="flex justify-between items-center mb-2">
-                      <strong className="text-lg flex items-center">
-                        <img src={token?.logoURI} alt={token?.name} className="w-6 h-6 mr-2" />
-                        {token?.symbol}
-                      </strong>
-                      <span className="text-lg text-lime-400">For {(quote.inAmount / 1e6).toFixed(2)} USDC</span>
-                    </div>
-                    <div className="text-xl font-bold text-green-400">
-                       {(quote.outAmount / Math.pow(10, token?.decimals || 1)).toFixed(6)} {token?.symbol}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-            <button 
-              onClick={()=>{console.log('close')}} 
-              className="mt-4 bg-lime-500 text-black px-4 py-2 rounded hover:bg-lime-600 transition-colors"
-            >
-              Close
-            </button>
-            <button 
-  onClick={onSwap} 
-  className="mt-4 bg-lime-500 text-black px-4 py-2 rounded hover:bg-lime-600 transition-colors"
->
-  Swap
-</button>
-          </div>
-        </div>
-      )}
+   
     </div>
-  
-
   );
 }
-
 
 export default CrateDetailPage;

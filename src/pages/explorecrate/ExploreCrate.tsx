@@ -3,9 +3,19 @@ import Sidebar from '../../components/ui/sidebar.tsx';
 import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
 import CrateCard from '../../components/CrateCard';
 import Loader from '../../components/Loading';
-
+import useCrateCharts from './useCrateCharts.tsx';
+interface Token {
+  icon: string;
+  percentage: number;
+  coingeckoId: string;
+  id: string;
+  symbol: string;
+  name: string;
+  quantity: number;
+}
 
 interface Crate {
+  [x: string]: any;
   id: string;
   name: string;
   image: string;
@@ -15,15 +25,15 @@ interface Crate {
   creatorId: string;
   upvotes: number;
   downvotes: number;
-  tokens: { icon: string; percentage: number }[];
+  tokens: Token[];
 }
 
 const ExploreCrate: React.FC = () => {
   const [crates, setCrates] = useState<Crate[]>([]);
   const [sortOption, setSortOption] = useState<string>('createdAt');
   const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
+  const {  chartsData , weightedPriceChanges } = useCrateCharts(crates);
+   useEffect(() => {
     const fetchCrates = async () => {
       try {
         const response = await fetch('https://sickb.vercel.app/api/crates');
@@ -55,7 +65,7 @@ const ExploreCrate: React.FC = () => {
   };
 
 
-  
+
 
   return (
     <div className="flex flex-col md:flex-row bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white min-h-screen">
@@ -99,20 +109,27 @@ const ExploreCrate: React.FC = () => {
         {loading ? (
           <Loader />
         ) : (
+          <>
+ {console.log(crates)}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
             {crates.map((crate) => (
+             
               <a href={`/crates/${crate.id}`} className="transform transition-all duration-300 hover:scale-105" key={crate.id}>
                 <CrateCard
+                  chartData={chartsData[crate.id]}
                   title={crate.name}
+                  creator={crate.creator.name}
                   subtitle={`Created: ${new Date(crate.createdAt).toLocaleDateString()}`}
                   percentage={0} // Placeholder
-                  tokens={[]} // Placeholder
+                  tokens={crate.tokens}
+                  weightedPriceChange={weightedPriceChanges[crate.id] || 0} // Placeholder
                   upvotes={crate.upvotes}
                   downvotes={crate.downvotes}
                 />
               </a>
             ))}
           </div>
+          </>
         )}
       </div>
       <SideBarPhone />

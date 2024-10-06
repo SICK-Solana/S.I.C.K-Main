@@ -1,4 +1,3 @@
-  import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { WalletProvider } from '@solana/wallet-adapter-react'
 import { TipLinkWalletAdapter } from "@tiplink/wallet-adapter"
@@ -15,8 +14,18 @@ const wallets = [
   }),
 ]
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js').then((registration) => {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, (error) => {
+      console.log('ServiceWorker registration failed: ', error);
+    });
+  });
+}
+
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+
     <WalletProvider wallets={wallets} autoConnect>
       <TipLinkWalletAutoConnectV2 isReady query={new URLSearchParams(window.location.search)}>
         <WalletModalProvider>
@@ -24,5 +33,5 @@ createRoot(document.getElementById('root')!).render(
         </WalletModalProvider>
       </TipLinkWalletAutoConnectV2>
     </WalletProvider>
-  </StrictMode>,
+
 )
