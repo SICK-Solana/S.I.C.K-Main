@@ -52,7 +52,9 @@ const CrateValueDisplay: React.FC<{ crateData: CrateData }> = ({ crateData }) =>
 
   const [isBookmarked, setIsBookmarked] = useState(false); 
 
-  const userId = "cm1cdrdqa0007qzzifkxm0e47";
+  const user = localStorage.getItem("user");
+  console.log(user);
+  const userId = user ? JSON.parse(user).id : "cm1cdrdqa0007qzzifkxm0e47";
   const { id } = useParams<{ id: string }>();
 
   const addBookMark= async()=>{
