@@ -48,7 +48,17 @@ export default function CryptoDashboard() {
 
   const fetchAndSetUserData = async () => {
     const user = await fetchUserData(publicKey?.toString());
-    setBookmarkedCrates(user?.bookmarkedCrates);
+    try {
+          const response = await fetch(`https://sickb.vercel.app/api/users/${user?.id}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch user data');
+          }
+          const data: { bookmarkedCrates: Crate[] } = await response.json();
+          setBookmarkedCrates(data.bookmarkedCrates);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+    // setBookmarkedCrates(user?.bookmarkedCrates);
   };
 
   fetchAndSetUserData();
