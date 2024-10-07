@@ -85,7 +85,7 @@ const CrateValueDisplay: React.FC<{ crateData: CrateData }> = ({ crateData }) =>
   return (
     <div className="space-y-8">
     <div>
-      <h2 className="text-lg md:text-xl font-semibold mx-4 bg-gradient-to-r from-[#4343FF] via-[#EC55FF] to-[#FFD939] text-transparent bg-clip-text">
+      <h2 className="text-lg md:text-xl font-semibold mx-4 text-white text-transparent bg-clip-text">
         {combinedValue !== null ? (
           <div className="flex items-center justify-between gap-2">
           <span>Abstracted Value : ${combinedValue.toFixed(4)}</span>
@@ -97,7 +97,7 @@ const CrateValueDisplay: React.FC<{ crateData: CrateData }> = ({ crateData }) =>
         />        </div>
         
         ) : 'Loading...'}
-        <span className="text-xs md:text-sm font-semibold bg-gradient-to-r from-[#4343FF] via-[#EC55FF] to-[#FFD939] text-transparent bg-clip-text">
+        <span className="text-xs md:text-sm font-semibold text-white text-transparent bg-clip-text">
           per token of this Crate
         </span>
       </h2>
