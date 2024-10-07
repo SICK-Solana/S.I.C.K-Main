@@ -73,7 +73,7 @@ export default function CryptoDashboard() {
     };
 
     fetchAndSetUserData();
-  }, []);
+  }, [publicKey]);
 
   const handleSort = (option: string) => {
     setSortOption(option);
