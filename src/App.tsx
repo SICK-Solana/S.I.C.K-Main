@@ -9,7 +9,6 @@ import {
 import Landing from "./pages/landing";
 import WhitepaperSICK from "./pages/whitepaper";
 import Home from "./pages/home";
-import Dashboard from "./pages/dashboard";
 import CrateCreator from "./pages/createcrate";
 import CrateDetailPage from "./pages/crates";
 import ExploreCrate from "./pages/explorecrate/ExploreCrate";
@@ -29,7 +28,7 @@ const AppContent: React.FC<{ wallets: any[] }> = ({ wallets }) => {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route element={<ProtectedLayout><Outlet /></ProtectedLayout>}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Home />} />
         </Route>
         <Route path="/home" element={<Home />} />
         <Route path="/explorecrate" element={<ExploreCrate />} />

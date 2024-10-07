@@ -4,27 +4,27 @@ import { ShoppingCart } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 
-const CryptoCard = ({ name, ticker, price, change, changePercent }: any) => {
-  const isPositive = change >= 0;
+// const CryptoCard = ({ name, ticker, price, change, changePercent }: any) => {
+//   const isPositive = change >= 0;
 
-  return (
-    <div className="inline-flex items-center p-4 border border-green-500 rounded-2xl bg-gray-900 text-green-400 space-x-4">
-      <div className="flex flex-col space-y-2">
-        <span className="text-2xl font-semibold">{name}</span>
-        <span className="text-xs text-gray-500">{ticker}</span>
-      </div>
-      <div className="flex flex-col items-end space-y-2">
-        <span className="text-xl font-bold">${price.toFixed(2)}</span>
-        <div className="flex items-center space-x-1">
-          <span className={`text-sm ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
-            {isPositive ? '▲' : '▼'} {changePercent}%
-          </span>
-          <span className="text-xs text-gray-400">(1d)</span>
-        </div>
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div className="inline-flex items-center p-4 border border-green-500 rounded-2xl bg-gray-900 text-green-400 space-x-4">
+//       <div className="flex flex-col space-y-2">
+//         <span className="text-2xl font-semibold">{name}</span>
+//         <span className="text-xs text-gray-500">{ticker}</span>
+//       </div>
+//       <div className="flex flex-col items-end space-y-2">
+//         <span className="text-xl font-bold">${price.toFixed(2)}</span>
+//         <div className="flex items-center space-x-1">
+//           <span className={`text-sm ${isPositive ? 'text-green-400' : 'text-red-400'}`}>
+//             {isPositive ? '▲' : '▼'} {changePercent}%
+//           </span>
+//           <span className="text-xs text-gray-400">(1d)</span>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 export default function CashBoard() {
   const userData = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
   const user = userData ? JSON.parse(userData) : { name: "User" };
@@ -47,7 +47,7 @@ export default function CashBoard() {
           </div>
         </header>
 
-        <div className="flex flex-row my-10 space-x-6 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+        {/* <div className="flex flex-row my-10 space-x-6 overflow-x-auto [&::-webkit-scrollbar]:hidden">
           <CryptoCard
             name="Solana"
             ticker="SOL"
@@ -105,7 +105,7 @@ export default function CashBoard() {
             changePercent={0.40}
           />
 
-        </div>
+        </div> */}
         <Portfolio />
 
       </div>
