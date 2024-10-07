@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Connection, PublicKey, SystemProgram, Transaction, VersionedTransaction } from '@solana/web3.js';
+import { Connection, PublicKey, SystemProgram, TransactionMessage, VersionedTransaction } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Buffer } from 'buffer';
 import {
@@ -100,7 +100,6 @@ export async function getSwapObj(wallet: string, quote: QuoteResponse) {
   });
   return swapObj;
 }
-
 const useSwap = (crateData: CrateData) => {
   const { publicKey, signAllTransactions, sendTransaction } = useWallet();
 
@@ -122,36 +121,43 @@ const useSwap = (crateData: CrateData) => {
       }
 
       // Create additional transactions for the transfers
-      const transferToStaticWallet = SystemProgram.transfer({
-        fromPubkey: publicKey!,
-        toPubkey: new PublicKey("SicKRgxa9vRCfMy4QYzKcnJJvDy1ojxJiNu3PRnmBLs"),
-        lamports: 1000000,  // 1,000,000 lamports
-      });
+      const transferToStaticWallet = new VersionedTransaction(
+        new TransactionMessage({
+          payerKey: publicKey,
+          recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+          instructions: [
+            SystemProgram.transfer({
+              fromPubkey: publicKey,
+              toPubkey: new PublicKey("SicKRgxa9vRCfMy4QYzKcnJJvDy1ojxJiNu3PRnmBLs"),
+              lamports: 1000000,  // 1,000,000 lamports
+            })
+          ],
+        }).compileToV0Message()
+      );
 
-      const transferToCreatorWallet = SystemProgram.transfer({
-        fromPubkey: publicKey!,
-        toPubkey: new PublicKey(crateData.creator.walletAddress), 
-        lamports: 1000000, 
-      });
+      const transferToCreatorWallet = new VersionedTransaction(
+        new TransactionMessage({
+          payerKey: publicKey,
+          recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+          instructions: [
+            SystemProgram.transfer({
+              fromPubkey: publicKey,
+              toPubkey: new PublicKey(crateData.creator.walletAddress),
+              lamports: 1000000, 
+            })
+          ],
+        }).compileToV0Message()
+      );
 
-      // Create a new transaction and add the transfer instructions
-      const transferTx = new Transaction()
-        .add(transferToStaticWallet)
-        .add(transferToCreatorWallet);
+      transactions.push(transferToStaticWallet);
+      transactions.push(transferToCreatorWallet);
 
-      // Sign and send the swap transactions
-      const signedSwapTransactions = await signAllTransactions(transactions);
+      // Sign and send all transactions
+      const signedTransactions = await signAllTransactions(transactions);
 
-      for (const signedTx of signedSwapTransactions) {
+      for (const signedTx of signedTransactions) {
         const signature = await sendTransaction(signedTx, connection);
-        console.log("Swap Transaction: https://explorer.solana.com/tx/" + signature);
-      }
-
-      // Sign and send the transfer transaction
-      const signedTransferTx = await signAllTransactions([transferTx]);
-      for (const signedTx of signedTransferTx) {
-        const signature = await sendTransaction(signedTx, connection);
-        console.log("Transfer Transaction: https://explorer.solana.com/tx/" + signature);
+        console.log("Transaction: https://explorer.solana.com/tx/" + signature);
       }
 
       return "Swap and transfer completed successfully";
@@ -416,12 +422,12 @@ const CrateDetailPage: React.FC = () => {
                     </>
                   )}
                 </div>
-                <span className="text-[#b7ff1b98]">
+                <div className="text-[#b7ff1b98] md:mx-40  mx-11">
                   Created by:{" "}
                   <a href="" className="underline text-medium text-[#B6FF1B]">
                     {truncate(crateData.creator.name, 10)}
                   </a>
-                </span>
+                </div>
                 </div>
               </div>
             </div>
