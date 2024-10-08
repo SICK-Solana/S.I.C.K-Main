@@ -6,8 +6,8 @@ import { RxDashboard } from "react-icons/rx";
 import { GiDiamonds } from "react-icons/gi";
 import { RiFunctionAddLine } from "react-icons/ri";
 import { useLocation } from 'react-router-dom';
-
-
+import { Link } from 'react-router-dom';
+import { useWallet } from "@solana/wallet-adapter-react";
 
 
 const Sidebar = () => {
@@ -48,6 +48,8 @@ const Sidebar = () => {
     }
 
   ]
+
+  const {  disconnect } = useWallet();
 
   return (
     <div className="fixed left-0 top-0 h-full z-40 hidden md:block">
@@ -93,12 +95,9 @@ const Sidebar = () => {
           </nav>
         </div>
         <div className="px-2 sm:px-3 mb-4 sm:mb-8 space-y-2 sm:space-y-4">
-          <button className="w-full flex items-center justify-center p-2 sm:p-3 rounded-full sm:rounded-lg transition-all duration-200 ease-in-out hover:bg-green-500 hover:bg-opacity-20 group">
-            <Icons.Gem className="text-[#B6FF1B] " size={20} />
-          </button>
-          <button className="w-full flex items-center justify-center p-2 sm:p-3 rounded-full sm:rounded-lg transition-all duration-200 ease-in-out hover:bg-red-500 hover:bg-opacity-20 group">
+          <Link to="/" onClick={disconnect} className="w-full flex items-center justify-center p-2 sm:p-3 rounded-full sm:rounded-lg transition-all duration-200 ease-in-out hover:bg-red-500 hover:bg-opacity-20 group">
             <Icons.LogOut className="text-gray-400 group-hover:text-red-300" size={20} />
-          </button>
+          </Link>
         </div>
       </div>
     </div>
