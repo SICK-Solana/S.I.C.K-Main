@@ -55,13 +55,13 @@ const OktoAuthButton = () => {
             console.log("response", response);
         setIsLoading(true);
          
-        const id_token = import.meta.env.VITE_REACT_ID_TOKEN;
+        // const id_token = import.meta.env.VITE_REACT_ID_TOKEN;
 
         if (!authenticate) {
           throw new Error('Authentication function not available');
         }
 
-        authenticate( id_token, (result, error) => {
+        authenticate( response.access_token, (result, error) => {
           if (error) {
             console.error("Authentication error:", error);
             throw new Error('Authentication failed');
