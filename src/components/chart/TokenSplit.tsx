@@ -9,12 +9,16 @@ interface TokenSplitProps {
 }
 
 const TokenSplit: React.FC<TokenSplitProps> = ({ crateData }) => {
+  const colors = [
+    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FFCD56', '#4BC0C0', '#36A2EB', '#FF6384'
+  ];
+
   const pieData = {
     labels: crateData.tokens.map((token: any) => token.name),
     datasets: [
       {
         data: crateData.tokens.map((token: any) => token.quantity),
-        backgroundColor: crateData.tokens.map(( index: number) => `hsl(${50 + index * 80 / crateData.tokens.length}, 70%, ${50 + index * 10 / crateData.tokens.length}%)`),
+        backgroundColor: crateData.tokens.map((_: any, index: number) => colors[index % colors.length]),
         borderColor: '#228B22', // Forest Green for borders
         borderWidth: 1,
       },
@@ -47,8 +51,11 @@ const TokenSplit: React.FC<TokenSplitProps> = ({ crateData }) => {
 
   return (
     <div className="mt-8 bg-gradient-to-b from-lime-400/10 to-green-800/10 rounded-xl p-4 md:p-6">
-      <h2 className="text-lg md:text-xl font-semibold mb-4 text-lime-400">Token Split</h2>
+      <h2 className="text-lg md:text-xl font-semibold mb-10 text-lime-400">Token Split</h2>
       <div className="flex flex-col md:flex-row">
+      <div className="w-full md:w-40 h-40 md:h-40 mx-auto md:mr-16">
+          <Doughnut data={pieData} options={pieOptions} />
+        </div>
         <div className="space-y-2 flex-1 mb-4 md:mb-0">
           {crateData.tokens.map((token: any, index: any) => (
             <div key={token.id}>
@@ -63,9 +70,7 @@ const TokenSplit: React.FC<TokenSplitProps> = ({ crateData }) => {
             </div>
           ))}
         </div>
-        <div className="w-full md:w-40 h-40 md:h-40 mx-auto md:ml-16">
-          <Doughnut data={pieData} options={pieOptions} />
-        </div>
+        
       </div>
     </div>
   );

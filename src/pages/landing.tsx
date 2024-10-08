@@ -1,11 +1,18 @@
-import { Button } from "../components/ui/button";
 import { BentoGrid } from "../components/ui/bentogrid";
 import { WalletMultiButton } from "@tiplink/wallet-adapter-react-ui";
 import { FaXTwitter } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState , useEffect } from "react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import  fetchUserData from '../constants/fetchUserData.ts';
+import { Button } from "../components/ui/button.tsx";
+import OktoAuthButton from "../components/OktoAuthButton.tsx";
+
 
 export default function Landing() {
+
+  const { publicKey, connected } = useWallet();
+
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const getRandomPosition = () => {
     const randomX = Math.floor(Math.random() * 300)-150; // Random value between -100 and 100
@@ -14,13 +21,39 @@ export default function Landing() {
   };
 
   useEffect(() => {
-    // Check if user data exists in localStorage
-    const user = localStorage.getItem("user");
-    if (user) {
+    checkLoginStatus();
+  }, [connected, publicKey]);
 
-window.location.href = "/dashboard";  }
-  }, []);
+  const checkLoginStatus = async () => {
+    const storedWalletAddress = localStorage.getItem("walletAddress");
+    
+    if (storedWalletAddress) {
+      
+        
+      await fetchUserData(publicKey?.toString());
+      
+      // Wallet address is already stored, proceed to explore crate
+      // window.location.href = "/explorecrate";
+    }
 
+    if (connected && publicKey) {
+      // Store the wallet address in localStorage
+      localStorage.setItem("walletAddress", publicKey.toString());
+   
+    }
+    const storedWalletAddress2 = localStorage.getItem("walletAddress");
+
+    if(storedWalletAddress2){
+ 
+     
+        
+        await fetchUserData(publicKey?.toString());
+        
+// window.location.href = "/explorecrate";
+  };
+}
+
+ 
   return (
     <>
       <img
@@ -59,13 +92,16 @@ window.location.href = "/dashboard";  }
               SICK
             </div>
 
-            <WalletMultiButton
-              style={{
-                background: "white",
-                color: "black",
-                borderRadius: "180px",
-              }}
-            />
+            <div className="flex items-center gap-4 ml-auto">
+              <OktoAuthButton />
+              <WalletMultiButton
+                style={{
+                  background: "white",
+                  color: "black",
+                  borderRadius: "180px",
+                }}
+              />
+            </div>
           </header>
 
           <main className="text-center justify-center items-center">
@@ -85,14 +121,21 @@ window.location.href = "/dashboard";  }
               <span className="text-white">"Crates"</span> and get acknowledged
               with a Social angle
             </p>
-            <a
-              href="/cratecreator"
-              className="border px-1 py-4 border-[#797979ad]  rounded-full"
-            >
-              <Button className="text-gray-900 px-[23px] font-semibold py-[20px] rounded-full text-[14px] bg-gradient-to-b from-[#A9F605] to-[#5e8d00] hover:shadow-[0_12px_24px_rgba(182,255,27,0.3)] transition-shadow duration-300">
-                Get Started
-              </Button>
+           
+              {/* <Button className="text-gray-900 px-[23px] font-semibold py-[20px] rounded-full text-[14px] bg-gradient-to-b from-[#A9F605] to-[#5e8d00] hover:shadow-[0_12px_24px_rgba(182,255,27,0.3)] transition-shadow duration-300"> */}
+           {connected? <div>             <a href="/explorecrate"> <Button className="text-gray-900 px-[23px] font-semibold py-[20px] rounded-full text-[14px] bg-gradient-to-b from-[#A9F605] to-[#5e8d00] hover:shadow-[0_12px_24px_rgba(182,255,27,0.3)] transition-shadow duration-300">
+         Get Started
+            </Button>
             </a>
+           </div>  : <WalletMultiButton
+              style={{
+                background: "#A9F605",
+                color: "black",
+                borderRadius: "180px",
+              }}
+            /> }
+   
+         
             <AnimatePresence>
               <motion.img
                 src="/sickCursor.png"
@@ -136,10 +179,11 @@ window.location.href = "/dashboard";  }
               />
             </AnimatePresence>
           </main>
-
+<a href="https://x.com/sickonsolana" target="_blank">
           <div className="text-center mx-auto justify-center w-full mt-52 mb-16 text-xl text-gray-400 flex items-center gap-2">
             Follow us on: <FaXTwitter className="text-lime-500" />
           </div>
+          </a>
         </div>
         
       </div>

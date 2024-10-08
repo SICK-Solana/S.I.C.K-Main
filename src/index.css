@@ -2,8 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply bg-gradient-to-b from-[#0A1019] to-[#02050A] text-gray-100;
+  }
+}
+
 .custom-border-gradient {
-    
     border-radius: 9999px;
     border-width: 1px;
     border-style: solid;
@@ -11,35 +16,74 @@
     border-image-slice: 1;
   }
 
-  .loader {
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #3498db;
+  .newtons-cradle {
+    --uib-size: 50px;
+    --uib-speed: 1.2s;
+    --uib-color: #474554;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--uib-size);
+    height: var(--uib-size);
+   }
+   
+   .newtons-cradle__dot {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 50%;
+    width: 25%;
+    transform-origin: center top;
+   }
+   
+   .newtons-cradle__dot::after {
+    content: '';
+    display: block;
+    width: 50%;
+    height: 25%;
     border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  .innerscroll::-webkit-scrollbar {
-    width: 2px;
-    height: 2px;
-  }
-  
-  .innerscroll::-webkit-scrollbar-track {
-    background: #2b2b2b;
-  }
-  
-  .innerscroll::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 5px;
-  }
-  
-  .innerscroll::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
-  
+    background-color: var(--uib-color);
+   }
+   
+   .newtons-cradle__dot:first-child {
+    animation: swing var(--uib-speed) linear infinite;
+   }
+   
+   .newtons-cradle__dot:last-child {
+    animation: swing2 var(--uib-speed) linear infinite;
+   }
+   
+   @keyframes swing {
+    0% {
+     transform: rotate(0deg);
+     animation-timing-function: ease-out;
+    }
+   
+    25% {
+     transform: rotate(70deg);
+     animation-timing-function: ease-in;
+    }
+   
+    50% {
+     transform: rotate(0deg);
+     animation-timing-function: linear;
+    }
+   }
+   
+   @keyframes swing2 {
+    0% {
+     transform: rotate(0deg);
+     animation-timing-function: linear;
+    }
+   
+    50% {
+     transform: rotate(0deg);
+     animation-timing-function: ease-out;
+    }
+   
+    75% {
+     transform: rotate(-70deg);
+     animation-timing-function: ease-in;
+    }
+   }

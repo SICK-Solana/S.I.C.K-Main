@@ -35,9 +35,9 @@ export const SideBarPhone = () => {
 
     },
     {
-      path: "/scroll",
-      logo: <GiDiamonds className={` ${location.pathname === "/scroll" ? "text-[#B6FF1B]" :" text-gray-400" }`} />,
-      name: <p className={` ${location.pathname === "/scroll" ? "text-[#B6FF1B] text-xs" :"text-xs  text-gray-400" }`}>{location.pathname === "/scroll" ? "/": ""}scroll </p>
+      path: "/sai",
+      logo: <GiDiamonds className={` ${location.pathname === "/sai" ? "text-[#B6FF1B]" :" text-gray-400" }`} />,
+      name: <p className={` ${location.pathname === "/sai" ? "text-[#B6FF1B] text-xs" :"text-xs  text-gray-400" }`}>{location.pathname === "/sai" ? "/": ""}s--ai </p>
 
 
     },
@@ -50,7 +50,7 @@ export const SideBarPhone = () => {
   ]
 
   return (
-    <div className="block md:hidden fixed bottom-0 left-0 right-0 bg-[#02050a]/10 backdrop-blur-md  z-50">
+    <div className="block md:hidden fixed bottom-0 left-0 right-0 bg-[#02050a]/[4%] backdrop-blur-md border-t border-gray-700 rounded-t-[2rem] z-50">
       <nav className="flex justify-around items-center h-20 px-4">
         {sidebarData.map((menu, index) => {
           return (
