@@ -61,7 +61,7 @@ const OktoAuthButton = () => {
           throw new Error('Authentication function not available');
         }
 
-        authenticate( response.access_token, (result, error) => {
+        authenticate( id_token, (result, error) => {
           if (error) {
             console.error("Authentication error:", error);
             throw new Error('Authentication failed');
