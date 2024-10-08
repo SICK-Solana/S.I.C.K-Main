@@ -17,6 +17,8 @@ import SickAi from "./pages/sickai";
 import SwapFunction from "./pages/swap";
 import ProtectedLayout from "./layout/Protected";
 import HeaderPhone from './components/ui/headerPhone';
+import { BuildType, OktoProvider } from 'okto-sdk-react';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const AppContent: React.FC<{ wallets: any[] }> = ({ wallets }) => {
   const location = useLocation();
@@ -25,6 +27,9 @@ const AppContent: React.FC<{ wallets: any[] }> = ({ wallets }) => {
   return (
     <>
       {showHeader && <HeaderPhone wallets={wallets} />}
+      <OktoProvider apiKey="5223c657-b570-4661-a38a-5eac5e020523"  buildType={BuildType.SANDBOX}>
+      <GoogleOAuthProvider clientId="501015698849-8a0bh2sdvq8fr1uksock9arqlbo37rp2.apps.googleusercontent.com">
+      
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route element={<ProtectedLayout><Outlet /></ProtectedLayout>}>
@@ -39,6 +44,8 @@ const AppContent: React.FC<{ wallets: any[] }> = ({ wallets }) => {
         <Route path="/sai" element={<SickAi />} />
         <Route path="/swap" element={<SwapFunction />} />
       </Routes>
+      </GoogleOAuthProvider>
+      </OktoProvider>
     </>
   );
 };

@@ -6,6 +6,7 @@ import { useState , useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import  fetchUserData from '../constants/fetchUserData.ts';
 import { Button } from "../components/ui/button.tsx";
+import OktoAuthButton from "../components/OktoAuthButton.tsx";
 
 
 export default function Landing() {
@@ -91,13 +92,16 @@ export default function Landing() {
               SICK
             </div>
 
-            <WalletMultiButton
-              style={{
-                background: "white",
-                color: "black",
-                borderRadius: "180px",
-              }}
-            />
+            <div className="flex items-center gap-4 ml-auto">
+              <OktoAuthButton />
+              <WalletMultiButton
+                style={{
+                  background: "white",
+                  color: "black",
+                  borderRadius: "180px",
+                }}
+              />
+            </div>
           </header>
 
           <main className="text-center justify-center items-center">

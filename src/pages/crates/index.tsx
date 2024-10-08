@@ -3,11 +3,13 @@ import { useParams } from 'react-router-dom';
 import { Connection, PublicKey, SystemProgram, TransactionMessage, VersionedTransaction } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Buffer } from 'buffer';
+
 import {
   createJupiterApiClient,
   QuoteGetRequest,
   QuoteResponse,
 } from "@jup-ag/api";
+
 import Sidebar from '../../components/ui/sidebar.tsx';
 import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
 import BuySellSection from '../../components/chart/BuySellSection';
@@ -20,6 +22,7 @@ import CrateValueDisplay from './CombinedTokenPrice.tsx';
 import truncate from '../../constants/truncate.ts';
 import Loader from '../../components/Loading.tsx';
 import { BiArrowBack } from "react-icons/bi";
+import OktoAuthButton from '../../components/OktoAuthButton.tsx'
 
 const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 const SOL_MINT = 'So11111111111111111111111111111111111111112';
@@ -64,6 +67,7 @@ type SwapQuote = {
 };
 
 const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=a95e3765-35c7-459e-808a-9135a21acdf6');
+
 const jupiterQuoteApi = createJupiterApiClient();
 
 export async function getQuote(
@@ -90,6 +94,7 @@ export async function getQuote(
 }
 
 export async function getSwapObj(wallet: string, quote: QuoteResponse) {
+ 
   const swapObj = await jupiterQuoteApi.swapPost({
     swapRequest: {
       quoteResponse: quote,
@@ -98,9 +103,12 @@ export async function getSwapObj(wallet: string, quote: QuoteResponse) {
       prioritizationFeeLamports: "auto",
     },
   });
+ 
   return swapObj;
 }
+
 const useSwap = (crateData: CrateData) => {
+ 
   const { publicKey, signAllTransactions, sendTransaction } = useWallet();
 
   const swap = async (quoteResults: SwapQuote[]) => {
@@ -372,6 +380,7 @@ const CrateDetailPage: React.FC = () => {
             </div>
             {crateData.name}
           </h1>
+          <OktoAuthButton/>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="col-span-1 md:col-span-2 bg-gray-800/10 rounded-xl p-4 md:p-6">

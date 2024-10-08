@@ -5,6 +5,8 @@ import { WalletModalProvider, TipLinkWalletAutoConnectV2 } from '@tiplink/wallet
 import App from './App';
 import './index.css';
 import '@solana/wallet-adapter-react-ui/styles.css';
+import { BuildType, OktoProvider } from 'okto-sdk-react';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const wallets = [
   new TipLinkWalletAdapter({
@@ -26,11 +28,16 @@ if ('serviceWorker' in navigator) {
 }
 
 createRoot(document.getElementById('root')!).render(
-  <WalletProvider wallets={wallets} autoConnect>
+  <OktoProvider apiKey={import.meta.env.REACT_APP_OKTO_CLIENT_API_KEY as string}  buildType={BuildType.SANDBOX}>
+  <GoogleOAuthProvider clientId={import.meta.env.REACT_APP_GOOGLE_CLIENT_ID as string}>
+    
+ <WalletProvider wallets={wallets} autoConnect>
     <TipLinkWalletAutoConnectV2 isReady query={new URLSearchParams(window.location.search)}>
       <WalletModalProvider>
         <App wallets={wallets} />
       </WalletModalProvider>
     </TipLinkWalletAutoConnectV2>
   </WalletProvider>
+  </GoogleOAuthProvider>
+  </OktoProvider>
 );
