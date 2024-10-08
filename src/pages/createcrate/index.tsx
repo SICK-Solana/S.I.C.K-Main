@@ -8,11 +8,6 @@ import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
 import SignUpPopup from './SignUpPopup.tsx';
 import { MdDelete } from 'react-icons/md';
 import { useWallet } from "@solana/wallet-adapter-react"; 
-
-
-
-
-
 interface Token {
   address: string;
   name: string;
@@ -58,11 +53,6 @@ const { publicKey } = useWallet();
   const [error, setError] = useState<string>('');
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
  
- 
-
-
-     
-
 
   useEffect(() => {
     setTokens(tokenData);
@@ -191,65 +181,7 @@ window.location.href = '/crates/' + result.id;
     ).slice(0, 20); // Limit to 5 suggestions
   }, [tokens, searchTerm]);
 
-  // if (!isLoggedIn) {
-  //   return (
-  //     <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
-  //       <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>
-  //         Sign Up to Create a Crate
-  //       </h1>
-  //       <form onSubmit={handleSignup}>
-  //         <input
-  //           type="text"
-  //           value={name}
-  //           onChange={(e) => setName(e.target.value)}
-  //           placeholder="Full Name"
-  //           style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
-  //         />
-  //         <input
-  //           type="email"
-  //           value={email}
-  //           onChange={(e) => setEmail(e.target.value)}
-  //           placeholder="Email"
-  //           style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
-  //         />
-  //         <input
-  //           type="text"
-  //           value={username}
-  //           onChange={(e) => setUsername(e.target.value)}
-  //           placeholder="Username"
-  //           style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
-  //         />
-  //         <input
-  //           type="text"
-  //           value={profileImage}
-  //           onChange={(e) => setProfileImage(e.target.value)}
-  //           placeholder="Profile Image URL"
-  //           style={{ width: '100%', padding: '10px', marginBottom: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
-  //         />
-  //         <button
-  //           type="submit"
-  //           style={{
-  //             width: '100%',
-  //             padding: '10px',
-  //             backgroundColor: '#4CAF50',
-  //             color: 'white',
-  //             border: 'none',
-  //             borderRadius: '4px',
-  //             cursor: 'pointer',
-  //             marginBottom: '10px'
-  //           }}
-  //         >
-  //           Sign Up
-  //         </button>
-  //       </form>
-  //       {error && (
-  //         <div style={{ backgroundColor: '#ffcccb', color: '#d8000c', padding: '10px', marginTop: '20px', borderRadius: '4px' }}>
-  //           {error}
-  //         </div>
-  //       )}
-  //     </div>
-  //   );
-  // }
+  
   const handleDeleteToken = (index: number) => {
     const newSelectedTokens = [...selectedTokens]
     newSelectedTokens.splice(index, 1)
@@ -261,7 +193,7 @@ window.location.href = '/crates/' + result.id;
   return (
     <div className="h-screen">
       <div className=" mx-4">
-     
+
       </div>
     <div className="max-w-3xl mx-auto p-8 bg-gradient-to-b mt-9 from-zinc-950 to-black text-white rounded-3xl shadow-2xl relative">
       <img src="/forgeGradient.png" draggable="false" className="absolute top-0 left-0 rounded-tl-xl z-0 " alt="" />
@@ -385,4 +317,3 @@ window.location.href = '/crates/' + result.id;
 };
 
 export default CrateCreator;
-
