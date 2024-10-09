@@ -55,22 +55,19 @@ const OktoAuthButton = () => {
             console.log("response", response);
         setIsLoading(true);
          
-         const id_token =  "eyJhbGciOiJSUzI1NiIsImtpZCI6IjI4YTQyMWNhZmJlM2RkODg5MjcxZGY5MDBmNGJiZjE2ZGI1YzI0ZDQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTQzNTQ1MjM2MzA3NTM1NDYwOTQiLCJlbWFpbCI6InZpZ2huZXNoLmRyYXdzQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoib0lnbjVyTDE4ZXBMM2l0Mkl3MGZhUSIsImlhdCI6MTcyODM3OTIxNiwiZXhwIjoxNzI4MzgyODE2fQ.HF5rTHAb7vnxbh_ZUHwHTAd00qsx46j70U4w7YbW2rJ97OE_YKMPeK_wzvBx26DXa_45qe6JQx11Sbn-GN3tm5nQTa3ITNLJ7rdY3KqyuwzK3rRyvJMWPHhynB35XwTaPX8rBVUpWYDstb2KACFURAO_XINqhALtVwuFaAeTaHTliyl2-Lyi40rYvdgqu4L-jCNsvjrVCt8m6-FHAKTKW0K8LmsFKTV7EC-_4ICCPsZR7uiV42EpbHpsAH0uqfSI1RSjO5OjG8ulKpwCsTVLOQsOsuyfLMxhYL7tGDiqJGTGb7OXo52v534PhmWq5vCwbLrXQpVKnydd8ZW7uG6dgw"
-    
+        const id_token = import.meta.env.VITE_REACT_ID_TOKEN;
+
         if (!authenticate) {
           throw new Error('Authentication function not available');
         }
 
-        authenticate( id_token, (result) => {
-         
-          // if (error) {
-          //   console.error("Authentication error:", error);
-          //   throw new Error('Authentication failed');
-          // }
+        authenticate( id_token, (result, error) => {
+          if (error) {
+            console.error("Authentication error:", error);
+            throw new Error('Authentication failed');
+          }
 
-         
           if (result) {
-          
             console.log("result.auth_token", result.auth_token);
             setUserAsync(result);
           }
