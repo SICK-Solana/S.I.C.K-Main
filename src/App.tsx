@@ -27,7 +27,7 @@ const AppContent: React.FC<{ wallets: any[] }> = ({ wallets }) => {
   return (
     <>
       {showHeader && <HeaderPhone wallets={wallets} />}
-      <OktoProvider apiKey="5223c657-b570-4661-a38a-5eac5e020523"  buildType={BuildType.SANDBOX}>
+      <OktoProvider apiKey="fa869b62-94fc-4afb-8dda-a8507fed097a"  buildType={BuildType.SANDBOX}>
       <GoogleOAuthProvider clientId="501015698849-8a0bh2sdvq8fr1uksock9arqlbo37rp2.apps.googleusercontent.com">
       
       <Routes>

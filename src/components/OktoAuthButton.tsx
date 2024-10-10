@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { OktoContextType, useOkto } from "okto-sdk-react";
-import { useGoogleLogin } from "@react-oauth/google";
-
+import { GoogleLogin } from '@react-oauth/google';
 
 interface User {
   auth_token: string;
@@ -9,12 +8,11 @@ interface User {
 }
 
 const OktoAuthButton = () => {
-  
-    const { authenticate, logOut, showWidgetModal } = useOkto() as OktoContextType;
-    const [isLoading, setIsLoading] = useState(false);
-    const [user, setUser] = useState<User | null>(() => {
-    
-        try {
+  const { authenticate, logOut, showWidgetModal } = useOkto() as OktoContextType;
+  //@ts-ignore
+  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<User | null>(() => {
+    try {
       const savedUser = localStorage.getItem('oktoUser');
       return savedUser ? JSON.parse(savedUser) : null;
     } catch (error) {
@@ -45,46 +43,35 @@ const OktoAuthButton = () => {
     }
   };
 
- 
-  const handleGoogleLogin = useGoogleLogin({
-   
-    onSuccess:  (response) => {
-    
-        try {
-        
-            console.log("response", response);
-        setIsLoading(true);
-         
-        const id_token = import.meta.env.VITE_REACT_ID_TOKEN;
+  const handleGoogleLogin = async (credentialResponse: any) => {
+    try {
+      console.log("Google response", credentialResponse);
+      setIsLoading(true);
+      
+      const id_token = credentialResponse.credential;
 
-        if (!authenticate) {
-          throw new Error('Authentication function not available');
+      if (!authenticate) {
+        throw new Error('Authentication function not available');
+      }
+
+      authenticate(id_token, (result, error) => {
+        if (error) {
+          console.error("Authentication error:", error);
+          throw new Error('Authentication failed');
         }
 
-        authenticate( id_token, (result, error) => {
-          if (error) {
-            console.error("Authentication error:", error);
-            throw new Error('Authentication failed');
-          }
-
-          if (result) {
-            console.log("result.auth_token", result.auth_token);
-            setUserAsync(result);
-          }
-          setIsLoading(false);
-        });
-      } catch (error) {
-        console.error("Login error:", error);
+        if (result) {
+          console.log("result.auth_token", result.auth_token);
+          setUserAsync(result);
+        }
         setIsLoading(false);
-        throw error;
-      }
-    },
-    onError: (error) => {
-      console.error("Google login failed:", error);
+      });
+    } catch (error) {
+      console.error("Login error:", error);
       setIsLoading(false);
       throw error;
-    },
-  });
+    }
+  };
 
   const handleLogout = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -105,7 +92,6 @@ const OktoAuthButton = () => {
 
   if (user) {
     return (
- 
       <div className="inline-flex rounded-full overflow-hidden shadow-lg hover:shadow-xl transition duration-300 ease-in-out bg-gradient-to-r from-gray-800 to-gray-900">
         <button
           onClick={() => {
@@ -125,33 +111,28 @@ const OktoAuthButton = () => {
           Log Out
         </button>
       </div>
-    
     );
   }
 
   return (
-    <button
-      onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleGoogleLogin(e as any)}
-      disabled={isLoading}
-      className={`
-        inline-flex items-center justify-center
-        px-6 py-3 rounded-full
-        text-base font-medium
-        transition-colors duration-200 ease-in-out
-        bg-gradient-to-r from-blue-700 to-indigo-600 hover:to-indigo-700 hover:from-blue-600 hover:shadow-blue-500/30 shadow-xl 
-        text-white
-        ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
-        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-        shadow-md hover:shadow-lg
-      `}
-    >
-      <img src="/okto.png" alt="Okto Logo" className="w-6 h-6 mr-2" />
-      {isLoading ? (
-        <span className="">loading...</span> 
-      ) : (
-        'Sign In with Okto'
-      )}
+    <button className="bg-blue-700 p-2  gap-x-2 rounded-3xl flex items-center">
+      <h1>Sign in with Okto ➡️</h1>
+    <GoogleLogin
+      onSuccess={handleGoogleLogin}
+      onError={() => {
+        console.log('Login Failed');
+      }}
+      useOneTap
+      type="icon"
+      theme="filled_blue"
+      size="large"
+      text="continue_with"
+      shape="pill"
+      
+    
+    />
     </button>
+
   );
 }
 
