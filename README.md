@@ -73,6 +73,7 @@ To set up and run the project locally, make sure you have the following installe
 - Node.js
 - Tiplink integration setup (API keys.)
 - Okto integration setup (API keys.)
+- Gemini (API keys.)
 
 
 ## Contributing
