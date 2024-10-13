@@ -100,12 +100,12 @@ const CrateValueDisplay: React.FC<{ crateData: CrateData }> = ({ crateData }) =>
 
   const shareOnX = () => {
     const text = `Check out this Crate on Blinks!`;
-    const url = `https://blinks.sickfreak.club/crates/${id}`;
+    const url = `https://dial.to/?action=solana-action:https://blinks.sickfreak.club/api/actions/buy?crateId=${id}`;
     window.open(`https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
   };
 
   const copyLink = () => {
-    const url = `https://blinks.sickfreak.club/crates/${id}`;
+    const url = `https://dial.to/?action=solana-action:https://blinks.sickfreak.club/api/actions/buy?crateId=${id}`;
     navigator.clipboard.writeText(url).then(() => {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
