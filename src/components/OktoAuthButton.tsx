@@ -116,7 +116,7 @@ const OktoAuthButton = () => {
 
   return (
     <button className="bg-blue-700 p-2  gap-x-2 rounded-3xl flex items-center">
-      <h1>Sign in with Okto ➡️</h1>
+      <h1>Sign in with Okto</h1>
     <GoogleLogin
       onSuccess={handleGoogleLogin}
       onError={() => {
