@@ -7,7 +7,7 @@ interface User {
   // Add other user properties as needed
 }
 
-const OktoAuthButton = () => {
+const OktoAuthButton = ({ className = '' }: { className?: string }) => {
   const { authenticate, logOut, showWidgetModal } = useOkto() as OktoContextType;
   //@ts-ignore
   const [isLoading, setIsLoading] = useState(false);
@@ -92,48 +92,46 @@ const OktoAuthButton = () => {
 
   if (user) {
     return (
-      <div className="inline-flex rounded-full overflow-hidden shadow-lg hover:shadow-xl transition duration-300 ease-in-out bg-gradient-to-r from-gray-800 to-gray-900">
+      <div className={`flex flex-col sm:flex-row items-center justify-between rounded-md sm:rounded-full overflow-hidden shadow-lg hover:shadow-xl transition duration-300 ease-in-out bg-gradient-to-r from-gray-800 to-gray-900 ${className}`}>
         <button
-          onClick={() => {
-            if (showWidgetModal) {
-              showWidgetModal();
-            }
-          }}
-          className="py-3 px-6 text-white font-semibold transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 hover:bg-opacity-60 hover:bg-blue-600 bg-blue-900 bg-opacity-40"
+          onClick={showWidgetModal}
+          className="w-full sm:w-auto py-2 sm:py-3 px-4 sm:px-6 text-sm sm:text-base lg:text-lg text-white font-semibold transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 hover:bg-blue-600 hover:bg-opacity-60 bg-blue-900 bg-opacity-40"
         >
           Open Profile
         </button>
-        <div className="w-px bg-gray-700"></div>
+        
+        <div className="hidden sm:block h-px sm:w-px bg-gray-700 sm:h-auto"></div>
+        
         <button
           onClick={handleLogout}
-          className="py-3 px-6 text-white font-semibold transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 hover:bg-opacity-60 hover:bg-red-600 bg-red-900 bg-opacity-40"
+          className="mt-2 sm:mt-0 w-full sm:w-auto py-2 sm:py-3 px-4 sm:px-6 text-sm sm:text-base lg:text-lg text-white font-semibold transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-50 hover:bg-red-600 hover:bg-opacity-60 bg-red-900 bg-opacity-40"
         >
           Log Out
         </button>
       </div>
     );
   }
-
+  
   return (
-    <button className="bg-blue-700 p-2  gap-x-2 rounded-3xl flex items-center">
-      <h1>Sign in with Okto ➡️</h1>
-    <GoogleLogin
-      onSuccess={handleGoogleLogin}
-      onError={() => {
-        console.log('Login Failed');
-      }}
-      useOneTap
-      type="icon"
-      theme="filled_blue"
-      size="large"
-      text="continue_with"
-      shape="pill"
-      
-    
-    />
+    <button className="bg-blue-700 p-2 sm:p-3 rounded-full flex items-center justify-center w-full max-w-[200px] sm:max-w-none sm:w-auto transition-all duration-300 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
+      <span className="hidden sm:inline-block mr-2 text-white text-xs sm:text-sm md:text-base whitespace-nowrap overflow-hidden text-ellipsis">
+        Sign in with Okto
+      </span>
+      <span className="sm:hidden text-white text-xs">Sign in</span>
+      <GoogleLogin
+        onSuccess={handleGoogleLogin}
+        onError={() => {
+          console.log('Login Failed');
+        }}
+        useOneTap
+        type="icon"
+        theme="filled_blue"
+        size="small"
+        text="signin_with"
+        shape="circle"
+      />
     </button>
-
   );
-}
+};
 
-export default OktoAuthButton
+export default OktoAuthButton;
