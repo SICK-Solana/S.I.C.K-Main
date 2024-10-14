@@ -113,6 +113,7 @@ const OktoAuthButton = ({ className = '' }: { className?: string }) => {
   }
   
   return (
+
     <button className="bg-blue-700 p-2 sm:p-3 rounded-full flex items-center justify-center w-full max-w-[200px] sm:max-w-none sm:w-auto transition-all duration-300 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50">
       <span className="hidden sm:inline-block mr-2 text-white text-xs sm:text-sm md:text-base whitespace-nowrap overflow-hidden text-ellipsis">
         Sign in with Okto
@@ -130,6 +131,7 @@ const OktoAuthButton = ({ className = '' }: { className?: string }) => {
         text="signin_with"
         shape="circle"
       />
+
     </button>
   );
 };
