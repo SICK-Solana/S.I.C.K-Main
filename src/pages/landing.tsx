@@ -82,27 +82,31 @@ export default function Landing() {
 
         {/* Main Content */}
         <div className="container mx-auto px-4 py-8 relative z-10">
-          <header className="flex justify-between items-center mb-28">
-            <div className="flex items-center text-3xl gap-2 font-bold">
-              <img
-                src="/sickLogo.png"
-                alt="Description of the image"
-                className="h-10"
-              />
-              SICK
-            </div>
-
-            <div className="flex items-center gap-4 ml-auto">
-              <OktoAuthButton />
-              <WalletMultiButton
-                style={{
-                  background: "white",
-                  color: "black",
-                  borderRadius: "180px",
-                }}
-              />
-            </div>
-          </header>
+    <header className="flex flex-wrap justify-between items-center mb-28">
+      <div className="flex items-center text-3xl gap-2 font-bold mb-4 sm:mb-0">
+        <img
+          src="/sickLogo.png"
+          alt="Description of the image"
+          className="h-10"
+        />
+        SICK
+      </div>
+         
+      <div className="flex flex-wrap items-center gap-4 ml-auto">
+      <div className="hidden sm:block w-auto mb-4 sm:mb-0">
+  <OktoAuthButton className="" />
+</div>
+        <WalletMultiButton
+          style={{
+            background: "white",
+            color: "black",
+            borderRadius: "180px",
+            width: "100%",
+          }}
+          className="w-full sm:w-auto"
+        />
+      </div>
+    </header>
 
           <main className="text-center justify-center items-center">
             <h2 className="text-sm mb-4 py-[6px] px-[15px] mx-auto border font-light border-[#4949497a] w-fit rounded-full">

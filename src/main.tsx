@@ -1,14 +1,21 @@
+
 import { createRoot } from 'react-dom/client';
+
 import { WalletProvider } from '@solana/wallet-adapter-react';
+
 import { TipLinkWalletAdapter } from "@tiplink/wallet-adapter";
+
 import { WalletModalProvider, TipLinkWalletAutoConnectV2 } from '@tiplink/wallet-adapter-react-ui';
+
 import App from './App';
 import './index.css';
 import '@solana/wallet-adapter-react-ui/styles.css';
 import { BuildType, OktoProvider } from 'okto-sdk-react';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { SolflareWalletAdapter } from '@solana/wallet-adapter-solflare';
 
 const wallets = [
+  new SolflareWalletAdapter(),
   new TipLinkWalletAdapter({
     title: "SICK",
     clientId: "cb46c2b5-91cb-4078-9543-7fcace89b15a",
@@ -36,7 +43,7 @@ createRoot(document.getElementById('root')!).render(
       <WalletModalProvider>
         <App wallets={wallets} />
       </WalletModalProvider>
-    </TipLinkWalletAutoConnectV2>
+      </TipLinkWalletAutoConnectV2>
   </WalletProvider>
   </GoogleOAuthProvider>
   </OktoProvider>
