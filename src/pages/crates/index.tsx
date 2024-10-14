@@ -22,7 +22,7 @@ import CrateValueDisplay from './CombinedTokenPrice.tsx';
 import truncate from '../../constants/truncate.ts';
 import Loader from '../../components/Loading.tsx';
 import { BiArrowBack } from "react-icons/bi";
-import OktoAuthButton from '../../components/OktoAuthButton.tsx'
+// import OktoAuthButton from '../../components/OktoAuthButton.tsx'
 
 const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 const SOL_MINT = 'So11111111111111111111111111111111111111112';
@@ -380,7 +380,7 @@ const CrateDetailPage: React.FC = () => {
             </div>
             {crateData.name}
           </h1>
-          <OktoAuthButton/>
+          {/* <OktoAuthButton/> */}
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="col-span-1 md:col-span-2 bg-gray-800/10 rounded-xl p-4 md:p-6">
