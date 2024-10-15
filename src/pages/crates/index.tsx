@@ -380,8 +380,7 @@ const CrateDetailPage: React.FC = () => {
             </div>
             {crateData.name}
           </h1>
-{/*           <OktoAuthButton/>
-        </div> */}
+</div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="col-span-1 md:col-span-2 bg-gray-800/10 rounded-xl p-4 md:p-6">
             <div className="flex justify-between items-center mb-4">
@@ -466,6 +465,7 @@ const CrateDetailPage: React.FC = () => {
       <SideBarPhone />
    
     </div>
+
   );
 }
 
