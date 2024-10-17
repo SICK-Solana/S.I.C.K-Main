@@ -66,7 +66,7 @@ type SwapQuote = {
   quote: QuoteResponse;
 };
 
-const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=a95e3765-35c7-459e-808a-9135a21acdf6');
+const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=d1ec9af2-889c-4759-88c1-a7ea87b0fc40');
 
 const jupiterQuoteApi = createJupiterApiClient();
 
