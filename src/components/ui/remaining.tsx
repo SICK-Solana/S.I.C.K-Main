@@ -52,6 +52,7 @@ export default function CryptoDashboard() {
       try {
         const user = await fetchUserData(publicKey?.toString());
         if (user?.id) {
+          console.log(user);
           const response = await fetch(`https://sickb.vercel.app/api/crates/${user.id}/bookmark`);
           if (!response.ok) {
             throw new Error('Failed to fetch bookmarked crates');
@@ -74,6 +75,21 @@ export default function CryptoDashboard() {
 
     fetchAndSetUserData();
   }, [publicKey]);
+
+  
+  const [solPrice, setSolPrice] = useState<number | 1>(1);
+
+      const fetchSolPrice = async () => {
+        const response = await fetch(
+          "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd"
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch SOL price");
+        }
+        const data = await response.json();
+        setSolPrice(data.solana.usd);
+        return data.solana.usd;
+      }
 
   const handleSort = (option: string) => {
     setSortOption(option);
@@ -102,9 +118,10 @@ export default function CryptoDashboard() {
           <div className="border p-4 sm:p-6 border-[rgb(34,49,21)] sm:rounded-l-xl max-sm:rounded-t-xl">
             <p className="text-[#238636] text-sm mb-2">▲ 🚀</p>
             <h2 className="text-4xl sm:text-6xl font-semibold bg-gradient-to-b from-[#B7FC24] to-[#486900] bg-clip-text text-transparent">
-              $sol {solBalance.toFixed(2)}
+              $Sol {solBalance.toFixed(2)}
 
             </h2>
+            <p className='mt-2 text-lg font-semibold text-zinc-300'>$ {solPrice * solBalance} USD</p>
             <p className="text-gray-400 mt-2">current_value</p>
           </div>
           <div className="border p-4 sm:p-6 border-[#223115] text-sm sm:text-md text-center">
@@ -113,7 +130,7 @@ export default function CryptoDashboard() {
               SOL_balance: <span className="text-[#B6FF1B]">{solBalance.toFixed(2)} SOL</span>
             </p>
             <p className="text-gray-400">
-              {/* token_balance: <span className="text-[#B6FF1B]">{tokenBalance} tokens</span> */}
+            $ {solPrice * solBalance} USD
             </p>
           </div>
           <div className="text-right p-4 sm:p-6 border border-[#223115] max-sm:rounded-b-xl sm:rounded-r-xl">
