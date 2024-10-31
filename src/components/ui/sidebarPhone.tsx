@@ -66,8 +66,6 @@ export const SideBarPhone = () => {
                       
                     </a>
                     {menu.name}
-
-
                     
                   </li>
           );
