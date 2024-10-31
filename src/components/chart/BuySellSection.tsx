@@ -22,27 +22,27 @@ const BuySellSection: React.FC<BuySellSectionProps> = ({
         <select 
           value={selectedCurrency} 
           onChange={(e) => setSelectedCurrency(e.target.value as 'USDC' | 'SOL')}
-          className="flex-1 bg-gray-700/30 text-white px-4 py-2 rounded-xl"
+          className="w-full sm:w-1/2 bg-gray-700/30 text-white px-4 py-2 rounded-xl mb-2 sm:mb-0"
         >
-          <option value="USDC">USDC</option>
+          <option disabled value="USDC">USDC <span className="text-xs">coming soon</span></option>
           <option value="SOL">SOL</option>
         </select>
         
         <input
           type="number"
           placeholder={`Enter amount in ${selectedCurrency}`}
-          className="flex-1 bg-gray-700/30 text-white px-4 py-2 rounded-xl"
+          className="w-full sm:w-1/2 bg-gray-700/30 text-white px-4 py-2 rounded-xl"
           value={inputAmount}
           onChange={handleInputChange}
         />
       </div>
       
-      <div className="flex gap-4">
-        <button className="flex-1 text-red-700 border-2 border-red-700 bg-transparent px-4 py-2 rounded-xl">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <button className="w-full sm:w-1/2 text-red-700 border-2 border-red-700 bg-transparent px-4 py-2 rounded-xl mb-2 sm:mb-0">
           SELL
         </button>
         <button 
-          className="flex-1 bg-gradient-to-b from-lime-500 to-lime-700 text-black px-4 py-2 rounded-xl" 
+          className="w-full sm:w-1/2 bg-gradient-to-b from-lime-500 to-lime-700 text-black px-4 py-2 rounded-xl" 
           onClick={handleGetQuotes}
         >
           BUY
@@ -55,3 +55,4 @@ const BuySellSection: React.FC<BuySellSectionProps> = ({
 };
 
 export default BuySellSection;
+

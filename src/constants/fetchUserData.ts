@@ -1,10 +1,11 @@
 import BackendApi from './api.ts';
-const fetchUserData = async () => {
+
+const fetchUserData = async (publickey: any) => {
   let walletAddress: string | null; // Declare walletAddress variable
   if (localStorage.getItem('tipLink_pk_connected')) {
-     walletAddress = localStorage.getItem('tipLink_pk_connected');
+     walletAddress = publickey || localStorage.getItem('tipLink_pk_connected');
   }else{
-     walletAddress = localStorage.getItem('walletAddress');
+     walletAddress =  publickey || localStorage.getItem('walletAddress');
   }
     if (walletAddress) {
       try {

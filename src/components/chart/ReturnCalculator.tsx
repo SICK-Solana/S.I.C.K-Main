@@ -58,7 +58,7 @@ const ReturnCalculator: React.FC<ReturnCalculatorProps> = ({
         min={0}
         max={1000}
         step={1}
-        onValueChange={(value) => setAmount(value[0])}
+        onValueChange={(value:any) => setAmount(value[0])}
       />
       <div className="space-y-4 flex items-center justify-between max-[1253px]:flex-col">
         <div className="text-sm text-zinc-400 text-center">Investment Period</div>

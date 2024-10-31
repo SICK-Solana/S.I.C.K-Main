@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Connection, PublicKey, SystemProgram, Transaction, VersionedTransaction } from '@solana/web3.js';
+import { Connection, PublicKey, SystemProgram, TransactionMessage, VersionedTransaction } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { Buffer } from 'buffer';
+
 import {
   createJupiterApiClient,
   QuoteGetRequest,
   QuoteResponse,
 } from "@jup-ag/api";
+
 import Sidebar from '../../components/ui/sidebar.tsx';
 import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
 import BuySellSection from '../../components/chart/BuySellSection';
@@ -20,6 +22,7 @@ import CrateValueDisplay from './CombinedTokenPrice.tsx';
 import truncate from '../../constants/truncate.ts';
 import Loader from '../../components/Loading.tsx';
 import { BiArrowBack } from "react-icons/bi";
+// import OktoAuthButton from '../../components/OktoAuthButton.tsx'
 
 const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
 const SOL_MINT = 'So11111111111111111111111111111111111111112';
@@ -63,7 +66,8 @@ type SwapQuote = {
   quote: QuoteResponse;
 };
 
-const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=a95e3765-35c7-459e-808a-9135a21acdf6');
+const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=d1ec9af2-889c-4759-88c1-a7ea87b0fc40');
+
 const jupiterQuoteApi = createJupiterApiClient();
 
 export async function getQuote(
@@ -90,6 +94,7 @@ export async function getQuote(
 }
 
 export async function getSwapObj(wallet: string, quote: QuoteResponse) {
+ 
   const swapObj = await jupiterQuoteApi.swapPost({
     swapRequest: {
       quoteResponse: quote,
@@ -98,10 +103,12 @@ export async function getSwapObj(wallet: string, quote: QuoteResponse) {
       prioritizationFeeLamports: "auto",
     },
   });
+ 
   return swapObj;
 }
 
 const useSwap = (crateData: CrateData) => {
+ 
   const { publicKey, signAllTransactions, sendTransaction } = useWallet();
 
   const swap = async (quoteResults: SwapQuote[]) => {
@@ -122,36 +129,43 @@ const useSwap = (crateData: CrateData) => {
       }
 
       // Create additional transactions for the transfers
-      const transferToStaticWallet = SystemProgram.transfer({
-        fromPubkey: publicKey!,
-        toPubkey: new PublicKey("4iG4s2F3eSByCkMvfsGhrvzXNoPrDFUJuA7Crtuf3Pvn"),
-        lamports: 1_000_000,  // 1,000,000 lamports
-      });
+      const transferToStaticWallet = new VersionedTransaction(
+        new TransactionMessage({
+          payerKey: publicKey,
+          recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+          instructions: [
+            SystemProgram.transfer({
+              fromPubkey: publicKey,
+              toPubkey: new PublicKey("SicKRgxa9vRCfMy4QYzKcnJJvDy1ojxJiNu3PRnmBLs"),
+              lamports: 1000000,  // 1,000,000 lamports
+            })
+          ],
+        }).compileToV0Message()
+      );
 
-      const transferToCreatorWallet = SystemProgram.transfer({
-        fromPubkey: publicKey!,
-        toPubkey: new PublicKey(crateData.creator.walletAddress), 
-        lamports: 1_000_000, 
-      });
+      const transferToCreatorWallet = new VersionedTransaction(
+        new TransactionMessage({
+          payerKey: publicKey,
+          recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+          instructions: [
+            SystemProgram.transfer({
+              fromPubkey: publicKey,
+              toPubkey: new PublicKey(crateData.creator.walletAddress),
+              lamports: 1000000, 
+            })
+          ],
+        }).compileToV0Message()
+      );
 
-      // Create a new transaction and add the transfer instructions
-      const transferTx = new Transaction()
-        .add(transferToStaticWallet)
-        .add(transferToCreatorWallet);
+      transactions.push(transferToStaticWallet);
+      transactions.push(transferToCreatorWallet);
 
-      // Sign and send the swap transactions
-      const signedSwapTransactions = await signAllTransactions(transactions);
+      // Sign and send all transactions
+      const signedTransactions = await signAllTransactions(transactions);
 
-      for (const signedTx of signedSwapTransactions) {
+      for (const signedTx of signedTransactions) {
         const signature = await sendTransaction(signedTx, connection);
-        console.log("Swap Transaction: https://explorer.solana.com/tx/" + signature);
-      }
-
-      // Sign and send the transfer transaction
-      const signedTransferTx = await signAllTransactions([transferTx]);
-      for (const signedTx of signedTransferTx) {
-        const signature = await sendTransaction(signedTx, connection);
-        console.log("Transfer Transaction: https://explorer.solana.com/tx/" + signature);
+        console.log("Transaction: https://explorer.solana.com/tx/" + signature);
       }
 
       return "Swap and transfer completed successfully";
@@ -173,7 +187,7 @@ const CrateDetailPage: React.FC = () => {
   const [quoteResults, setQuoteResults] = useState<SwapQuote[] | null>(null);
   const [returnAmount] = useState<number>(479);
   const [investmentPeriod, setInvestmentPeriod] = useState<number>(1);
-  const [selectedCurrency, setSelectedCurrency] = useState<'USDC' | 'SOL'>('USDC');
+  const [selectedCurrency, setSelectedCurrency] = useState<'USDC' | 'SOL'>('SOL');
   const [loadingvote, setLoadingvote] = useState(false);
 
   const { swap } = useSwap(crateData!);
@@ -294,7 +308,7 @@ const CrateDetailPage: React.FC = () => {
     console.log("Upvoting crate:", id, "by user:", userId); // Debug
     try {
       const response = await fetch(
-        'https://sickb.vercel.app/api/crates/${id}/upvote',
+        `https://sickb.vercel.app/api/crates/${id}/upvote`,
         {
           method: "POST",
           headers: {
@@ -325,7 +339,7 @@ const CrateDetailPage: React.FC = () => {
     console.log("Downvoting crate:", id, "by user:", userId); // Debug
     try {
       const response = await fetch(
-        'https://sickb.vercel.app/api/crates/${id}/downvote',
+        `https://sickb.vercel.app/api/crates/${id}/downvote`,
         {
           method: "POST",
           headers: {
@@ -366,7 +380,7 @@ const CrateDetailPage: React.FC = () => {
             </div>
             {crateData.name}
           </h1>
-        </div>
+</div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="col-span-1 md:col-span-2 bg-gray-600/10 rounded-xl p-4 md:p-6">
             <div className="flex justify-between items-center mb-4">
@@ -416,12 +430,12 @@ const CrateDetailPage: React.FC = () => {
                     </>
                   )}
                 </div>
-                <span className="text-[#b7ff1b98]">
+                <div className="text-[#b7ff1b98] md:mx-40  mx-11">
                   Created by:{" "}
                   <a href="" className="underline text-medium text-[#B6FF1B]">
                     {truncate(crateData.creator.name, 10)}
                   </a>
-                </span>
+                </div>
                 </div>
               </div>
             </div>
@@ -451,6 +465,7 @@ const CrateDetailPage: React.FC = () => {
       <SideBarPhone />
    
     </div>
+
   );
 }
 

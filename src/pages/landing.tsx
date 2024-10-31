@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState , useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import  fetchUserData from '../constants/fetchUserData.ts';
+import { Button } from "../components/ui/button.tsx";
+// import OktoAuthButton from "../components/OktoAuthButton.tsx";
 
 
 export default function Landing() {
@@ -26,9 +28,12 @@ export default function Landing() {
     const storedWalletAddress = localStorage.getItem("walletAddress");
     
     if (storedWalletAddress) {
-      await fetchUserData();
+      
+        
+      await fetchUserData(publicKey?.toString());
+      
       // Wallet address is already stored, proceed to explore crate
-      window.location.href = "/explorecrate";
+      // window.location.href = "/explorecrate";
     }
 
     if (connected && publicKey) {
@@ -40,8 +45,11 @@ export default function Landing() {
 
     if(storedWalletAddress2){
  
-await fetchUserData();
-window.location.href = "/explorecrate";
+     
+        
+        await fetchUserData(publicKey?.toString());
+        
+// window.location.href = "/explorecrate";
   };
 }
 
@@ -74,24 +82,31 @@ window.location.href = "/explorecrate";
 
         {/* Main Content */}
         <div className="container mx-auto px-4 py-8 relative z-10">
-          <header className="flex justify-between items-center mb-28">
-            <div className="flex items-center text-3xl gap-2 font-bold">
-              <img
-                src="/sickLogo.png"
-                alt="Description of the image"
-                className="h-10"
-              />
-              SICK
-            </div>
-
-            <WalletMultiButton
-              style={{
-                background: "white",
-                color: "black",
-                borderRadius: "180px",
-              }}
-            />
-          </header>
+    <header className="flex flex-wrap justify-between items-center mb-28">
+      <div className="flex items-center text-3xl gap-2 font-bold mb-4 sm:mb-0">
+        <img
+          src="/sickLogo.png"
+          alt="Description of the image"
+          className="h-10"
+        />
+        SICK
+      </div>
+         
+      <div className="flex flex-wrap items-center gap-4 ml-auto">
+      {/* <div className="hidden sm:block w-auto mb-4 sm:mb-0">
+  <OktoAuthButton className="" />
+</div> */}
+        <WalletMultiButton
+          style={{
+            background: "white",
+            color: "black",
+            borderRadius: "180px",
+            width: "100%",
+          }}
+          className="w-full sm:w-auto"
+        />
+      </div>
+    </header>
 
           <main className="text-center justify-center items-center">
             <h2 className="text-sm mb-4 py-[6px] px-[15px] mx-auto border font-light border-[#4949497a] w-fit rounded-full">
@@ -112,14 +127,18 @@ window.location.href = "/explorecrate";
             </p>
            
               {/* <Button className="text-gray-900 px-[23px] font-semibold py-[20px] rounded-full text-[14px] bg-gradient-to-b from-[#A9F605] to-[#5e8d00] hover:shadow-[0_12px_24px_rgba(182,255,27,0.3)] transition-shadow duration-300"> */}
-              <WalletMultiButton
+           {connected? <div>             <a href="/explorecrate"> <Button className="text-gray-900 px-[23px] font-semibold py-[20px] rounded-full text-[14px] bg-gradient-to-b from-[#A9F605] to-[#5e8d00] hover:shadow-[0_12px_24px_rgba(182,255,27,0.3)] transition-shadow duration-300">
+         Get Started
+            </Button>
+            </a>
+           </div>  : <WalletMultiButton
               style={{
                 background: "#A9F605",
                 color: "black",
                 borderRadius: "180px",
               }}
-            />
-              {/* </Button> */}
+            /> }
+   
          
             <AnimatePresence>
               <motion.img
@@ -164,10 +183,11 @@ window.location.href = "/explorecrate";
               />
             </AnimatePresence>
           </main>
-
+<a href="https://x.com/sickonsolana" target="_blank">
           <div className="text-center mx-auto justify-center w-full mt-52 mb-16 text-xl text-gray-400 flex items-center gap-2">
             Follow us on: <FaXTwitter className="text-lime-500" />
           </div>
+          </a>
         </div>
         
       </div>
