@@ -357,7 +357,7 @@ const CrateDetailPage: React.FC = () => {
           downvotes: prevState.downvotes + 1,
         }));
       } else {
-        throw new Error('Failed to downvote. Status: ${response.status}');
+        throw new Error(`Failed to downvote. Status: ${response.status}`);
       }
     } catch (error) {
       console.error("Failed to downvote:", error); // Debug
@@ -382,7 +382,7 @@ const CrateDetailPage: React.FC = () => {
           </h1>
 </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="col-span-1 md:col-span-2 bg-gray-800/10 rounded-xl p-4 md:p-6">
+          <div className="col-span-1 md:col-span-2 bg-gray-600/10 rounded-xl p-4 md:p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg md:text-xl font-semibold">Performance</h2>
               <select className="bg-gray-700/10 rounded px-2 py-1">

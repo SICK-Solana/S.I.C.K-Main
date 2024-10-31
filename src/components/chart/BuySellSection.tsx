@@ -18,7 +18,7 @@ const BuySellSection: React.FC<BuySellSectionProps> = ({
     <div className="bg-gradient-to-b from-gray-800/10 to-green-800/10 rounded-xl p-4 md:p-6">
       <h2 className="text-lg md:text-xl font-semibold mb-4">Buy / Sell</h2>
       
-      <div className="flex flex-col sm:flex-row gap-4 mb-4">
+      <div className="flex gap-4 mb-4 max-[1253px]:flex-col">
         <select 
           value={selectedCurrency} 
           onChange={(e) => setSelectedCurrency(e.target.value as 'USDC' | 'SOL')}
