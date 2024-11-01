@@ -49,6 +49,7 @@ const TokenSplit: React.FC<TokenSplitProps> = ({ crateData }) => {
     },
   };
 
+
   return (
     <div className="mt-8 bg-gradient-to-b from-lime-400/10 to-green-800/10 rounded-xl p-4 md:p-6">
       <h2 className="text-lg md:text-xl font-semibold mb-10 text-lime-400">Token Split</h2>

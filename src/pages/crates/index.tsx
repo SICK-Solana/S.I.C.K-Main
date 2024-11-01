@@ -458,9 +458,7 @@ const CrateDetailPage: React.FC = () => {
             setSelectedCurrency={setSelectedCurrency}
           />
             <ReturnCalculator
-              returnAmount={returnAmount}
-              investmentPeriod={investmentPeriod}
-              setInvestmentPeriod={setInvestmentPeriod}
+              crateData={crateData}
             />
           </div>
         </div>
