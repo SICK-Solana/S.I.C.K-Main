@@ -12,11 +12,11 @@ import { useEffect } from 'react';
 import { Slider } from "../../components/ui/slider"
 import { Button } from "../../components/ui/button"
 
-interface ReturnCalculatorProps {
-  returnAmount: number;
-  investmentPeriod: number;
-  setInvestmentPeriod: (value: number) => void;
-}
+// interface ReturnCalculatorProps {
+//   returnAmount: number;
+//   investmentPeriod: number;
+//   setInvestmentPeriod: (value: number) => void;
+// }
 
 interface TokenSplitProps {
   crateData: any;
@@ -25,7 +25,6 @@ interface TokenSplitProps {
 const ReturnCalculator: React.FC<TokenSplitProps> = ({crateData}) => {
   const [crateTokenSymbols, setCrateTokenSymbols] = React.useState<string[]>([]);
   const [amount, setAmount] = React.useState(169)
-  const [period, setPeriod] = React.useState(6)
   const [frequency, setFrequency] = React.useState("monthly")
   const [returnAmount, setReturnAmount] = React.useState(0)
 
