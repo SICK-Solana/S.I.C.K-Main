@@ -185,8 +185,6 @@ const CrateDetailPage: React.FC = () => {
   const [inputAmount, setInputAmount] = useState<string>('');
 // @ts-ignore
   const [quoteResults, setQuoteResults] = useState<SwapQuote[] | null>(null);
-  const [returnAmount] = useState<number>(479);
-  const [investmentPeriod, setInvestmentPeriod] = useState<number>(1);
   const [selectedCurrency, setSelectedCurrency] = useState<'USDC' | 'SOL'>('SOL');
   const [loadingvote, setLoadingvote] = useState(false);
 
