@@ -11,7 +11,7 @@ const HeaderPhone: React.FC<HeaderPhoneProps> = ({ wallets }) => {
 
   const handleWalletClick = () => {
     if (wallets && wallets.length > 0) {
-      const tipLinkWallet = wallets[0];
+      const tipLinkWallet = wallets[1];
       if (tipLinkWallet && tipLinkWallet._showWallet) {
         tipLinkWallet._showWallet();
       } else {
