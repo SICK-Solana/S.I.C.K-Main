@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Connection, PublicKey, SystemProgram, TransactionMessage, VersionedTransaction } from '@solana/web3.js';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { Buffer } from 'buffer';
-
+import useTokenSwap from './useTokenSwap.ts';
 import {
   createJupiterApiClient,
   QuoteGetRequest,
@@ -24,8 +22,8 @@ import Loader from '../../components/Loading.tsx';
 import { BiArrowBack } from "react-icons/bi";
 // import OktoAuthButton from '../../components/OktoAuthButton.tsx'
 
-const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
-const SOL_MINT = 'So11111111111111111111111111111111111111112';
+// const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+// const SOL_MINT = 'So11111111111111111111111111111111111111112';
 
 declare global {
   interface Window {
@@ -66,7 +64,6 @@ type SwapQuote = {
   quote: QuoteResponse;
 };
 
-const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=a95e3765-35c7-459e-808a-9135a21acdf6');
 
 const jupiterQuoteApi = createJupiterApiClient();
 
@@ -107,76 +104,7 @@ export async function getSwapObj(wallet: string, quote: QuoteResponse) {
   return swapObj;
 }
 
-const useSwap = (crateData: CrateData) => {
- 
-  const { publicKey, signAllTransactions, sendTransaction } = useWallet();
 
-  const swap = async (quoteResults: SwapQuote[]) => {
-    if (!publicKey || !signAllTransactions || !sendTransaction) {
-      console.error('Wallet not connected');
-      return;
-    }
-
-    try {
-      const transactions: VersionedTransaction[] = [];
-
-      // Create a transaction for swapping tokens
-      for (const quoteResult of quoteResults) {
-        const swapObj = await getSwapObj(publicKey.toString(), quoteResult.quote);
-        const swapTransactionBuf = Buffer.from(swapObj.swapTransaction, "base64");
-        const transaction = VersionedTransaction.deserialize(swapTransactionBuf);
-        transactions.push(transaction);
-      }
-
-      // Create additional transactions for the transfers
-      const transferToStaticWallet = new VersionedTransaction(
-        new TransactionMessage({
-          payerKey: publicKey,
-          recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
-          instructions: [
-            SystemProgram.transfer({
-              fromPubkey: publicKey,
-              toPubkey: new PublicKey("SicKRgxa9vRCfMy4QYzKcnJJvDy1ojxJiNu3PRnmBLs"),
-              lamports: 1000000,  // 1,000,000 lamports
-            })
-          ],
-        }).compileToV0Message()
-      );
-
-      const transferToCreatorWallet = new VersionedTransaction(
-        new TransactionMessage({
-          payerKey: publicKey,
-          recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
-          instructions: [
-            SystemProgram.transfer({
-              fromPubkey: publicKey,
-              toPubkey: new PublicKey(crateData.creator.walletAddress),
-              lamports: 1000000, 
-            })
-          ],
-        }).compileToV0Message()
-      );
-
-      transactions.push(transferToStaticWallet);
-      transactions.push(transferToCreatorWallet);
-
-      // Sign and send all transactions
-      const signedTransactions = await signAllTransactions(transactions);
-
-      for (const signedTx of signedTransactions) {
-        const signature = await sendTransaction(signedTx, connection);
-        console.log("Transaction: https://explorer.solana.com/tx/" + signature);
-      }
-
-      return "Swap and transfer completed successfully";
-    } catch (error) {
-      console.error("Error while swapping", error);
-      throw error;
-    }
-  };
-
-  return { swap };
-};
 const CrateDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [crateData, setCrateData] = useState<CrateData | null>(null);
@@ -189,8 +117,9 @@ const CrateDetailPage: React.FC = () => {
   const [investmentPeriod, setInvestmentPeriod] = useState<number>(1);
   const [selectedCurrency, setSelectedCurrency] = useState<'USDC' | 'SOL'>('SOL');
   const [loadingvote, setLoadingvote] = useState(false);
+  const { bulkSwap } = useTokenSwap();
 
-  const { swap } = useSwap(crateData!);
+
 
   useEffect(() => {
     const fetchCrateData = async () => {
@@ -219,85 +148,10 @@ const CrateDetailPage: React.FC = () => {
     setInputAmount(e.target.value);
   };
 
-  const getSwapQuotes = async (tokenAllocations: { mint: string; amount: number }[]): Promise<SwapQuote[]> => {
-    try {
-      console.log('tokenAllocations', tokenAllocations);  
   
-      const inputMint = selectedCurrency === 'USDC' ? USDC_MINT : SOL_MINT;
-      const inputDecimals = selectedCurrency === 'USDC' ? 6 : 9;  // USDC has 6 decimals, SOL has 9
-      
-      const quotePromises = tokenAllocations.map(async ({ mint, amount }) => {
-        try {
-            // Convert amount to lamports or USDC atomic units
-        const atomicAmount = Math.floor(amount * Math.pow(10, inputDecimals));
-        
-          const quote = await getQuote(inputMint, mint, atomicAmount);
-          console.log(`Quote for ${mint}:`, quote);
-          const token = tokenData.find(t => t.address === mint);
-          return token ? { symbol: token.symbol, quote } : null;
-        } catch (error) {
-          console.error(`Error getting quote for token ${mint}:`, error);
-          return null;
-        }
-      });
-  
-      const results = await Promise.all(quotePromises);
-      return results.filter((result): result is SwapQuote => result !== null);
-    } catch (error) {
-      console.error("Error fetching swap quotes:", error);
-      throw error;
-    }
-  };
 
-  const handleGetQuotes = async () => {
-    if (!crateData || !inputAmount) return;
+ 
   
-    setError(null);
-    setLoading(true);
-  
-    const totalAmount = parseFloat(inputAmount);
-    const tokenAllocations = crateData.tokens.map(token => ({
-      mint: tokenData.find(t => t.symbol === token.symbol)?.address || '',
-      amount: (totalAmount * token.quantity) / 100
-    }));
-  
-    try {
-      const quotes = await getSwapQuotes(tokenAllocations);
-      setQuoteResults(quotes);
-      console.log(quotes);
-  
-      // Immediately proceed to swap after getting quotes
-      await onSwap(quotes);
-    } catch (err) {
-      console.error("Error in getSwapQuotes:", err);
-      setError("Failed to fetch swap quotes. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const onSwap = async (quotes: SwapQuote[]) => {
-    if (!quotes || quotes.length === 0) {
-      setError("No quotes available. Please get quotes first.");
-      return;
-    }
-  
-    setLoading(true);
-    setError(null);
-  
-    try {
-      const result = await swap(quotes);
-      console.log(`Swap successful:`, result);
-      alert('purchase successful , find new tokens in your wallet');
-      setQuoteResults(null); // Clear quotes after successful swaps
-    } catch (error) {
-      console.error('Swap failed:', error);
-      setError("Swap failed. Please try again.");
-      window.location.reload();
-    } finally {
-      setLoading(false);
-    }
-  };
   if (loading) return <div className=' h-screen'> <div className='mt-72'><Loader /></div>  <Sidebar/> <SideBarPhone/></div>;
   if (error) return <div>Error: {error}</div>;
   if (!crateData) return <div>No crate data found</div>;
@@ -366,6 +220,26 @@ const CrateDetailPage: React.FC = () => {
     }
   };
 
+  const handleSwap = async () => {
+    const swapOptions = {
+      tokens: crateData.tokens.map(token => ({
+        symbol: token.symbol,
+        mint: tokenData.find(t => t.symbol === token.symbol)?.address || '',
+        quantity: token.quantity
+      })),
+      inputAmount: parseFloat(inputAmount),
+      inputCurrency: selectedCurrency
+    };
+  
+    try {
+      const results = await bulkSwap(swapOptions);
+      console.log('Swap results:', results);
+      alert('purchase successful , find new tokens in your wallet');
+    } catch (error) {
+      // Handle swap error
+      alert('purchase failed');
+    }
+  };
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white">
       <Sidebar />
@@ -447,7 +321,7 @@ const CrateDetailPage: React.FC = () => {
             <BuySellSection
             inputAmount={inputAmount}
             handleInputChange={handleInputChange}
-            handleGetQuotes={handleGetQuotes}
+            handleGetQuotes={handleSwap}
             selectedCurrency={selectedCurrency}
             setSelectedCurrency={setSelectedCurrency}
           />
