@@ -1,28 +1,21 @@
-
 import { createRoot } from 'react-dom/client';
-
 import { WalletProvider } from '@solana/wallet-adapter-react';
-
-import { TipLinkWalletAdapter } from "@tiplink/wallet-adapter";
-
-import { WalletModalProvider, TipLinkWalletAutoConnectV2 } from '@tiplink/wallet-adapter-react-ui';
-
+import { WalletModalProvider } from '@tiplink/wallet-adapter-react-ui';
+import { createPhantom } from "@phantom/wallet-sdk";
 import App from './App';
 import './index.css';
 import '@solana/wallet-adapter-react-ui/styles.css';
-import { BuildType, OktoProvider } from 'okto-sdk-react';
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import { SolflareWalletAdapter } from '@solana/wallet-adapter-solflare';
 
-const wallets = [
-  new SolflareWalletAdapter(),
-  new TipLinkWalletAdapter({
-    title: "SICK",
-    clientId: "cb46c2b5-91cb-4078-9543-7fcace89b15a",
-    theme: "dark",
-    hideDraggableWidget: true
-  }),
-];
+// Initialize Phantom embedded wallet
+if (typeof window !== 'undefined') {
+  createPhantom({
+    zIndex: 10000,
+    colorScheme: 'light',
+    hideLauncherBeforeOnboarded: false,
+    paddingRight: 20,
+    paddingBottom: 20
+  });
+}
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
@@ -35,16 +28,9 @@ if ('serviceWorker' in navigator) {
 }
 
 createRoot(document.getElementById('root')!).render(
-  <OktoProvider apiKey={import.meta.env.REACT_APP_OKTO_CLIENT_API_KEY as string}  buildType={BuildType.SANDBOX}>
-  <GoogleOAuthProvider clientId={import.meta.env.REACT_APP_GOOGLE_CLIENT_ID as string}>
-    
- <WalletProvider wallets={wallets} autoConnect>
-    <TipLinkWalletAutoConnectV2 isReady query={new URLSearchParams(window.location.search)}>
-      <WalletModalProvider>
-        <App wallets={wallets} />
-      </WalletModalProvider>
-      </TipLinkWalletAutoConnectV2>
+  <WalletProvider wallets={[]} autoConnect>
+    <WalletModalProvider>
+      <App wallets={[]} />
+    </WalletModalProvider>
   </WalletProvider>
-  </GoogleOAuthProvider>
-  </OktoProvider>
 );

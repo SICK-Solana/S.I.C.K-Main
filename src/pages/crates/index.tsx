@@ -113,8 +113,6 @@ const CrateDetailPage: React.FC = () => {
   const [inputAmount, setInputAmount] = useState<string>('');
 // @ts-ignore
   const [quoteResults, setQuoteResults] = useState<SwapQuote[] | null>(null);
-  const [returnAmount] = useState<number>(479);
-  const [investmentPeriod, setInvestmentPeriod] = useState<number>(1);
   const [selectedCurrency, setSelectedCurrency] = useState<'USDC' | 'SOL'>('SOL');
   const [loadingvote, setLoadingvote] = useState(false);
   const { bulkSwap } = useTokenSwap();
@@ -211,7 +209,7 @@ const CrateDetailPage: React.FC = () => {
           downvotes: prevState.downvotes + 1,
         }));
       } else {
-        throw new Error('Failed to downvote. Status: ${response.status}');
+        throw new Error(`Failed to downvote. Status: ${response.status}`);
       }
     } catch (error) {
       console.error("Failed to downvote:", error); // Debug
@@ -219,6 +217,9 @@ const CrateDetailPage: React.FC = () => {
       setLoadingvote(false); // End loading
     }
   };
+
+      
+
 
   const handleSwap = async () => {
     const swapOptions = {
@@ -240,6 +241,7 @@ const CrateDetailPage: React.FC = () => {
       alert('purchase failed');
     }
   };
+  
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white">
       <Sidebar />
@@ -256,7 +258,8 @@ const CrateDetailPage: React.FC = () => {
           </h1>
 </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="col-span-1 md:col-span-2 bg-gray-800/10 rounded-xl p-4 md:p-6">
+          <div className="col-span-1 md:col-span-2 bg-gray-600/10 rounded-xl p-4 md:p-6">
+           <div className="flex flex-col justify-between gap-20 max-sm:gap-1">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg md:text-xl font-semibold">Performance</h2>
               <select className="bg-gray-700/10 rounded px-2 py-1">
@@ -265,8 +268,10 @@ const CrateDetailPage: React.FC = () => {
             </div>
             <div className="h-fit">
               <CombinedPriceChart tokens={crateData.tokens} />
-              <div className="flex gap-4 justify-between mt-4 text-sm">
-              <div className="flex gap-4 justify-between mt-4 text-sm">
+              
+            </div>
+            <div className="flex gap-4 w-full mt-4 text-sm">
+              <div className="flex gap-4 justify-between items-center w-full mt-4 text-sm">
                 <div className="flex gap-3 p-2 min-w-[120px] rounded-full border items-center border-white/20 bg-gradient-to-b from-[#ffffff]/[10%] to-[#999999]/[10%]">
                   {loadingvote ? (
                     <div className="flex justify-center items-center max-h-[20px] w-full">
@@ -304,7 +309,7 @@ const CrateDetailPage: React.FC = () => {
                     </>
                   )}
                 </div>
-                <div className="text-[#b7ff1b98] md:mx-40  mx-11">
+                <div className="text-[#b7ff1b98]">
                   Created by:{" "}
                   <a href="" className="underline text-medium text-[#B6FF1B]">
                     {truncate(crateData.creator.name, 10)}
@@ -312,7 +317,7 @@ const CrateDetailPage: React.FC = () => {
                 </div>
                 </div>
               </div>
-            </div>
+           </div> 
           </div>
           <div className="space-y-8">
             <div>
@@ -326,9 +331,7 @@ const CrateDetailPage: React.FC = () => {
             setSelectedCurrency={setSelectedCurrency}
           />
             <ReturnCalculator
-              returnAmount={returnAmount}
-              investmentPeriod={investmentPeriod}
-              setInvestmentPeriod={setInvestmentPeriod}
+              crateData={crateData}
             />
           </div>
         </div>
