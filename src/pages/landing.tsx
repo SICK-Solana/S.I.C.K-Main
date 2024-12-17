@@ -39,7 +39,24 @@ export default function Landing() {
     if (connected && publicKey) {
       // Store the wallet address in localStorage
       localStorage.setItem("walletAddress", publicKey.toString());
-   
+      const data = {
+        walletAddress: publicKey.toString(),
+        profileImage: "https://wallpapers.com/images/hd/weird-pfp-of-pepe-frog-9jhipb7w1gpfgrcb.jpg"
+      };
+        
+      try {
+        const response = await fetch('https://sickb.vercel.app/api/register-wallet', {
+          method: 'POST',
+          headers: {
+        'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        console.log('Response:', result);
+      } catch (error) {
+        console.error('Error registering wallet:', error);
+      }
     }
     const storedWalletAddress2 = localStorage.getItem("walletAddress");
 
