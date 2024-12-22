@@ -5,7 +5,6 @@ import BackendApi from '../../constants/api.ts';
 import fetchUserData from '../../constants/fetchUserData.ts';
 import Sidebar from '../../components/ui/sidebar.tsx';
 import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
-import SignUpPopup from './SignUpPopup.tsx';
 import { MdDelete } from 'react-icons/md';
 import { useWallet } from "@solana/wallet-adapter-react"; 
 
@@ -205,7 +204,7 @@ const CrateCreator: React.FC = () => {
           <p className="text-gray-400 text-xl">Create a custom token basket with your preferred allocations.</p>
         </div>
 
-        {!isLoggedIn && <SignUpPopup />}
+        {/* {!isLoggedIn && <SignUpPopup />} */}
 
         <div className="space-y-8">
           <input
