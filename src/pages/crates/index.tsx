@@ -14,7 +14,7 @@ import BuySellSection from '../../components/chart/BuySellSection';
 import ReturnCalculator from '../../components/chart/ReturnCalculator';
 import TokenSplit from '../../components/chart/TokenSplit';
 import BackendApi from '../../constants/api.ts';
-import tokenData from '../../pages/createcrate/tokens.json';
+import { getTokenData } from '../../pages/createcrate/tokens';
 import CombinedPriceChart from './CombinedPriceChart.tsx';
 import CrateValueDisplay from './CombinedTokenPrice.tsx';
 import truncate from '../../constants/truncate.ts';
@@ -222,6 +222,8 @@ const CrateDetailPage: React.FC = () => {
 
 
   const handleSwap = async () => {
+    const tokenData = getTokenData();
+
     const swapOptions = {
       tokens: crateData.tokens.map(token => ({
         symbol: token.symbol,

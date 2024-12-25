@@ -1,5 +1,4 @@
 import React, { useState, useEffect, ChangeEvent, useMemo } from 'react';
-import tokenData from './tokens.json';
 import debounce from 'lodash/debounce';
 import BackendApi from '../../constants/api.ts';
 import fetchUserData from '../../constants/fetchUserData.ts';
@@ -50,12 +49,33 @@ const CrateCreator: React.FC = () => {
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [totalAllocation, setTotalAllocation] = useState<number>(0);
+    // @ts-nocheck
+
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>('');
+  // @ts-nocheck
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
-    setTokens(tokenData);
-    checkLoginStatus();
+    const fetchTokens = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('https://tokens.jup.ag/tokens?tags=verified');
+        if (!response.ok) {
+          throw new Error('Failed to fetch tokens');
+        }
+        const tokenData = await response.json();
+        setTokens(tokenData);
+        checkLoginStatus(); // Assuming this is defined elsewhere in your app
+      } catch (err) {
+       
+        console.error('Error fetching tokens:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTokens();
   }, []);
 
   const distributeAllocations = (tokens: SelectedToken[]): SelectedToken[] => {
@@ -252,22 +272,28 @@ const CrateCreator: React.FC = () => {
                 className="w-full p-4 bg-gray-800/30 border border-lime-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-lime-500 text-white appearance-none cursor-pointer transition-all duration-300"
               >
                 <option value="">Select a token</option>
-                {tokens.map((token) => (
-                  <option 
-                    className='bg-black' 
-                    key={token.address} 
-                    value={token.address}
-                    disabled={selectedTokens.some(t => t.address === token.address)}
-                  >
-                    {token.name} ({token.symbol})
-                  </option>
-                ))}
+                {tokens
+    .filter(token => 
+      token.symbol !== 'SOL' && 
+      token.symbol !== 'WSOL' && 
+      token.symbol !== 'wSOL'
+    )
+    .map((token) => (
+      <option
+        className='bg-black'
+        key={token.address}
+        value={token.address}
+        disabled={selectedTokens.some(t => t.address === token.address)}
+      >
+        {token.name} ({token.symbol})
+      </option>
+    ))}
               </select>
 
               <div className="w-full p-4 bg-gray-800/30 border border-lime-500/30 rounded-xl">
                 <h3 className="text-lg font-semibold mb-3">Popular Tokens</h3>
                 <div className="flex flex-wrap gap-4">
-                  {tokens.filter(token => ['BTC', 'ETH', 'SOL', 'USDC', 'USDT'].includes(token.symbol)).map((token) => (
+                  {tokens.filter(token => ['BTC', 'ETH', 'USDC', ].includes(token.symbol)).map((token) => (
                     <label key={token.address} className="flex items-center space-x-2 cursor-pointer">
                       <input
                         type="checkbox"

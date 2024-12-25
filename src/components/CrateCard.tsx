@@ -8,7 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import tokenData from '../pages/createcrate/tokens.json';
+import {getTokenData} from '../pages/createcrate/tokens.ts';
 import truncate from '../constants/truncate';
 
 interface ChartDataPoint {
@@ -49,6 +49,7 @@ const CrateCard: React.FC<CrateCardProps> = ({
   chartData,
   weightedPriceChange,
 }) => {
+  const tokenData = getTokenData();
   const [yAxisDomain, setYAxisDomain] = useState<number[]>([0, 0]);
 
   useEffect(() => {
@@ -135,6 +136,7 @@ const CrateCard: React.FC<CrateCardProps> = ({
           <div key={index} className="flex items-center space-x-1">
             <img
               src={
+                
                 tokenData.find((t) => t.symbol === token.symbol)?.logoURI ||
                 `/path/to/${token.symbol}-icon.png`
               }
