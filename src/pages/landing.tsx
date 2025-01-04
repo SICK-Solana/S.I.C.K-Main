@@ -1,5 +1,5 @@
 import { BentoGrid } from "../components/ui/bentogrid";
-import { WalletMultiButton } from "@tiplink/wallet-adapter-react-ui";
+// import { WalletMultiButton } from "@tiplink/wallet-adapter-react-ui";
 import { FaXTwitter } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState , useEffect } from "react";
@@ -96,7 +96,7 @@ export default function Landing() {
       {/* <div className="hidden sm:block w-auto mb-4 sm:mb-0">
   <OktoAuthButton className="" />
 </div> */}
-        <WalletMultiButton
+        {/* <WalletMultiButton
           style={{
             background: "white",
             color: "black",
@@ -104,7 +104,7 @@ export default function Landing() {
             width: "100%",
           }}
           className="w-full sm:w-auto"
-        />
+        /> */}
       </div>
     </header>
 

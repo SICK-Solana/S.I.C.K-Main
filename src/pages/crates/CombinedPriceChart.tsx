@@ -54,7 +54,6 @@ const CombinedPriceChart: React.FC<CombinedPriceChartProps> = ({ tokens }) => {
         const processedData = processChartData(data, tokens);
         setChartData(processedData);
 
-        // Calculate the weighted average price change
         const totalQuantity = tokens.reduce(
           (sum, token) => sum + token.quantity,
           0
@@ -66,7 +65,6 @@ const CombinedPriceChart: React.FC<CombinedPriceChartProps> = ({ tokens }) => {
 
         setPriceChangeColor(weightedPriceChange >= 0 ? "#4ade80" : "#ef4444");
 
-        // Set Y-axis domain
         const minValue = Math.min(...processedData.map((d) => d.value));
         const maxValue = Math.max(...processedData.map((d) => d.value));
         setYAxisDomain([minValue * 0.99, maxValue * 1.01]);
@@ -88,7 +86,7 @@ const CombinedPriceChart: React.FC<CombinedPriceChartProps> = ({ tokens }) => {
   ): ChartDataPoint[] => {
     const quantityMap = new Map(
       tokens.map((token) => [token.coingeckoId, token.quantity])
-    ); // Percentage, not actual quantity
+    );
     const combinedData: ChartDataPoint[] = [];
 
     const dataPoints = priceData[0]?.sparkline_in_7d.price.length || 0;
@@ -96,9 +94,9 @@ const CombinedPriceChart: React.FC<CombinedPriceChartProps> = ({ tokens }) => {
     for (let i = 0; i < dataPoints; i++) {
       let combinedValue = 0;
       priceData.forEach((coin) => {
-        const quantityPercentage = quantityMap.get(coin.id) || 0; // This is a percentage (0-100)
+        const quantityPercentage = quantityMap.get(coin.id) || 0;
         combinedValue +=
-          (coin.sparkline_in_7d.price[i] * quantityPercentage) / 100; // Adjust for percentage
+          (coin.sparkline_in_7d.price[i] * quantityPercentage) / 100;
       });
 
       combinedData.push({
@@ -116,17 +114,23 @@ const CombinedPriceChart: React.FC<CombinedPriceChartProps> = ({ tokens }) => {
     return value.toFixed(8);
   };
 
-  if (loading) return <div>Loading chart data...</div>;
+  if (loading) return <div className="text-sm">Loading chart data...</div>;
 
   return (
     <>
       {error ? (
-        <div className=" mb-10">
-          <img src="/errorgraph.png" className="h-96 mx-auto opacity-50" alt="" />
-          <h1 className="text-xl max-sm:text-base text-white font-bold text-center">Sorry,We couldn't fetch any graphs {":("}</h1>
+        <div className="mb-6">
+          <img
+            src="/errorgraph.png"
+            className="h-48 mx-auto opacity-50"
+            alt=""
+          />
+          <h1 className="text-sm text-white font-bold text-center">
+            Sorry, we couldn't fetch any graphs {":("}
+          </h1>
         </div>
       ) : (
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={200}>
           <LineChart data={chartData}>
             <XAxis
               dataKey="timestamp"
@@ -140,7 +144,7 @@ const CombinedPriceChart: React.FC<CombinedPriceChartProps> = ({ tokens }) => {
             <YAxis domain={yAxisDomain} tickFormatter={formatYAxis} hide />
             <Tooltip
               contentStyle={{ backgroundColor: "#2a2a2a", border: "none" }}
-              itemStyle={{ color: "#fff" }}
+              itemStyle={{ color: "#fff", fontSize: "0.75rem" }}
               formatter={(value: number) => [
                 `$${formatYAxis(value)}`,
                 "Combined Value",
@@ -151,7 +155,7 @@ const CombinedPriceChart: React.FC<CombinedPriceChartProps> = ({ tokens }) => {
               type="monotone"
               dataKey="value"
               stroke={priceChangeColor}
-              strokeWidth={2}
+              strokeWidth={1.5}
               dot={false}
             />
           </LineChart>

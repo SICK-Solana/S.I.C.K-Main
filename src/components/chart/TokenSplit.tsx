@@ -10,8 +10,9 @@ interface TokenSplitProps {
 
 const TokenSplit: React.FC<TokenSplitProps> = ({ crateData }) => {
   const colors = [
-    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FFCD56', '#4BC0C0', '#36A2EB', '#FF6384'
+    '#008000', '#00FF00', '#32CD32', '#3CB371', '#2E8B57', '#006400', '#228B22', '#7FFF00', '#98FB98', '#ADFF2F'
   ];
+  
 
   const pieData = {
     labels: crateData.tokens.map((token: any) => token.name),
