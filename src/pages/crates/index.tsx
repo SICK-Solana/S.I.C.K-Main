@@ -11,7 +11,7 @@ import { BiArrowBack } from "react-icons/bi";
 import BuySellSection from '../../components/chart/BuySellSection';
 import TokenSplit from '../../components/chart/TokenSplit';
 import BackendApi from '../../constants/api.ts';
-import tokenData from '../../pages/createcrate/tokens.json';
+import { getTokenData } from '../../pages/createcrate/tokens';
 import CombinedPriceChart from './CombinedPriceChart.tsx';
 // import CrateValueDisplay from './CombinedTokenPrice.tsx';
 import truncate from '../../constants/truncate.ts';
@@ -111,6 +111,8 @@ const CrateDetailPage: React.FC = () => {
   }, [id]);
 
   const handleSwap = async () => {
+    const tokenData = getTokenData();
+
     const swapOptions = {
       tokens: crateData?.tokens.map(token => ({
         symbol: token.symbol,

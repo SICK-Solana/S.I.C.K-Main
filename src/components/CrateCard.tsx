@@ -1,8 +1,20 @@
 import React from 'react';
 import { Bookmark, ArrowBigUp, ArrowBigDown } from "lucide-react";
+<<<<<<< HEAD
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import tokenData from '../pages/createcrate/tokens.json';
+=======
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import {getTokenData} from '../pages/createcrate/tokens.ts';
+>>>>>>> a94bb26cc84bdecaebd39d2f16036d2443f99d13
 import truncate from '../constants/truncate';
 
 // Initialize dayjs relative time plugin
@@ -41,7 +53,64 @@ const CrateCard: React.FC<CrateCardProps> = ({
   weightedPriceChange,
   createdAt,
 }) => {
+<<<<<<< HEAD
   const timeAgo = dayjs(createdAt).fromNow();
+=======
+  const tokenData = getTokenData();
+  const [yAxisDomain, setYAxisDomain] = useState<number[]>([0, 0]);
+
+  useEffect(() => {
+    if (chartData && chartData.length > 0) {
+      const minValue = Math.min(...chartData.map((d) => d.value));
+      const maxValue = Math.max(...chartData.map((d) => d.value));
+      setYAxisDomain([minValue * 0.99, maxValue * 1.01]);
+    }
+  }, [chartData]);
+
+  const formatYAxis = (value: number) => {
+    if (value >= 1) return value.toFixed(2);
+    if (value >= 0.01) return value.toFixed(4);
+    return value.toFixed(8);
+  };
+
+  const priceChangeColor = useMemo(() => {
+    return weightedPriceChange >= 0 ? "#4ade80" : "#ef4444";
+  }, [weightedPriceChange]);
+
+  const renderChart = () => {
+    if (!chartData || chartData.length === 0) return null;
+
+    return (
+      <ResponsiveContainer width="100%" height={130}>
+        <LineChart data={chartData}>
+          <XAxis
+            dataKey="timestamp"
+            type="number"
+            domain={["dataMin", "dataMax"]}
+            tickFormatter={(timestamp) =>
+              new Date(timestamp).toLocaleDateString()
+            }
+            hide
+          />
+          <YAxis domain={yAxisDomain} tickFormatter={formatYAxis} hide />
+          <Tooltip
+            contentStyle={{ backgroundColor: "#2a2a2a", border: "none" }}
+            itemStyle={{ color: "#fff" }}
+            formatter={(value: number) => [`$${formatYAxis(value)}`, "Combined Value"]}
+            labelFormatter={(label) => new Date(label).toLocaleString()}
+          />
+          <Line
+            type="monotone"
+            dataKey="value"
+            stroke={priceChangeColor}
+            strokeWidth={2}
+            dot={false}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  };
+>>>>>>> a94bb26cc84bdecaebd39d2f16036d2443f99d13
 
   return (
     <div className={`relative w-full max-w-sm rounded-2xl border p-4 text-white shadow-lg transform transition-transform hover:scale-105 ${
@@ -98,6 +167,7 @@ const CrateCard: React.FC<CrateCardProps> = ({
         </span>
       </div>
 
+<<<<<<< HEAD
       <div className="text-center flex flex-col space-y-1">
         <span className="text-[#b7ff1b98] text-xs">
           Created by: <span className="underline text-medium text-sm text-[#B6FF1B]">
@@ -105,6 +175,26 @@ const CrateCard: React.FC<CrateCardProps> = ({
           </span>
         </span>
         <span className="text-xs text-gray-400">{timeAgo}</span>
+=======
+      <div className="flex items-center space-x-1">
+        {tokens.slice(0, 2).map((token, index) => (
+          <div key={index} className="flex items-center space-x-1">
+            <img
+              src={
+                
+                tokenData.find((t) => t.symbol === token.symbol)?.logoURI ||
+                `/path/to/${token.symbol}-icon.png`
+              }
+              alt={token.symbol}
+              className="w-5 h-5 border-2 border-lime-900 rounded-full"
+            />
+            <span className="text-xs text-gray-400">{token.quantity}%</span>
+          </div>
+        ))}
+        {tokens.length > 2 && (
+          <span className="text-xs text-gray-400">+{tokens.length - 2}</span>
+        )}
+>>>>>>> a94bb26cc84bdecaebd39d2f16036d2443f99d13
       </div>
     </div>
   );

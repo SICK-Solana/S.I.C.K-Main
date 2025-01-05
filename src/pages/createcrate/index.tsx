@@ -1,8 +1,9 @@
 import React, { useState, useEffect, ChangeEvent, useMemo } from 'react';
-import tokenData from './tokens.json';
 import debounce from 'lodash/debounce';
 import BackendApi from '../../constants/api.ts';
 import fetchUserData from '../../constants/fetchUserData.ts';
+import Sidebar from '../../components/ui/sidebar.tsx';
+import SideBarPhone from '../../components/ui/sidebarPhone.tsx';
 import { MdDelete } from 'react-icons/md';
 import { useWallet } from "@solana/wallet-adapter-react"; 
 
@@ -50,7 +51,11 @@ const CrateCreator: React.FC = () => {
   const [isCreating, setIsCreating] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [totalAllocation, setTotalAllocation] = useState<number>(0);
+    // @ts-nocheck
+
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string>('');
+  // @ts-nocheck
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   // useEffect(() => {
@@ -60,26 +65,27 @@ const CrateCreator: React.FC = () => {
   const BLACKLISTED_TOKENS = ['USDC', 'USDT', 'SOL'];
 
 
-useEffect(() => {
-  const fetchTokens = async () => {
-    try {
-      const response = await fetch('https://quote-api.jup.ag/v6/tokens');
-      const data = await response.json();
-      const filteredTokens = data.filter((token: Token) => 
-        !BLACKLISTED_TOKENS.includes(token.symbol)
-      );
-      setTokens(filteredTokens);
-    } catch (error) {
-      console.error('Failed to fetch tokens:', error);
-      setError('Failed to load tokens');
-    }
-  };
+  useEffect(() => {
+    const fetchTokens = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('https://tokens.jup.ag/tokens?tags=verified');
+        if (!response.ok) {
+          throw new Error('Failed to fetch tokens');
+        }
+        const tokenData = await response.json();
+        setTokens(tokenData);
+        checkLoginStatus(); // Assuming this is defined elsewhere in your app
+      } catch (err) {
+       
+        console.error('Error fetching tokens:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-
-  fetchTokens();
-  checkLoginStatus();
-}, []);
-
+    fetchTokens();
+  }, []);
 
   const distributeAllocations = (tokens: SelectedToken[]): SelectedToken[] => {
     const tokenCount = tokens.length;

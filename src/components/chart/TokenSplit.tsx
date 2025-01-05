@@ -1,6 +1,6 @@
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import tokenData from '../../pages/createcrate/tokens.json';
+import {getTokenData} from '../../pages/createcrate/tokens.ts';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -9,6 +9,7 @@ interface TokenSplitProps {
 }
 
 const TokenSplit: React.FC<TokenSplitProps> = ({ crateData }) => {
+  const tokenData = getTokenData();
   const colors = [
     '#008000', '#00FF00', '#32CD32', '#3CB371', '#2E8B57', '#006400', '#228B22', '#7FFF00', '#98FB98', '#ADFF2F'
   ];
