@@ -27,3 +27,4 @@ dist-ssr
 
 # Custom directories
 Vighnesh/
+.vercel

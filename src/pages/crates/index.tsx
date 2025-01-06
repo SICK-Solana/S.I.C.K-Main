@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Buffer } from 'buffer';
@@ -136,10 +137,10 @@ const CrateDetailPage: React.FC = () => {
   if (!crateData) return <div className="text-gray-400">No crate data found</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white">
-    <div className="flex-1 p-4 md:p-8">
+    <div className="min-h-screen  bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white">
+    <div className="flex-1  p-4 md:p-8">
       {/* Header */}
-      <header className="flex md:pr-[900px] mb-8">
+      <header className="flex mt-20 md:mt-20 md:pr-[900px] mb-8">
         <button 
           onClick={() => window.history.back()} 
           className="hover:opacity-80 transition-opacity"

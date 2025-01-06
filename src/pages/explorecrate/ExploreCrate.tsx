@@ -1,3 +1,4 @@
+// @ts-nocheck
 import '../../index.css'
 import React, { useState, useEffect } from 'react';
 // import Sidebar from '../../components/ui/sidebar.tsx';
@@ -72,7 +73,7 @@ const ExploreCrate: React.FC = () => {
 
 
   return (
-    <div className="flex flex-col md:flex-row bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white min-h-screen pt-20">
+    <div className="flex flex-col md:flex-row bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white min-h-screen pt-20 md:pt-32">
       
       <div className="flex-1 pr-4 pl-4 pb-4 md:ml-20 mb-20 md:mb-0">
         

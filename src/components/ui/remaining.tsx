@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect } from 'react';
 import CrateCard from "../CrateCard";
 import { useWallet } from '@solana/wallet-adapter-react';

@@ -4,7 +4,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useLocation,
+  // useLocation,
 } from "react-router-dom";
 
 import Home from "./pages/home";
@@ -12,16 +12,16 @@ import CrateCreator from "./pages/createcrate";
 import CrateDetailPage from "./pages/crates";
 import ExploreCrate from "./pages/explorecrate/ExploreCrate";
 import SwapFunction from "./pages/swap";
-import HeaderPhone from './components/ui/headerPhone';
+// import HeaderPhone from './components/ui/headerPhone';
 import Dashboard from './pages/dashboard';
 
-const AppContent: React.FC<{ wallets: any[] }> = ({ wallets }) => {
-  const location = useLocation();
-  const showHeader = location.pathname !== '/';
+const AppContent: React.FC<{ wallets: any[] }> = ({ }) => {
+  // const location = useLocation();
+  // const showHeader = location.pathname !== '/';
 
   return (
     <>
-      {showHeader && <HeaderPhone wallets={wallets} />}
+      {/* {showHeader && <HeaderPhone wallets={wallets} />} */}
       
       <Routes>
         <Route path="/" element={<ExploreCrate />} />

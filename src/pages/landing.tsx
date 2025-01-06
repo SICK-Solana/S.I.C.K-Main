@@ -6,6 +6,7 @@ import { useState , useEffect } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import  fetchUserData from '../constants/fetchUserData.ts';
 import { Button } from "../components/ui/button.tsx";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 // import OktoAuthButton from "../components/OktoAuthButton.tsx";
 
 

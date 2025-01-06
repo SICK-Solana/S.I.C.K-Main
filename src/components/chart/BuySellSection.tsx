@@ -32,6 +32,8 @@ const BuySellSection: React.FC<BuySellSectionProps> = ({
     </div>
     <div className="flex justify-center">
       <button 
+                onClick={handleGetQuotes}
+
         className="jersey-10-regular pixel-button bg-gradient-to-b from-lime-500 to-emerald-800 rounded-xl px-4 py-2 text-green-950 font-semibold text-6xl md:text-6xl" 
         style={{fontFamily: "'Jersey 10', serif", fontWeight: '100'}}
       >
