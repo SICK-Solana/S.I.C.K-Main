@@ -177,7 +177,7 @@ const CrateCreator: React.FC = () => {
 
       const result = await response.json();
       console.log('Crate created:', result);
-      window.location.href = '/crates/' + result.id;
+      window.location.href = '/';
     } catch (error) {
       if (error instanceof Error) {
         setError('Failed to create crate: ' + error.message);

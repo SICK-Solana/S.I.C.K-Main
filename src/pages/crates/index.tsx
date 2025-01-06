@@ -140,7 +140,7 @@ const CrateDetailPage: React.FC = () => {
     <div className="min-h-screen  bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white">
     <div className="flex-1  p-4 md:p-8">
       {/* Header */}
-      <header className="flex mt-20 md:mt-20 md:pr-[900px] mb-8">
+      <header className="flex mt-20 md:mt-20s mb-8">
         <button 
           onClick={() => window.history.back()} 
           className="hover:opacity-80 transition-opacity"
@@ -148,7 +148,7 @@ const CrateDetailPage: React.FC = () => {
           <BiArrowBack size={20} className="cursor-pointer" />
         </button>
         
-        <h1 className="flex items-center gap-2 mx-auto text-2xl md:text-3xl font-bold text-lime-400">
+        <h1 className="flex items-center gap-2 mx-auto text-sm md:text-3xl font-bold text-lime-400">
           <div className="w-10 h-10 overflow-hidden rounded-full">
             <img 
               src={crateData.image} 
@@ -159,8 +159,8 @@ const CrateDetailPage: React.FC = () => {
           {crateData.name}
         </h1>
 
-        <a href="" className="text-white font-bold text-xl pr-12">
-          Share on X
+        <a href="" className="text-white font-bold text-xs md:text-xl md:pr-12">
+          Share
         </a>
       </header>
 
@@ -172,11 +172,11 @@ const CrateDetailPage: React.FC = () => {
             {/* Chart Controls */}
             <div className="flex justify-between items-center">
               <h2 className="text-lg md:text-xl font-semibold">Performance</h2>
-              <select className="bg-gray-100/90 text-black rounded px-3 py-1.5">
+              {/* <select className="bg-gray-100/90 text-black rounded px-3 py-1.5">
                 {['1 hr', '6 hr', '24 hr', '7 day'].map(option => (
                   <option key={option} value={option}>{option}</option>
                 ))}
-              </select>
+              </select> */}
             </div>
 
             {/* Chart */}
