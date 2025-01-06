@@ -8,12 +8,14 @@ interface BuySellSectionProps {
   inputAmount: string;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleGetQuotes: () => Promise<void>;
+loading: boolean; 
 }
 
 const BuySellSection: React.FC<BuySellSectionProps> = ({
   inputAmount,
   handleInputChange,
   handleGetQuotes,
+  loading,
 }) => {
   return (
     <div className="bg-gradient-to-b from-gray-100/10 to-green-500/10 rounded-xl p-4 md:p-6">
@@ -33,15 +35,15 @@ const BuySellSection: React.FC<BuySellSectionProps> = ({
     <div className="flex justify-center">
       <button 
                 onClick={handleGetQuotes}
-
+                disabled={loading}
         className="jersey-10-regular pixel-button bg-gradient-to-b from-lime-500 to-emerald-800 rounded-xl px-4 py-2 text-green-950 font-semibold text-6xl md:text-6xl" 
         style={{fontFamily: "'Jersey 10', serif", fontWeight: '100'}}
       >
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Jersey+10&display=swap');
         </style>
-        BUY
-      </button>
+        {loading ? "Processing..." : "BUY"}
+        </button>
     </div>
   </div>
   );

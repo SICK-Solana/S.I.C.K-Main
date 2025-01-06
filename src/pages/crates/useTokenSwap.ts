@@ -35,7 +35,7 @@ interface SwapResult {
 
 export const useTokenSwap = () => {
   const { publicKey, signTransaction, sendTransaction } = useWallet();
-  const [loading, setLoading] = useState(false);
+  const [loading2, setLoading2] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [swapResults, setSwapResults] = useState<SwapResult[]>([]);
 
@@ -104,7 +104,7 @@ export const useTokenSwap = () => {
     inputAmount,
     inputCurrency
   }: TokenSwapOptions) => {
-    setLoading(true);
+    setLoading2(true);
     setError(null);
     setSwapResults([]);
 
@@ -167,13 +167,14 @@ export const useTokenSwap = () => {
       setError(error instanceof Error ? error.message : 'Bulk swap failed');
       throw error;
     } finally {
-      setLoading(false);
+      setLoading2(false);
+      alert('Purchase successful');
     }
   };
 
   return {
     bulkSwap,
-    loading,
+    loading2,
     error,
     swapResults
   };

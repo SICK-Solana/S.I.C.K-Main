@@ -86,13 +86,15 @@ export async function getSwapObj(wallet: string, quote: QuoteResponse) {
 
 const CrateDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const shareUrl = `https://sickfreak.club/crates/${id}`; // Construct the URL
+
   const [crateData, setCrateData] = useState<CrateData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [inputAmount, setInputAmount] = useState<string>('');
   const [quoteResults, setQuoteResults] = useState<SwapQuote[] | null>(null);
   const [selectedCurrency, setSelectedCurrency] = useState<'USDC' | 'SOL'>('SOL');
-  const { bulkSwap } = useTokenSwap();
+  const { bulkSwap , loading2} = useTokenSwap();
 
   useEffect(() => {
     const fetchCrateData = async () => {
@@ -159,9 +161,14 @@ const CrateDetailPage: React.FC = () => {
           {crateData.name}
         </h1>
 
-        <a href="" className="text-white font-bold text-xs md:text-xl md:pr-12">
-          Share
-        </a>
+        <a
+      href={`https://twitter.com/intent/tweet?text=Check%20out%20this%20crate!%20${encodeURIComponent(shareUrl)}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-white font-bold text-xs md:text-xl md:pr-12"
+    >
+      Share
+    </a>
       </header>
 
       {/* Main Content */}
@@ -202,6 +209,7 @@ const CrateDetailPage: React.FC = () => {
             inputAmount={inputAmount}
             handleInputChange={(e) => setInputAmount(e.target.value)}
             handleGetQuotes={handleSwap}
+            loading={loading2}
           />
           <TokenSplit crateData={crateData} />
         </div>
