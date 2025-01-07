@@ -12,6 +12,7 @@ import CrateCreator from "./pages/createcrate";
 import CrateDetailPage from "./pages/crates";
 import ExploreCrate from "./pages/explorecrate/ExploreCrate";
 import SwapFunction from "./pages/swap";
+import SickAi from './pages/sickai';
 // import HeaderPhone from './components/ui/headerPhone';
 import Dashboard from './pages/dashboard';
 
@@ -31,6 +32,7 @@ const AppContent: React.FC<{ wallets: any[] }> = ({ }) => {
         <Route path="/cratecreator" element={<CrateCreator />} />
         <Route path="/crates/:id" element={<CrateDetailPage />} />
          <Route path="/swap" element={<SwapFunction />} />
+         <Route path="/sai" element={<SickAi />} />
       </Routes>
     </>
   );

@@ -53,7 +53,7 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-4 md:space-x-4 md:pr-20">
               <NavLinks 
                 setShowAboutModal={setShowAboutModal} 
-                className="text-lime-200 hover:text-gray-300 jersey-10-regular underline px-6 text-2xl md:text-4xl"
+                className="text-lime-200 hover:text-gray-300 jersey-10-regular underline px-6 text-xl md:text-2xl"
               />
               <WalletButton />
             </div>
@@ -111,6 +111,9 @@ const NavLinks = ({ setShowAboutModal, className }) => (
     </a>
     <a href="/" className={className}>
       Explore
+    </a>
+    <a href="/sai" className={className}>
+      Agent
     </a>
     <a href="https://x.com/SICKonSolana" className={className}>
       <Twitter className="inline-block" size={24} />
