@@ -73,8 +73,11 @@ const ExploreCrate: React.FC = () => {
 
 
   return (
-    <div className="flex flex-col md:flex-row bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white min-h-screen pt-20 md:pt-32">
-      
+<div>
+    <div className='flex mx-auto pt-20 md:pt-32 text-[10px] ml-2  md:flex-row md:ml-40 mb-10'>
+      </div>
+    <div className="flex flex-col md:flex-row bg-gradient-to-b from-[#0A1019] to-[#02050A] text-white min-h-screen ">
+    
       <div className="flex-1 pr-4 pl-4 pb-4 md:ml-20 mb-20 md:mb-0">
         
            
@@ -142,7 +145,13 @@ const ExploreCrate: React.FC = () => {
           </>
         )}
       </div>
-      
+     
+    </div>
+    
+    <div className='flex justify-center items-center mx-auto my-10'>
+        <img src="/solana.svg" alt="Group-1" border="0" width={150} className=''/>
+      </div>
+   
     </div>
   );
 };
