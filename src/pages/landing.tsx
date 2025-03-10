@@ -201,7 +201,7 @@ export default function Landing() {
               />
             </AnimatePresence>
           </main>
-<a href="https://x.com/sickonsolana" target="_blank">
+<a href="https://x.com/apecratedotfun" target="_blank">
           <div className="text-center mx-auto justify-center w-full mt-52 mb-16 text-xl text-gray-400 flex items-center gap-2">
             Follow us on: <FaXTwitter className="text-lime-500" />
           </div>

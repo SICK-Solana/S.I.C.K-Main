@@ -115,7 +115,7 @@ const NavLinks = ({ setShowAboutModal, className }) => (
     <a href="/sai" className={className}>
       Agent
     </a>
-    <a href="https://x.com/SICKonSolana" className={className}>
+    <a href="https://x.com/apecratedotfun" className={className}>
       <Twitter className="inline-block" size={24} />
     </a>
     <button 
