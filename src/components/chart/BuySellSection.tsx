@@ -19,8 +19,9 @@ const BuySellSection: React.FC<BuySellSectionProps> = ({
 }) => {
   return (
     <div className="bg-gradient-to-b from-gray-100/10 to-green-500/10 rounded-xl p-4 md:p-6">
-   
+    <h1 className="text-slate-500 pl-2 mb-4">make sure to have enough sol balance </h1>
     <div className="mb-4 md:flex md:justify-between relative text-xl">
+     
       <input
         type="number"
         placeholder="Enter amount"

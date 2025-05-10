@@ -168,7 +168,6 @@ export const useTokenSwap = () => {
       throw error;
     } finally {
       setLoading2(false);
-      alert('Purchase successful');
     }
   };
 

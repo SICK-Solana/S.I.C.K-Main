@@ -129,7 +129,7 @@ const CrateDetailPage: React.FC = () => {
     try {
       await bulkSwap(swapOptions);
     } catch (error) {
-      alert('Purchase failed');
+      console.error('Purchase failed:', error);
     }
   };
 

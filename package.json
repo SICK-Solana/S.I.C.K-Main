@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.20.0",
     "@jup-ag/api": "^6.0.29",
+    "@jup-ag/wallet-adapter": "^0.2.3",
     "@phantom/wallet-sdk": "^0.0.10",
     "@project-serum/anchor": "^0.26.0",
     "@radix-ui/react-dialog": "^1.1.4",

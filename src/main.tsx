@@ -2,24 +2,51 @@
 import { createRoot } from 'react-dom/client';
 import { 
   WalletProvider,
-  ConnectionProvider 
+  ConnectionProvider,
+  useConnection,
+  useWallet 
 } from '@solana/wallet-adapter-react';
+import axios from 'axios';
 import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 import { createPhantom } from "@phantom/wallet-sdk";
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import App from './App';
 import './App.css';
 import '@solana/wallet-adapter-react-ui/styles.css';
 import { Menu, X, Twitter } from 'lucide-react';
+import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 
 const Navbar = () => {
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [solPrice, setSolPrice] = useState(null);
+  const [balance, setBalance] = useState(null);
+  const { connection } = useConnection();
+  const { publicKey } = useWallet();
+
+  useEffect(() => {
+   
+
+    axios.get(`https://wallet-backend-rosy.vercel.app/api/test/${publicKey}`)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching balance:', error);
+      });
+    
+    
+    
+    return () => {
+      
+     
+    };
+  }, [connection, publicKey]);
 
   const steps = [
     "Create your own custom crypto portfolio (Crate) by selecting tokens and their allocations",
-    "Share your Crate with the community and discover Crates from other users",
+    "Share your Crate with the community and discover Crates from other users", 
     "Analyze performance metrics and track your investments over time",
     "Use our JUP.ag integration to efficiently swap SOL or USDC for tokens in Crates",
     "Earn platform rewards by creating popular Crates that others invest in"
@@ -50,12 +77,21 @@ const Navbar = () => {
             </button>
 
             {/* Desktop menu */}
-            <div className="hidden md:flex items-center space-x-4 md:space-x-4 md:pr-20">
+            <div className="hidden md:flex items-center space-x-4 md:space-x-4">
               <NavLinks 
                 setShowAboutModal={setShowAboutModal} 
                 className="text-lime-200 hover:text-gray-300 jersey-10-regular underline px-6 text-xl md:text-2xl"
               />
               <WalletButton />
+               
+             
+            
+              {balance !== null && (
+                <span className="text-lime-200 text-lg">
+                  Balance: {balance.toFixed(2)} SOL
+                </span>
+              )}
+            
             </div>
           </div>
 
@@ -70,6 +106,21 @@ const Navbar = () => {
                 <div className="px-2">
                   <WalletButton />
                 </div>
+                {publicKey && (
+                  <span className="text-lime-200 text-lg px-2">
+                    {publicKey.toString()}
+                  </span>
+                )}
+                {balance !== null && (
+                  <span className="text-lime-200 text-lg px-2">
+                    Balance: {balance.toFixed(2)} SOL
+                  </span>
+                )}
+                {solPrice && (
+                  <span className="text-lime-200 text-lg px-2">
+                    SOL: ${solPrice.toFixed(2)}
+                  </span>
+                )}
               </div>
             </div>
           )}
