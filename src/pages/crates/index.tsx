@@ -88,12 +88,19 @@ const CrateDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const shareUrl = `https://sickfreak.club/crates/${id}`; // Construct the URL
 
+ 
   const [crateData, setCrateData] = useState<CrateData | null>(null);
+ 
   const [loading, setLoading] = useState<boolean>(true);
+ 
   const [error, setError] = useState<string | null>(null);
+ 
   const [inputAmount, setInputAmount] = useState<string>('');
+ 
   const [quoteResults, setQuoteResults] = useState<SwapQuote[] | null>(null);
+  
   const [selectedCurrency, setSelectedCurrency] = useState<'USDC' | 'SOL'>('SOL');
+  
   const { bulkSwap , loading2} = useTokenSwap();
 
   useEffect(() => {
@@ -117,7 +124,7 @@ const CrateDetailPage: React.FC = () => {
     const tokenData = getTokenData();
 
     const swapOptions = {
-      tokens: crateData?.tokens.map(token => ({
+        tokens: crateData?.tokens.map(token => ({
         symbol: token.symbol,
         mint: tokenData.find(t => t.symbol === token.symbol)?.address || '',
         quantity: token.quantity
@@ -205,12 +212,14 @@ const CrateDetailPage: React.FC = () => {
 
         {/* Right Column - now spans 3 columns out of 7 */}
         <div className="md:col-span-3 space-y-8">
+          
           <BuySellSection
             inputAmount={inputAmount}
             handleInputChange={(e) => setInputAmount(e.target.value)}
             handleGetQuotes={handleSwap}
             loading={loading2}
           />
+
           <TokenSplit crateData={crateData} />
         </div>
       </div>

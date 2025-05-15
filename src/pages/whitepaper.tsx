@@ -3,13 +3,13 @@ import { Scroll, ShoppingBag, Share2, TrendingUp, DollarSign, Zap } from 'lucide
 const WhitepaperSICK = () => {
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
-      <h1 className="text-4xl font-bold mb-6 text-center">S.I.C.K. Whitepaper</h1>
+      <h1 className="text-4xl font-bold mb-6 text-center">apecrate Whitepaper</h1>
       <h2 className="text-2xl font-semibold mb-4 text-center">Scroll Invest Calculate Krypto</h2>
       
       <section className="mb-8">
         <h3 className="text-xl font-semibold mb-2">Overview</h3>
         <p className="mb-4">
-          S.I.C.K. revolutionizes crypto investing by bringing the concept of curated stock baskets 
+          apecrate revolutionizes crypto investing by bringing the concept of curated stock baskets 
           to the world of cryptocurrency. Users can create, share, and invest in custom-made crypto 
           portfolios, making it easier for both experts and newcomers to navigate the crypto space.
         </p>

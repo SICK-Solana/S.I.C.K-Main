@@ -3,7 +3,9 @@ import { Connection, VersionedTransaction } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Buffer } from 'buffer';
+
 const SwapComponent = () => {
+ 
   const wallet = useWallet();
   const [isLoading, setIsLoading] = useState(false);
   const [txId, setTxId] = useState('');
@@ -41,7 +43,9 @@ console.log(quoteResponse);
         })
       ).json();
 
+      
       const swapTransactionBuf = Buffer.from(swapTransaction, 'base64');
+      
       const transaction = VersionedTransaction.deserialize(swapTransactionBuf);
 
       const signedTransaction = await wallet.signTransaction(transaction);

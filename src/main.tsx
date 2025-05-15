@@ -169,6 +169,8 @@ const NavLinks = ({ setShowAboutModal, className }) => (
     <a href="https://x.com/apecratedotfun" className={className}>
       <Twitter className="inline-block" size={24} />
     </a>
+    <a href="/dashboard" className={className}>
+    Dashboard</a>
     <button 
       onClick={() => setShowAboutModal(true)} 
       className={className}
