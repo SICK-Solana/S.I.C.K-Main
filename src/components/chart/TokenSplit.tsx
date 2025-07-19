@@ -1,6 +1,7 @@
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import {getTokenData} from '../../pages/createcrate/tokens.ts';
+import React, { useEffect, useState } from 'react';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -51,6 +52,38 @@ const TokenSplit: React.FC<TokenSplitProps> = ({ crateData }) => {
     },
   };
 
+  const TokenRow: React.FC<{ token: any; tokenData: any[] }> = ({ token }) => {
+    const [iconUrl, setIconUrl] = useState<string | undefined>();
+
+    useEffect(() => {
+      async function fetchTokenIcon(tokenId: string) {
+        try {
+          const response = await fetch(`https://datapi.jup.ag/v1/assets/search?query=${tokenId}`);
+          if (!response.ok) return;
+          const data = await response.json();
+          if (data && data[0] && data[0].icon) {
+            setIconUrl(data[0].icon);
+          }
+        } catch (e) {
+          // fallback will be used
+        }
+      }
+      if (token.coingeckoId) {
+        fetchTokenIcon(token.coingeckoId);
+      }
+      if (token.symbol) {
+        fetchTokenIcon(token.symbol);
+      }
+    }, [token.coingeckoId , token.symbol]);
+
+    return (
+      <div className="flex items-center">
+        <img src={iconUrl} alt={token.symbol} className="w-10 h-10 border-2 border-lime-900 rounded-full mr-2" />
+        <span className="text-lime-100 text-xl font-semibold">{token.name}</span>
+        <span className="ml-auto">{token.quantity}%</span>
+      </div>
+    );
+  };
 
   return (
     <div className="mt-8 bg-gradient-to-b from-lime-400/10 to-green-800/10 rounded-xl p-4 md:p-6">
@@ -62,11 +95,7 @@ const TokenSplit: React.FC<TokenSplitProps> = ({ crateData }) => {
         <div className="space-y-2 flex-1 mb-4 md:mb-0">
           {crateData.tokens.map((token: any, index: any) => (
             <div key={token.id}>
-              <div className="flex items-center">
-                <img src={tokenData.find(t => t.symbol === token.symbol)?.logoURI || `/path/to/${token.symbol}-icon.png`} alt={token.symbol} className="w-10 h-10 border-2 border-lime-900 rounded-full mr-2" />
-                <span className="text-lime-100 text-xl font-semibold">{token.name}</span>
-                <span className="ml-auto">{token.quantity}%</span>
-              </div>
+              <TokenRow token={token} tokenData={tokenData} />
               {index < crateData.tokens.length - 1 && (
                 <hr className="my-2 border-lime-400/30" />
               )}

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bookmark, ArrowBigUp, ArrowBigDown } from "lucide-react";
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -29,6 +29,36 @@ interface CrateCardProps {
   weightedPriceChange: number;
   createdAt: Date | string | number; // Can accept various date formats
 }
+
+const TokenImage: React.FC<{ symbol: string; fallback: string }> = ({ symbol, fallback }) => {
+  const [iconUrl, setIconUrl] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    async function fetchTokenIcon(symbol: string) {
+      try {
+        const response = await fetch(`https://datapi.jup.ag/v1/assets/search?query=${symbol}`);
+        if (!response.ok) return;
+        const data = await response.json();
+        if (data && data[0] && data[0].icon) {
+          setIconUrl(data[0].icon);
+        }
+      } catch (e) {
+        // fallback will be used
+      }
+    }
+    if (symbol) {
+      fetchTokenIcon(symbol);
+    }
+  }, [symbol]);
+
+  return (
+    <img
+      src={iconUrl || fallback}
+      alt={symbol}
+      className="w-20 h-20 border-4 border-lime-900 rounded-full shadow-lg"
+    />
+  );
+};
 
 const CrateCard: React.FC<CrateCardProps> = ({
   title,
@@ -73,19 +103,14 @@ const CrateCard: React.FC<CrateCardProps> = ({
         </div>
       </div>
 
-      <div className="text-xs text-gray-400 mb-4 text-center">{subtitle}</div>
 
       <div className="flex flex-col items-center justify-center mb-8">
         <div className="flex items-center justify-center space-x-12 mb-6">
           {tokens.slice(0, 2).map((token, index) => (
             <div key={index} className="flex flex-col items-center">
-              <img
-                src={
-                  tokenData.find((t) => t.symbol === token.symbol)?.logoURI ||
-                  `/path/to/${token.symbol}-icon.png`
-                }
-                alt={token.symbol}
-                className="w-20 h-20 border-4 border-lime-900 rounded-full shadow-lg"
+              <TokenImage
+                symbol={token.symbol}
+                fallback={tokenData.find((t) => t.symbol === token.symbol)?.logoURI || `/path/to/${token.symbol}-icon.png`}
               />
               <span className="text-sm text-gray-400 mt-2">{token.quantity}%</span>
             </div>
@@ -106,7 +131,8 @@ const CrateCard: React.FC<CrateCardProps> = ({
             {truncate(creator, 10)}
           </span>
         </span>
-        <span className="text-xs text-gray-400">{timeAgo}</span>
+        
+        <span className="text-xs text-gray-400">{subtitle}</span>
       </div>
     </div>
   );

@@ -10,16 +10,19 @@ import {
 
 interface Token {
   coingeckoId: string;
-  id: string;
+  id: string; // This is the mint address
   symbol: string;
   name: string;
   quantity: number;
 }
 
-interface PriceData {
-  id: string;
-  sparkline_in_7d: { price: number[] };
-  price_change_percentage_24h: number;
+interface Candle {
+  time: number;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
 }
 
 interface ChartDataPoint {
@@ -38,35 +41,62 @@ const CombinedPriceChart: React.FC<CombinedPriceChartProps> = ({ tokens }) => {
   const [error, setError] = useState<string | null>(null);
   const [yAxisDomain, setYAxisDomain] = useState<[number, number]>([0, 1]);
 
+  // Helper to get mint address by symbol
+  async function getMintAddressBySymbol(symbol: string): Promise<string | undefined> {
+    if (!symbol) return undefined;
+    const response = await fetch(`https://datapi.jup.ag/v1/assets/search?query=${symbol}`);
+    if (response.ok) {
+      const data = await response.json();
+      if (data && data[0] && data[0].id) {
+        return data[0].id;
+      }
+    }
+    return undefined;
+  }
+
   useEffect(() => {
-    const fetchPriceData = async () => {
+    const fetchJupiterChartData = async (mint: string, interval = '15_MINUTE', to = Date.now(), candles = 114) => {
+      const url = `https://datapi.jup.ag/v2/charts/${mint}?interval=${interval}&to=${to}&candles=${candles}&type=price`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to fetch chart data');
+      const data = await response.json();
+      return data.candles as Candle[];
+    };
+
+    const fetchAll = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const ids = tokens.map((token) => token.coingeckoId).join(",");
-        const response = await fetch(
-          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=${tokens.length}&page=1&sparkline=true&price_change_percentage=24h`
+        // Resolve mint addresses for each token by symbol
+        const mintAddresses = await Promise.all(tokens.map(token => getMintAddressBySymbol(token.symbol)));
+        // Fetch candles for each token
+        const now = Date.now();
+        const numCandles = 114; // ~1 day of 15m candles
+        const allCandles = await Promise.all(
+          mintAddresses.map(mint => mint ? fetchJupiterChartData(mint, '15_MINUTE', now, numCandles) : [])
         );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch price data");
+        // Find the minimum length (in case some tokens have less data)
+        const minLen = Math.min(...allCandles.map(candles => candles.length));
+        // Combine weighted
+        const combinedData: ChartDataPoint[] = [];
+        for (let i = 0; i < minLen; i++) {
+          let combinedValue = 0;
+          let timestamp = allCandles[0][i].time * 1000; // Jupiter returns seconds
+          tokens.forEach((token, idx) => {
+            const weight = token.quantity / 100;
+            combinedValue += (allCandles[idx][i].close * weight);
+          });
+          combinedData.push({ timestamp, value: combinedValue });
         }
-
-        const data: PriceData[] = await response.json();
-        const processedData = processChartData(data, tokens);
-        setChartData(processedData);
-
-        const totalQuantity = tokens.reduce(
-          (sum, token) => sum + token.quantity,
-          0
-        );
-        const weightedPriceChange = data.reduce((sum, coin, index) => {
-          const weight = (tokens[index].quantity * totalQuantity) / 100;
-          return sum + coin.price_change_percentage_24h * weight;
-        }, 0);
-
-        setPriceChangeColor(weightedPriceChange >= 0 ? "#4ade80" : "#ef4444");
-
-        const minValue = Math.min(...processedData.map((d) => d.value));
-        const maxValue = Math.max(...processedData.map((d) => d.value));
+        setChartData(combinedData);
+        // Calculate price change color
+        if (combinedData.length > 1) {
+          const change = (combinedData[combinedData.length - 1].value - combinedData[0].value) / combinedData[0].value;
+          setPriceChangeColor(change >= 0 ? "#4ade80" : "#ef4444");
+        }
+        // Set Y axis domain
+        const minValue = Math.min(...combinedData.map((d) => d.value));
+        const maxValue = Math.max(...combinedData.map((d) => d.value));
         setYAxisDomain([minValue * 0.99, maxValue * 1.01]);
       } catch (err) {
         setError(
@@ -76,37 +106,8 @@ const CombinedPriceChart: React.FC<CombinedPriceChartProps> = ({ tokens }) => {
         setLoading(false);
       }
     };
-
-    fetchPriceData();
-  }, []);
-
-  const processChartData = (
-    priceData: PriceData[],
-    tokens: Token[]
-  ): ChartDataPoint[] => {
-    const quantityMap = new Map(
-      tokens.map((token) => [token.coingeckoId, token.quantity])
-    );
-    const combinedData: ChartDataPoint[] = [];
-
-    const dataPoints = priceData[0]?.sparkline_in_7d.price.length || 0;
-
-    for (let i = 0; i < dataPoints; i++) {
-      let combinedValue = 0;
-      priceData.forEach((coin) => {
-        const quantityPercentage = quantityMap.get(coin.id) || 0;
-        combinedValue +=
-          (coin.sparkline_in_7d.price[i] * quantityPercentage) / 100;
-      });
-
-      combinedData.push({
-        timestamp: Date.now() - (dataPoints - i) * 3600000,
-        value: combinedValue,
-      });
-    }
-
-    return combinedData;
-  };
+    fetchAll();
+  }, [tokens]);
 
   const formatYAxis = (value: number) => {
     if (value >= 1) return value.toFixed(2);

@@ -84,6 +84,18 @@ export async function getSwapObj(wallet: string, quote: QuoteResponse) {
   });
 }
 
+// Add this helper function at the top (after imports):
+async function fetchTokenMint(tokenId) {
+  try {
+    const response = await fetch(`https://datapi.jup.ag/v1/assets/search?query=${tokenId}`);
+    if (!response.ok) return tokenId;
+    const data = await response.json();
+    return data[0]?.id || tokenId;
+  } catch {
+    return tokenId;
+  }
+}
+
 const CrateDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const shareUrl = `https://sickfreak.club/crates/${id}`; // Construct the URL
@@ -121,14 +133,17 @@ const CrateDetailPage: React.FC = () => {
   }, [id]);
 
   const handleSwap = async () => {
-    const tokenData = getTokenData();
+    // Instead of mapping directly, fetch mints asynchronously
+    const tokensWithMint = await Promise.all(
+      crateData?.tokens.map(async token => ({
+        symbol: token.symbol,
+        mint: await fetchTokenMint(token.symbol ||  token.coingeckoId ),
+        quantity: token.quantity
+      })) || []
+    );
 
     const swapOptions = {
-        tokens: crateData?.tokens.map(token => ({
-        symbol: token.symbol,
-        mint: tokenData.find(t => t.symbol === token.symbol)?.address || '',
-        quantity: token.quantity
-      })),
+      tokens: tokensWithMint,
       inputAmount: parseFloat(inputAmount),
       inputCurrency: selectedCurrency
     };

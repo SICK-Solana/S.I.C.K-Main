@@ -14,92 +14,88 @@ interface Crate {
   tokens: Token[];
 }
 
-interface PriceData {
-  id: string;
-  sparkline_in_7d: { price: number[] };
-  price_change_percentage_24h: number;
-}
-
 interface ChartDataPoint {
   timestamp: number;
   value: number;
 }
 
+interface JupiterToken {
+  id: string;
+  symbol: string;
+  name: string;
+  stats5m?: { priceChange: number };
+  stats1h?: { priceChange: number };
+  stats24h?: { priceChange: number };
+  // ...other fields
+}
+
+const JUPITER_SEARCH_API = 'https://datapi.jup.ag/v1/assets/search?query=';
+
 const useCrateCharts = (crates: Crate[]) => {
   const [chartsData, setChartsData] = useState<{ [crateId: string]: ChartDataPoint[] }>({});
   const [weightedPriceChanges, setWeightedPriceChanges] = useState<{ [crateId: string]: number }>({});
 
+  // Helper to fetch a single symbol (uppercased)
+  async function fetchJupiterTokenBySymbol(symbol: string): Promise<JupiterToken | undefined> {
+    if (!symbol) return undefined;
+    const query = symbol.toUpperCase();
+    const response = await fetch(`${JUPITER_SEARCH_API}${encodeURIComponent(query)}`);
+    if (!response.ok) return undefined;
+    const data = await response.json();
+    if (Array.isArray(data) && data.length > 0) {
+      // Debug output
+      console.log('Jupiter API response for', query, ':', data);
+      return data[0];
+    }
+    return undefined;
+  }
+
   useEffect(() => {
     const fetchBatchPriceData = async () => {
       try {
-        const allCoingeckoIds = new Set(
-          crates.flatMap(crate => crate.tokens.map(token => token.coingeckoId))
-        );
-        const ids = Array.from(allCoingeckoIds).join(',');
-        console.log("Fetching data for these ids:", ids);
-        const response = await fetch(
-          `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&order=market_cap_desc&per_page=${allCoingeckoIds.size}&page=1&sparkline=true&price_change_percentage=24h`
-        );
-        const data: PriceData[] = await response.json();
-        console.log("Received price data:", data);
-
-        const processedData: { [crateId: string]: ChartDataPoint[] } = {};
         const processedWeightedPriceChanges: { [crateId: string]: number } = {};
-
-        crates.forEach(crate => {
-          const { chartData, weightedPriceChange } = processChartData(data, crate.tokens);
-          console.log("Processed chart data for crate", crate.id, chartData);
-          processedData[crate.id] = chartData;
-          processedWeightedPriceChanges[crate.id] = weightedPriceChange;
-        });
-
-        setChartsData(processedData);
+        // Gather all unique symbols (uppercased)
+        const allSymbols = Array.from(new Set(crates.flatMap(crate => crate.tokens.map(token => token.symbol.toUpperCase()))));
+        // Fetch each symbol individually
+        const allJupiterTokens: JupiterToken[] = [];
+        for (const symbol of allSymbols) {
+          const token = await fetchJupiterTokenBySymbol(symbol);
+          if (token) allJupiterTokens.push(token);
+        }
+        // Debug output
+        console.log('All Jupiter tokens fetched:', allJupiterTokens);
+        // For each crate, compute weighted price change using stats1h (fallback to stats24h)
+        for (const crate of crates) {
+          let weightedChange = 0;
+          let totalWeight = 0;
+          crate.tokens.forEach(token => {
+            const jupToken = allJupiterTokens.find(jt =>
+              (jt.id && token.id && jt.id === token.id) ||
+              (jt.symbol && token.symbol && jt.symbol.toUpperCase() === token.symbol.toUpperCase())
+            );
+            // Debug output for matching
+            console.log('Crate token:', token, 'Matched Jupiter:', jupToken);
+            let priceChange = 0;
+            if (jupToken) {
+              if (jupToken.stats1h && typeof jupToken.stats1h.priceChange === 'number') {
+                priceChange = jupToken.stats1h.priceChange;
+              } else if (jupToken.stats24h && typeof jupToken.stats24h.priceChange === 'number') {
+                priceChange = jupToken.stats24h.priceChange;
+              }
+            }
+            weightedChange += priceChange * (token.quantity / 100);
+            totalWeight += token.quantity / 100;
+          });
+          processedWeightedPriceChanges[crate.id] = totalWeight > 0 ? weightedChange / totalWeight : 0;
+        }
         setWeightedPriceChanges(processedWeightedPriceChanges);
+        setChartsData({}); // No chart data, just for compatibility
       } catch (err) {
         console.error("Error fetching price data:", err);
       }
     };
-
     fetchBatchPriceData();
   }, [crates]);
-
-  const processChartData = (
-    priceData: PriceData[],
-    tokens: Token[]
-  ): { chartData: ChartDataPoint[], weightedPriceChange: number } => {
-    const combinedData: ChartDataPoint[] = [];
-    let totalWeightedPriceChange = 0;
-    let totalWeight = 0;
-
-    const dataPoints = priceData[0]?.sparkline_in_7d.price.length || 0;
-
-    for (let i = 0; i < dataPoints; i++) {
-      let combinedValue = 0;
-      tokens.forEach((token) => {
-        const coinData = priceData.find(p => p.id === token.coingeckoId);
-        if (coinData) {
-          combinedValue += (coinData.sparkline_in_7d.price[i] * token.quantity) / 100;
-        }
-      });
-
-      combinedData.push({
-        timestamp: Date.now() - (dataPoints - i) * 3600000,
-        value: combinedValue,
-      });
-    }
-
-    tokens.forEach((token) => {
-      const coinData = priceData.find(p => p.id === token.coingeckoId);
-      if (coinData) {
-        totalWeightedPriceChange += coinData.price_change_percentage_24h * (token.quantity / 100);
-        totalWeight += token.quantity / 100;
-      }
-    });
-
-    const weightedPriceChange = totalWeight > 0 ? totalWeightedPriceChange / totalWeight : 0;
-
-    return { chartData: combinedData, weightedPriceChange };
-  };
 
   return { chartsData, weightedPriceChanges };
 };
